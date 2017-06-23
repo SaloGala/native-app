@@ -8,4 +8,18 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="loginImago" parent="">
+        <item name="android:src">@drawable/login_imago2x</item>
+
+
+
+    </style>
+
+    <style name="loginLogo" parent="">
+        <item name="android:src">@drawable/login_logo2x</item>
+
+
+
+    </style>
+
 </resources>

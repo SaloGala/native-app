@@ -8,8 +8,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide(); // --> hide bar from Activity
         setContentView(R.layout.activity_main);
 
-        System.out.println("First push of the login feature");
     }
 }
