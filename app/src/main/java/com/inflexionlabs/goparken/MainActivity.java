@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.view.ActionMode;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "FacebookLogIn";
 
     private LoginButton facebookLoginButton;
     private CallbackManager callbackManager;
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(!task.isSuccessful()){
-
+                    Log.w(TAG, "Facebook log in error", task.getException());
                     Toast.makeText(MainActivity.this,R.string.error_login_facebook,Toast.LENGTH_SHORT).show();
                 }else{
                     //goMapScreen();

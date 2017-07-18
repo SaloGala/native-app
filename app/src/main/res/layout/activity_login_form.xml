@@ -7,44 +7,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TableRow
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
 
-        <EditText android:id="@+id/editTxtEmail"
-            android:layout_width="fill_parent"
+        <EditText android:id="@+id/txtEmail"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/editTxtEmail" />
 
-    </TableRow>
 
-    <TableRow
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
-
-        <EditText android:id="@+id/editTxtPass"
-            android:layout_width="fill_parent"
+        <EditText android:id="@+id/txtPass"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/editTxtPass" />
 
-    </TableRow>
-
-    <TableRow
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
 
         <Button
-            android:layout_width="fill_parent"
+            android:id="@+id/btnLogIn"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/buttonEnviar"
+            android:onClick="onClick"
             />
 
-    </TableRow>
 
 </LinearLayout>
