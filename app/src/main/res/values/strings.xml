@@ -3,4 +3,13 @@
     <string name="button_iniciarSesion">Iniciar Sesión</string>
     <string name="button_registrarse">Registrarse</string>
     <string name="button_iniciarFB">Iniciar con Facebook</string>
+    <string name="editTxtEmail">email</string>
+    <string name="editTxtPass">contraseña</string>
+    <string name="buttonEnviar">Enviar</string>
+    <string name="editTxtNombre">nombre</string>
+    <string name="editTxtApellidos">apellidos</string>
+    <string name="facebook_app_id">1037322849654372</string>
+    <string name="cancel_login_facebook">Inicio de sesión con Facebook cancelado</string>
+    <string name="error_login_facebook">Inicio de sesión con Facebook fallido</string>
+    <string name="button_cerrarSesion">Cerrar Sesiòn</string>
 </resources>

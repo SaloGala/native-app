@@ -6,85 +6,41 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    tools:context="com.inflexionlabs.goparken.MainActivity"
     >
+
+    <Button
+        android:id="@+id/btnSignin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_iniciarSesion"
+        android:onClick="onClick"/>
+
+
+
+    <Button
+        android:id="@+id/btnRegister"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/button_registrarse"
+        android:onClick="onClick"
+            />
     
-    <ImageView
-        android:src="@drawable/fondomap"
-        android:scaleType="fitXY"
-        android:alpha="0.4"
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btnSigninWithFacebook"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        />
+
+    <Button
+        android:id="@+id/BTNSigninWithFacebook"
         android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        tools:ignore="ContentDescription" />
-
-    <TableRow
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2">
-
-
-        <ImageView
-            android:id="@+id/imageView"
-            style="@style/loginImago"
+        android:layout_height="wrap_content"
+        android:text="@string/button_iniciarFB"
+        android:onClick="onClick"
             />
 
-    </TableRow>
 
-    <TableRow
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.8">
-
-        <ImageView
-            android:id="@+id/imageView2"
-            style="@style/loginLogo"
-            />
-
-    </TableRow>
-
-    <TableRow
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_iniciarSesion" />
-
-    </TableRow>
-
-    <TableRow
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_registrarse"
-            />
-
-    </TableRow>
-
-    <TableRow
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/button_iniciarFB"
-            />
-
-    </TableRow>
-    
 </LinearLayout>

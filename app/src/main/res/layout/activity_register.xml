@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <EditText android:id="@+id/editTxtNombre"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTxtNombre" />
+
+    </TableRow>
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <EditText android:id="@+id/editTxtApellidos"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTxtApellidos" />
+
+    </TableRow>
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <EditText android:id="@+id/editTxtCorreo"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTxtEmail" />
+
+    </TableRow>
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <EditText android:id="@+id/editTxtCorreoR"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTxtEmail" />
+
+    </TableRow>
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <EditText android:id="@+id/editTxtPass"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTxtPass" />
+
+    </TableRow>
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <EditText android:id="@+id/editTxtPassR"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/editTxtPass" />
+
+    </TableRow>
+
+    <TableRow
+
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="2.5">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/buttonEnviar"
+            android:onClick="send"
+            />
+
+    </TableRow>
+
+</LinearLayout>
+
