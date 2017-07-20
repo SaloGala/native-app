@@ -5,13 +5,18 @@ import android.net.Uri;
 import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MapActivity extends AppCompatActivity {
 
@@ -22,6 +27,9 @@ public class MapActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
 
@@ -32,6 +40,9 @@ public class MapActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if(user!=null){
+
+
+            writeNewUser();
 
             String uid = user.getUid();
             String nombre = user.getDisplayName();
@@ -60,6 +71,17 @@ public class MapActivity extends AppCompatActivity {
         FirebaseAuth.getInstance().signOut();
         LoginManager.getInstance().logOut();
         goLoginScreen();
+    }
+
+    private void writeNewUser(){
+        final DatabaseReference dataBaseRef = FirebaseDatabase.getInstance().getReference();
+        final User currentUser = new User();
+
+        dataBaseRef.child("users").child(currentUser.getUid()).child("userName").setValue(currentUser.getUserName());
+        dataBaseRef.child("users").child(currentUser.getUid()).child("email").setValue(currentUser.getEmail());
+        dataBaseRef.child("users").child(currentUser.getUid()).child("photoUrl").setValue(currentUser.getPhotoUrl());
+        dataBaseRef.child("users").child(currentUser.getUid()).child("provider").setValue(currentUser.getProvider());
+
     }
 
 
