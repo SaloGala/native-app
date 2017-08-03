@@ -91,8 +91,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
-
         super.onCreate(savedInstanceState);
 
         mValuesUtilities.setMainContext(this);
@@ -618,7 +616,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         public int getCount() {
-            return 5;
+            return 2;
         }
 
         @Override
@@ -629,12 +627,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     return getString(R.string.map);
                 case 1:
                     return getString(R.string.service);
-                case 2:
-                    return getString(R.string.payment);
-                case 3:
-                    return getString(R.string.profile);
-                case 4:
-                    return getString(R.string.promo);
+
             }
 
             return null;

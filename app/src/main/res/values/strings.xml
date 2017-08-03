@@ -18,7 +18,7 @@
     <string name="map">Mapa</string>
     <string name="service">Servicios</string>
     <string name="payment">Pagos</string>
-    <string name="profile">Perfil</string>
+    <string name="action_profile">Perfil</string>
     <string name="promo">Promoión</string>
     <string name="action_logout">Cerrar sesión</string>
     <string name="action_search_place">Buscar</string>
@@ -26,7 +26,10 @@
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="msg_location_user">¿Permitir a Go Parken utilizar la ubicación de tu dispositivo?</string>
-
+    <string name="btn_taller">Talleres</string>
+    <string name="btn_gas">Gasolinerías</string>
+    <string name="btn_auto">Autolavados</string>
+    <string name="title_activity_service">ServiceActivity</string>
 
 
 </resources>

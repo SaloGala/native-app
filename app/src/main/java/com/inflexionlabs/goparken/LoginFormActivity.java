@@ -1,10 +1,14 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.constraint.solver.widgets.ConstraintAnchor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -42,6 +46,28 @@ public class LoginFormActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        initializeComponents();
+
+    }
+
+    private void initializeComponents() {
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
+        toolbar.setTitleTextColor(Color.WHITE);
+        setSupportActionBar(toolbar);
+
+        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
+        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryActionBar), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void signIn(String email, String password) {

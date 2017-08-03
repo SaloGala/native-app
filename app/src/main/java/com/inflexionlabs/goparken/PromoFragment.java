@@ -15,6 +15,8 @@ public class PromoFragment extends Fragment {
 
     private static final String TAG = "PromoFragment";
 
+    public PromoFragment(){}
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
