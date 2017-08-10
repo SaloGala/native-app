@@ -5,8 +5,10 @@ import android.Manifest;
 import android.app.ActionBar;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Build;
@@ -54,6 +56,12 @@ public class ServiceActivity extends AppCompatActivity implements OnMapReadyCall
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     String type;
     String appBarTitle;
+
+    Bitmap iconMarker;
+    int height = 40;
+    int width = 40;
+
+
 
 
     @Override
@@ -132,10 +140,28 @@ public class ServiceActivity extends AppCompatActivity implements OnMapReadyCall
 
         if (type.equals("car_repair")){
             appBarTitle = getString(R.string.btn_taller);
+
+            BitmapDrawable parkingBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.car_repair_icon);
+            Bitmap bitmapGraff = parkingBitmapDrawable.getBitmap();
+            iconMarker = Bitmap.createScaledBitmap(bitmapGraff, width, height, false);
+
         }else if (type.equals("gas_station")){
             appBarTitle = getString(R.string.btn_gas);
+
+
+            BitmapDrawable parkingBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.gas_station_icon);
+            Bitmap bitmapGraff = parkingBitmapDrawable.getBitmap();
+            iconMarker = Bitmap.createScaledBitmap(bitmapGraff, width, height, false);
+
+
         }else{
             appBarTitle = getString(R.string.btn_auto);
+
+            BitmapDrawable parkingBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.car_wash_icon);
+            Bitmap bitmapGraff = parkingBitmapDrawable.getBitmap();
+            iconMarker = Bitmap.createScaledBitmap(bitmapGraff, width, height, false);
+
+
         }
 
         getSupportActionBar().setTitle(appBarTitle);
@@ -240,15 +266,16 @@ public class ServiceActivity extends AppCompatActivity implements OnMapReadyCall
 
         //move map Camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+        mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
-        mGoogleMap.clear();
+        //mGoogleMap.clear();
 
         String url = getUrl(lt,lng,type);
-        Object[] dataTransfer = new Object[2];
+        Object[] dataTransfer = new Object[3];
 
         dataTransfer[0] = mGoogleMap;
         dataTransfer[1] = url;
+        dataTransfer[2] = iconMarker;
 
         GetNearbyPlacesData getNearbyPlacesData = new GetNearbyPlacesData();
         getNearbyPlacesData.execute(dataTransfer);

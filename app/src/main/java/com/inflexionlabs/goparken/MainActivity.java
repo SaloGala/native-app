@@ -8,7 +8,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -20,6 +22,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -33,6 +36,10 @@ import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
@@ -53,13 +60,16 @@ import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.common.collect.HashBiMap;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -88,6 +98,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Boolean MapInitializedFlag = false;
     private Boolean RequestingLocationUpdatesFlag = false;
 
+    private HashBiMap<String, Marker> parkingsMarkers = HashBiMap.create();
+    GeoQuery geoQuery;
+    Bitmap grayMarker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -109,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             writeNewUser();
             initializeComponents();
             initializeApiComponents();
+            initializeGraphicComponents();
             createLocationManager();
 
 
@@ -116,6 +131,18 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             goLoginScreen();
         }
 
+
+
+    }
+
+    private void initializeGraphicComponents() {
+
+        int height = 120;
+        int width = 100;
+
+        BitmapDrawable parkingBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_gris);
+        Bitmap bitmapParking = parkingBitmapDrawable.getBitmap();
+        grayMarker = Bitmap.createScaledBitmap(bitmapParking, width, height, false);
 
 
     }
@@ -494,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     Place place = PlaceAutocomplete.getPlace(this, data);
 
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(13).build();
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
 
                     tempMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -529,6 +556,63 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         mValuesUtilities.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+    }
+
+
+    public void searchParkings(GeoLocation searchArea){
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("markers");
+
+        GeoQueryEventListener parkingsEventListener = new GeoQueryEventListener() {
+
+            @Override
+            public void onKeyEntered(String key, GeoLocation location) {
+
+                LatLng markerLatLng = new LatLng(location.latitude,location.longitude);
+
+                Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
+                        .position(markerLatLng)
+                        .icon(BitmapDescriptorFactory.fromBitmap(grayMarker))
+                );
+
+                parkingsMarkers.put(key,newMarker);
+                mValuesUtilities.setParkingsMarkers(parkingsMarkers);
+
+            }
+
+            @Override
+            public void onKeyExited(String key) {
+
+                parkingsMarkers.get(key).remove();
+                parkingsMarkers.remove(key);
+                mValuesUtilities.setParkingsMarkers(parkingsMarkers);
+            }
+
+            @Override
+            public void onKeyMoved(String key, GeoLocation location) {
+
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+
+            }
+        };
+
+        GeoFire geoFire = new GeoFire(ref);
+        geoQuery = geoFire.queryAtLocation(searchArea,10);
+        geoQuery.addGeoQueryEventListener(parkingsEventListener);
+
+    }
+
+    public void updateParkingsSearch(GeoLocation newGeoLocationCriteria){
+
+        geoQuery.setCenter(newGeoLocationCriteria);
     }
 
     @Override

@@ -36,6 +36,9 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
     MainActivity mMainActivity;
     private ValuesUtilities mValuesUtilities;
     GeoLocation mAbsoluteCenter;
+    GeoLocation oldAbsoluteCenter;
+
+    Boolean initializeUpdateFlag;
 
     private OnFragmentInteractionListener mListener;
 
@@ -58,6 +61,8 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         mValuesUtilities = ValuesUtilities.getInstance();
+        mValuesUtilities.setInitializeUpdateFlag(false);
+        initializeUpdateFlag = mValuesUtilities.getInitializeUpdateFlag();
 
         mView = inflater.inflate(R.layout.map_fragment, container, false);
 
@@ -172,6 +177,36 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     mMainActivity.subscribeToGooglePlayServicesLocation();
                     mValuesUtilities.setUserLocation(null);
                 }
+
+                mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener(){
+
+                    @Override
+                    public void onCameraIdle() {
+
+                        CameraPosition cameraPosition = mGoogleMap.getCameraPosition();
+
+                        if(cameraPosition.zoom >=10){
+                            mAbsoluteCenter = new GeoLocation(cameraPosition.target.latitude, cameraPosition.target.longitude);
+
+                            if(!mValuesUtilities.getInitializeUpdateFlag()){
+
+                                mMainActivity.searchParkings(mAbsoluteCenter);
+                                mValuesUtilities.setInitializeUpdateFlag(true);
+                                oldAbsoluteCenter = mAbsoluteCenter;
+                            }else{
+
+                                float[] results = new float[1];
+
+                                Location.distanceBetween(mAbsoluteCenter.latitude,mAbsoluteCenter.longitude,oldAbsoluteCenter.latitude,oldAbsoluteCenter.longitude,results);
+
+                                if (results[0]>10000) {
+                                    mMainActivity.updateParkingsSearch(mAbsoluteCenter);
+                                    oldAbsoluteCenter = mAbsoluteCenter;
+                                }
+                            }
+                        }
+                    }
+                });
 
             }
         });

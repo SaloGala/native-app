@@ -7,6 +7,8 @@ import android.location.LocationManager;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.common.collect.HashBiMap;
 
 /**
  * Created by odalysmarronsanchez on 28/07/17.
@@ -22,6 +24,10 @@ class ValuesUtilities {
     private MainActivity mainActivity;
     private GoogleMap googleMap;
     private Context mainContext;
+
+    private HashBiMap<String,Marker> parkingsMarkers;
+    private Boolean initializeUpdateFlag;
+
 
     public final int REQUEST_CHECK_SETTINGS = 2;
 
@@ -78,5 +84,21 @@ class ValuesUtilities {
 
     public GoogleMap getGoogleMap() {
         return this.googleMap;
+    }
+
+    public void setParkingsMarkers(HashBiMap<String, Marker> parkingsMarkers) {
+        this.parkingsMarkers = parkingsMarkers;
+    }
+
+    public HashBiMap<String, Marker> getParkingsMarkers() {
+        return this.parkingsMarkers;
+    }
+
+    public void setInitializeUpdateFlag(Boolean initializeUpdateFlag) {
+        this.initializeUpdateFlag = initializeUpdateFlag;
+    }
+
+    public Boolean getInitializeUpdateFlag() {
+        return this.initializeUpdateFlag;
     }
 }

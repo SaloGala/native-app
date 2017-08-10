@@ -1,13 +1,17 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -26,7 +30,7 @@ public class GetNearbyPlacesData extends AsyncTask<Object,String, String > {
     GoogleMap mMap;
     String url;
 
-    ServiceActivity mServiceActivity ;
+    Bitmap iconMarker;
 
     @Override
     protected String doInBackground(Object... objects) {
@@ -35,6 +39,7 @@ public class GetNearbyPlacesData extends AsyncTask<Object,String, String > {
             Log.d("GetNearbyPlacesData","doInBackground entered");
             mMap = (GoogleMap) objects[0];
             url = (String) objects[1];
+            iconMarker = (Bitmap) objects[2];
             DownloadUrl downloadUrl = new DownloadUrl();
             googlePlacesData = downloadUrl.readUrl(url);
             Log.d("GooglePlacesReadTask", "doInBackground Exit");
@@ -77,17 +82,16 @@ public class GetNearbyPlacesData extends AsyncTask<Object,String, String > {
             LatLng latlng = new LatLng(lat,lng);
             markerOptions.position(latlng);
             markerOptions.title(placeName + " : "+ vicinity);
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(iconMarker));
             mMap.addMarker(markerOptions);
 
             //move map camera
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+            //mMap.moveCamera(CameraUpdateFactory.newLatLng(latlng));
+            //mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
         }
 
 
-
-
-
     }
+
 }
