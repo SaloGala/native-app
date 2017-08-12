@@ -187,9 +187,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             logOut();
         } else if (id == R.id.action_search_place) {
             openAutocompleteActivity();
+        } else if (id == R.id.action_profile) {
+            goToProfileScreen();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void goToProfileScreen(){
+
+        Intent intent = new Intent(this,ProfileActivity.class);
+        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
     }
 
     private void openAutocompleteActivity() {
@@ -713,14 +723,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 case 2:
                     fragment = new ServicesFragment();
                     break;
-                case 3:
-                    fragment = new PaymentFragment();
-                    break;
-                case 4:
-                    fragment = new PerfilFragment();
-                    break;
-                case 5:
-                    fragment = new PromoFragment();
 
             }
 

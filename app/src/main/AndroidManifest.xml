@@ -47,45 +47,45 @@
              You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
 
-        <activity android:name=".ServiceActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity
+            android:name=".ServiceActivity"
+            android:parentActivityName=".MainActivity" />
 
-        <!-- Start firebase FCM-->
-        <service
-            android:name=".MyFirebaseMessagingService">
+        <activity
+            android:name=".ProfileActivity"
+            android:parentActivityName=".MainActivity" />
+
+        <!-- Start firebase FCM -->
+        <service android:name=".MyFirebaseMessagingService">
             <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".MyFirebaseInstanceIDService">
+        <service android:name=".MyFirebaseInstanceIDService">
             <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
 
         <!-- End firebase FCM -->
 
-
         <receiver
             android:name=".FirebaseDataReceiver"
             android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND">
-
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
-
         </receiver>
 
-        <!-- Start firebase FCM notification icons-->
+        <!-- Start firebase FCM notification icons -->
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/icon" />
 
-        <!-- End firebase FCM notification icons-->
+        <!-- End firebase FCM notification icons -->
+
     </application>
 
 </manifest>
