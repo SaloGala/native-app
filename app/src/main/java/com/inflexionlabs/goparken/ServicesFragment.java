@@ -1,6 +1,8 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 /**
  * Created by odalysmarronsanchez on 25/07/17.
@@ -21,13 +25,15 @@ public class ServicesFragment extends Fragment {
     Button btnTalleres;
     Button btnGasolineras;
     Button btnAutolavados;
+    ValuesUtilities valuesUtilities = ValuesUtilities.getInstance();
     public View mView;
 
     MainActivity mMainActivity;
     private OnFragmentInteractionListener mListener;
 
 
-    public ServicesFragment(){}
+    public ServicesFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,8 +42,8 @@ public class ServicesFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState){
-        mView = inflater.inflate(R.layout.services_fragment,container,false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.services_fragment, container, false);
 
         initializeComponents();
         initializeVariables();
@@ -50,7 +56,7 @@ public class ServicesFragment extends Fragment {
     }
 
     private void initializeComponents() {
-        btnTalleres = (Button) mView.findViewById(R.id.btnTaller) ;
+        btnTalleres = (Button) mView.findViewById(R.id.btnTaller);
         btnGasolineras = (Button) mView.findViewById(R.id.btnGasolineria);
         btnAutolavados = (Button) mView.findViewById(R.id.btnAutolavado);
 
@@ -61,41 +67,53 @@ public class ServicesFragment extends Fragment {
 
     private View.OnClickListener btnListener = new View.OnClickListener() {
 
-        public void onClick(View v)
-        {
+        public void onClick(View v) {
 
             Intent intent = new Intent(mMainActivity, ServiceActivity.class);
 
-            switch (v.getId()){
-                case R.id.btnTaller:
+            Location actualLocation = new Location(LocationManager.GPS_PROVIDER);
+            actualLocation.setLatitude(valuesUtilities.getUserLocation().latitude);
+            actualLocation.setLongitude(valuesUtilities.getUserLocation().longitude);
 
-                    intent.putExtra("my-string", "car_repair");
-                    startActivity(intent);
+            intent.putExtra("my-lat", actualLocation.getLatitude());
+            intent.putExtra("my-lng", actualLocation.getLongitude());
+
+            if (actualLocation == null) {
+
+                //Request permissions
+
+            } else {
+
+                switch (v.getId()) {
+                    case R.id.btnTaller:
+
+                        intent.putExtra("my-string", "car_repair");
+                        startActivity(intent);
 
                     /*MapFragment nextFrag= new MapFragment();
                     mMainActivity.getSupportFragmentManager().beginTransaction()
                             .replace(R.id.container, nextFrag)
                             .addToBackStack(null)
                             .commit();*/
-                    break;
-                case R.id.btnGasolineria:
+                        break;
+                    case R.id.btnGasolineria:
 
-                    intent.putExtra("my-string", "gas_station");
-                    startActivity(intent);
+                        intent.putExtra("my-string", "gas_station");
+                        startActivity(intent);
 
-                    break;
+                        break;
 
-                case R.id.btnAutolavado:
+                    case R.id.btnAutolavado:
 
-                    intent.putExtra("my-string", "car_wash");
-                    startActivity(intent);
+                        intent.putExtra("my-string", "car_wash");
+                        startActivity(intent);
 
-                    break;
+                        break;
+                }
             }
         }
 
     };
-
 
 
     public interface OnFragmentInteractionListener {

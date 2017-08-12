@@ -13,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -77,6 +78,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 3;
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     public GoogleApiClient mGoogleApiClient;
     LocationManager locationManager;
@@ -85,7 +87,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     Marker searchLocationMarker;
 
     public ViewPager mViewPager;
-    private Menu menu;
     private FirebaseAuth mFirebaseAuth;
 
     ValuesUtilities mValuesUtilities = ValuesUtilities.getInstance();
@@ -107,7 +108,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mValuesUtilities.setMainActivity(this);
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG, "onCreate Starting");
+
+        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            checkLocationPermissions();
+        }
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -130,6 +134,28 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
+    private boolean checkLocationPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            //Asking user if explanation is needed
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                //No explanation needed, we can request the permission
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     private void initializeGraphicComponents() {
 
         int height = 120;
@@ -145,7 +171,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        this.menu = menu;
         return true;
     }
 
