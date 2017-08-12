@@ -66,6 +66,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.common.collect.HashBiMap;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
@@ -102,6 +103,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     GeoQuery geoQuery;
     Bitmap grayMarker;
 
+    private FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -131,6 +134,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             goLoginScreen();
         }
 
+        //Obtain the FirebaseAnalytics instance
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
 
     }

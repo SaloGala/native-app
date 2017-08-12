@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,6 +32,8 @@ public class LoginFormActivity extends AppCompatActivity {
     private EditText passwordField;
 
     private FirebaseAuth mAuth;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     @Override
@@ -45,6 +48,8 @@ public class LoginFormActivity extends AppCompatActivity {
         passwordField = (EditText) findViewById(R.id.txtPass);
 
         mAuth = FirebaseAuth.getInstance();
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         initializeComponents();
 
@@ -85,6 +90,9 @@ public class LoginFormActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
                             Log.d(TAG,"signinWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            registerEventFirebaseAnalitics("email_password","El usuario inicio sesion con un correo y contraseña");
+
                             goMapScreen();
 
                         }else{
@@ -131,5 +139,15 @@ public class LoginFormActivity extends AppCompatActivity {
         if (i == R.id.btnLogIn) {
             signIn(emailField.getText().toString(),passwordField.getText().toString());
         }
+    }
+
+    public void registerEventFirebaseAnalitics(String name , String description){
+
+        Bundle params = new Bundle();
+        params.putString("nombre",name);
+        params.putString("descripcion",description);
+
+        mFirebaseAnalytics.logEvent("inicio_sesion",params);
+
     }
 }
