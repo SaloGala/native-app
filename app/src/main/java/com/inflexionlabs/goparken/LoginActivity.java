@@ -90,6 +90,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
                     //goMapScreen();
                     registerEventFirebaseAnalitics("facebook_loggin","El usuario inicio sesion a traves de Facebook");
+
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 }
@@ -102,13 +103,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         callbackManager.onActivityResult(requestCode,resultCode,data);
     }
-
-    private void goMapScreen(){
-        Intent intent = new Intent(this,MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-    }
-
 
     public void loginForm() {
 
