@@ -1,6 +1,5 @@
 package com.inflexionlabs.goparken;
 
-import android.*;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
@@ -14,6 +13,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,12 +26,10 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.facebook.FacebookSdk;
@@ -73,11 +71,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import static android.provider.Settings.Global.getString;
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, MapFragment.OnFragmentInteractionListener, LocationListener {
 
-public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, MapFragment.OnFragmentInteractionListener, LocationListener  {
-
-    private static final String TAG= "MainActivity";
+    private static final String TAG = "MainActivity";
 
     private static final int MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 0;
     private static final int REQUEST_CODE_AUTOCOMPLETE = 3;
@@ -92,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private Menu menu;
     private FirebaseAuth mFirebaseAuth;
 
-    ValuesUtilities mValuesUtilities = ValuesUtilities.getInstance();;
+    ValuesUtilities mValuesUtilities = ValuesUtilities.getInstance();
 
     GooglePlayServicesLocationFromActivity googlePlayServicesLocationFromActivityCallback;
     private Boolean MapInitializedFlag = false;
@@ -111,13 +107,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mValuesUtilities.setMainActivity(this);
         setContentView(R.layout.activity_main);
 
-        Log.d(TAG,"onCreate Starting");
+        Log.d(TAG, "onCreate Starting");
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
-        if(mFirebaseUser!=null){
+        if (mFirebaseUser != null) {
 
 
             writeNewUser();
@@ -127,10 +123,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             createLocationManager();
 
 
-        }else{
+        } else {
             goLoginScreen();
         }
-
 
 
     }
@@ -148,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu){
+    public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         this.menu = menu;
         return true;
@@ -160,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if (id == R.id.action_logout) {
             logOut();
-        }  else if (id == R.id.action_search_place) {
+        } else if (id == R.id.action_search_place) {
             openAutocompleteActivity();
         }
 
@@ -193,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
 
-    private void initializeComponents(){
+    private void initializeComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         toolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(toolbar);
@@ -207,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
 
-    private void initializeApiComponents(){
+    private void initializeApiComponents() {
         FacebookSdk.sdkInitialize(getApplicationContext());
 
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -234,10 +229,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         mValuesUtilities.setLocationManager(locationManager);
     }
 
-    private void goLoginScreen(){
-        Intent intent = new Intent(this,LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+    private void goLoginScreen() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        finish();
     }
 
     public boolean isCheckLocationPermission() {
@@ -293,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     };
 
-    public void logOut(){
+    public void logOut() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String providerId = "";
@@ -311,7 +307,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         goLoginScreen();
     }
 
-    private void writeNewUser(){
+    private void writeNewUser() {
         final DatabaseReference dataBaseRef = FirebaseDatabase.getInstance().getReference();
         final User currentUser = new User();
 
@@ -390,6 +386,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     public void onAttachFragment(Fragment fragment) {
         super.onAttachFragment(fragment);
+        System.out.println("Fragment is: " + fragment.getClass().getSimpleName());
         try {
             googlePlayServicesLocationFromActivityCallback = (GooglePlayServicesLocationFromActivity) fragment;
         } catch (Exception e) {
@@ -418,7 +415,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-
 
             googlePlayServicesLocationFromActivityCallback.onLocationAcquired(null);
             MapInitializedFlag = true;
@@ -505,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-         if (requestCode == mValuesUtilities.REQUEST_CHECK_SETTINGS) {
+        if (requestCode == mValuesUtilities.REQUEST_CHECK_SETTINGS) {
 
             if (resultCode == Activity.RESULT_OK) {
             } else if (resultCode == Activity.RESULT_CANCELED) {
@@ -525,12 +521,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     tempMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                    if( searchLocationMarker !=null){
+                    if (searchLocationMarker != null) {
                         searchLocationMarker.remove();
                     }
 
                     searchLocationMarker = tempMap.addMarker(new MarkerOptions()
-                        .position(place.getLatLng())
+                            .position(place.getLatLng())
                     );
 
                 }
@@ -559,7 +555,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     }
 
 
-    public void searchParkings(GeoLocation searchArea){
+    public void searchParkings(GeoLocation searchArea) {
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("markers");
 
@@ -568,14 +564,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
 
-                LatLng markerLatLng = new LatLng(location.latitude,location.longitude);
+                LatLng markerLatLng = new LatLng(location.latitude, location.longitude);
 
                 Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
                         .position(markerLatLng)
                         .icon(BitmapDescriptorFactory.fromBitmap(grayMarker))
                 );
 
-                parkingsMarkers.put(key,newMarker);
+                parkingsMarkers.put(key, newMarker);
                 mValuesUtilities.setParkingsMarkers(parkingsMarkers);
 
             }
@@ -605,12 +601,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         };
 
         GeoFire geoFire = new GeoFire(ref);
-        geoQuery = geoFire.queryAtLocation(searchArea,10);
+        geoQuery = geoFire.queryAtLocation(searchArea, 10);
         geoQuery.addGeoQueryEventListener(parkingsEventListener);
 
     }
 
-    public void updateParkingsSearch(GeoLocation newGeoLocationCriteria){
+    public void updateParkingsSearch(GeoLocation newGeoLocationCriteria) {
 
         geoQuery.setCenter(newGeoLocationCriteria);
     }
@@ -721,5 +717,5 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 }
 
 interface GooglePlayServicesLocationFromActivity {
-    public void onLocationAcquired(Location location);
+    void onLocationAcquired(Location location);
 }
