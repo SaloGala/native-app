@@ -18,6 +18,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button BTNfacebookLogin;
 
     private FirebaseAuth firebaseAuth;
+
+    private FirebaseAnalytics mFirebaseAnalytics;
 
 
     @Override
@@ -72,6 +75,8 @@ public class LoginActivity extends AppCompatActivity {
 
         firebaseAuth = FirebaseAuth.getInstance();
 
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
     }
 
     private void handleFacebookAccessToken(AccessToken accessToken) {
@@ -84,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this,R.string.error_login_facebook,Toast.LENGTH_SHORT).show();
                 }else{
                     //goMapScreen();
+                    registerEventFirebaseAnalitics("facebook_loggin","El usuario inicio sesion a traves de Facebook");
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
                 }
@@ -118,6 +124,16 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void registerEventFirebaseAnalitics(String name , String description){
+
+        Bundle params = new Bundle();
+        params.putString("nombre",name);
+        params.putString("descripcion",description);
+
+        mFirebaseAnalytics.logEvent("inicio_sesion",params);
+
+    }
+
     public void onClick(View v){
         switch (v.getId()){
             case R.id.btnSignin:
@@ -125,10 +141,14 @@ public class LoginActivity extends AppCompatActivity {
                 break;
 
             case R.id.btnRegister:
+
+
                 register();
                 break;
 
             case R.id.BTNSigninWithFacebook:
+
+
                 facebookLoginButton.performClick();
                 break;
 
