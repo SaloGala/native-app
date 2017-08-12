@@ -3,4 +3,6 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimaryActionBar">#FFF</color>
+    <color name="rippleFABColor">#4DD0E1</color>
 </resources>

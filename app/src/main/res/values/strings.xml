@@ -1,3 +1,35 @@
 <resources>
-    <string name="app_name">Go Parken Nativa</string>
+    <string name="app_name">Go Parken</string>
+    <string name="button_iniciarSesion">Iniciar Sesión</string>
+    <string name="button_registrarse">Registrarse</string>
+    <string name="button_iniciarFB">Iniciar con Facebook</string>
+    <string name="editTxtEmail">email</string>
+    <string name="editTxtPass">contraseña</string>
+    <string name="buttonEnviar">Enviar</string>
+    <string name="editTxtNombre">nombre</string>
+    <string name="editTxtApellidos">apellidos</string>
+    <string name="facebook_app_id">1037322849654372</string>
+    <string name="cancel_login_facebook">Inicio de sesión con Facebook cancelado</string>
+    <string name="error_login_facebook">Inicio de sesión con Facebook fallido</string>
+    <string name="button_cerrarSesion">Cerrar Sesiòn</string>
+    <string name="google_maps_key">AIzaSyC-EQ7WdjOHIwnSI0Hh6MSUKD4d5OmYv2Y</string>
+    <string name="google_places_key">AIzaSyBd_knHDIc1dny3fhL_14P0cj9iZvNFNsE</string>
+
+    <string name="map">Mapa</string>
+    <string name="service">Servicios</string>
+    <string name="payment">Pagos</string>
+    <string name="action_profile">Perfil</string>
+    <string name="promo">Promoión</string>
+    <string name="action_logout">Cerrar sesión</string>
+    <string name="action_search_place">Buscar</string>
+    <string name="msg_localization">Debes permitir el acceso a tu ubicación</string>
+    <string name="accept">Aceptar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="msg_location_user">¿Permitir a Go Parken utilizar la ubicación de tu dispositivo?</string>
+    <string name="btn_taller">Talleres</string>
+    <string name="btn_gas">Gasolinerías</string>
+    <string name="btn_auto">Autolavados</string>
+    <string name="title_activity_service">ServiceActivity</string>
+
+
 </resources>
