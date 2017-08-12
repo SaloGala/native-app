@@ -101,4 +101,12 @@ class ValuesUtilities {
     public Boolean getInitializeUpdateFlag() {
         return this.initializeUpdateFlag;
     }
+
+    public GoogleApiClient getmGoogleApiClient() {
+        return mGoogleApiClient;
+    }
+
+    public void setmGoogleApiClient(GoogleApiClient mGoogleApiClient) {
+        this.mGoogleApiClient = mGoogleApiClient;
+    }
 }

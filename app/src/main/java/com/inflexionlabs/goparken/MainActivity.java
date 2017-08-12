@@ -239,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 .addApi(Places.PLACE_DETECTION_API)
                 .build();
 
-
+        mValuesUtilities.setmGoogleApiClient(mGoogleApiClient);
     }
 
 
@@ -576,7 +576,22 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
 
+        if(!mValuesUtilities.getGoogleMap().isMyLocationEnabled()){
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            mValuesUtilities.getGoogleMap().setMyLocationEnabled(true);
+        }
+
         mValuesUtilities.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+
     }
 
 
