@@ -9,9 +9,18 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.MapView;
@@ -20,6 +29,17 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
 
 /**
  * Created by odalysmarronsanchez on 25/07/17.
@@ -194,6 +214,79 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                                 }
                             }
                         }
+                    }
+                });
+
+                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+
+                        DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference mParkingDetail = mDatabaseReference.child("parkings").child(mValuesUtilities.getParkingsMarkers().inverse().get(marker)+"/data");
+
+                        ValueEventListener parkingListener = new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                                Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
+                                JSONObject mJSONObject = new JSONObject(value);
+
+                                //Log.d(TAG, "mJSONObject: "+mJSONObject);
+
+                                RequestQueue mRequestQueue;
+                                mRequestQueue = Volley.newRequestQueue(mValuesUtilities.getMainContext());
+
+                                // Nueva petición JSONObject
+                                String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/MarkerAv?parking_id=23&marker_id=23";
+                                //String URL_JSON = "";
+
+                                JsonObjectRequest jsArrayRequest = new JsonObjectRequest(
+                                        Request.Method.GET,
+                                        URL_BASE ,
+                                        null,
+                                        new Response.Listener<JSONObject>() {
+
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                Log.d(TAG, "Respuesta en JSON: " + response);
+                                            }
+                                        },
+
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                Log.d(TAG, "Error Respuesta en JSON: " + error.getMessage());
+
+                                            }
+                                        }
+                                );
+                                // Add request to de queue
+                                mRequestQueue.add(jsArrayRequest);
+
+
+                                /*try {
+                                    Log.d(TAG, "mJSONObject: " + mJSONObject.get("name").toString());
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }*/
+
+
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+
+                                Toast.makeText(getActivity(), "Failed to loas parking", Toast.LENGTH_SHORT).show();
+                            }
+                        };
+
+                        mParkingDetail.addValueEventListener(parkingListener);
+
+
+
+                        return true;
                     }
                 });
 

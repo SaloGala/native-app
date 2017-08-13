@@ -217,6 +217,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     public void send(View view) {
         // Do something in response to button
+        Log.d(TAG, "send method");
         createAccount(emailField.getText().toString(),passwordField.getText().toString());
 
     }
