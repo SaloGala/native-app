@@ -222,7 +222,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        Toast.makeText(mMainActivity, "Detalle Marcador", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mMainActivity, "KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker), Toast.LENGTH_SHORT).show();
 
 
 
