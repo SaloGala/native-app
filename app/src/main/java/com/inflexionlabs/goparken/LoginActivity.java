@@ -2,7 +2,6 @@ package com.inflexionlabs.goparken;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -50,8 +49,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
-        //getSupportActionBar().hide(); // --> hide bar from Activity
-        //icons4android.com
 
         CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
                 .setDefaultFontPath("NexaLight.ttf")
@@ -59,8 +56,8 @@ public class LoginActivity extends AppCompatActivity {
                 .build()
         );
 
-
         setContentView(R.layout.activity_login);
+
 
         callbackManager = CallbackManager.Factory.create();
         facebookLoginButton = (LoginButton) findViewById(R.id.btnSigninWithFacebook);
