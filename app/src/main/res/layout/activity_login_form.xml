@@ -8,8 +8,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/appbar_padding_top">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbarMain"
@@ -40,7 +39,7 @@
         <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
             android:id="@+id/card_view"
             android:layout_width="match_parent"
-            android:layout_height="300dp"
+            android:layout_height="350dp"
             android:elevation="40dp"
             card_view:cardCornerRadius="4dp">
 
@@ -53,9 +52,9 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="0px"
-                    android:textSize="30dp"
                     android:layout_weight="1"
-                    android:text="Iniciar sesión" />
+                    android:text="Iniciar sesión"
+                    android:textSize="30dp" />
 
                 <EditText
                     android:id="@+id/txtEmail"
@@ -70,6 +69,17 @@
                     android:layout_height="0px"
                     android:layout_weight="1"
                     android:hint="@string/editTxtPass" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0px"
+                    android:layout_weight="0.2" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:text="* Campo obligatorio" />
 
                 <Button
                     android:id="@+id/btnLogIn"
