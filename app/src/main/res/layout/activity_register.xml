@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -11,114 +10,145 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/appbar_padding_top">
+        android:layout_height="wrap_content">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbarMain"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:title="@string/button_registrarse"
+            android:background="@android:color/white">
 
-            >
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:paddingBottom="15dp"
+                android:paddingRight="50dp"
+                android:paddingTop="15dp"
+                android:src="@drawable/login_logo2x" />
 
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
-    <TableRow
-
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="2.5">
+        android:orientation="vertical"
+        android:padding="10dp">
 
-        <EditText android:id="@+id/editTxtNombre"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/editTxtNombre" />
+        <android.support.v7.widget.CardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:elevation="40dp"
+            card_view:cardCornerRadius="4dp">
 
-    </TableRow>
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <TableRow
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:padding="15dp">
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Registro"
+                        android:textSize="30dp" />
 
-        <EditText android:id="@+id/editTxtApellidos"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/editTxtApellidos" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-    </TableRow>
+                    <EditText
+                        android:id="@+id/editTxtNombre"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/editTxtNombre" />
 
-    <TableRow
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
+                    <EditText
+                        android:id="@+id/editTxtApellidos"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/editTxtApellidos" />
 
-        <EditText android:id="@+id/editTxtCorreo"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/editTxtEmail" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-    </TableRow>
+                    <EditText
+                        android:id="@+id/editTxtCorreo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/editTxtEmail" />
 
-    <TableRow
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
+                    <EditText
+                        android:id="@+id/editTxtCorreoR"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/editTxtEmail2" />
 
-        <EditText android:id="@+id/editTxtCorreoR"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/editTxtEmail" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-    </TableRow>
+                    <EditText
+                        android:id="@+id/editTxtPass"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/editTxtPass" />
 
-    <TableRow
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
+                    <EditText
+                        android:id="@+id/editTxtPassR"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/editTxtPass2" />
 
-        <EditText android:id="@+id/editTxtPass"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/editTxtPass" />
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-    </TableRow>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="* Campo obligatorio" />
 
-    <TableRow
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
+                    <Button
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/round_send_button"
+                        android:onClick="send"
+                        android:text="@string/buttonEnviar"
+                        android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+                        android:textColor="@android:color/white" />
 
-        <EditText android:id="@+id/editTxtPassR"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/editTxtPass" />
+                </LinearLayout>
 
-    </TableRow>
+            </ScrollView>
 
-    <TableRow
+        </android.support.v7.widget.CardView>
 
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="2.5">
-
-        <Button
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/buttonEnviar"
-            android:onClick="send"
-            />
-
-    </TableRow>
+    </LinearLayout>
 
 </LinearLayout>
 

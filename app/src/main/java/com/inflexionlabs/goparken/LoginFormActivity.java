@@ -47,8 +47,8 @@ public class LoginFormActivity extends AppCompatActivity {
                 .setFontAttrId(R.attr.fontPath)
                 .build()
         );
-        setContentView(R.layout.activity_login_form);
 
+        setContentView(R.layout.activity_login_form);
 
         emailField = (EditText) findViewById(R.id.txtEmail);
         passwordField = (EditText) findViewById(R.id.txtPass);
@@ -68,7 +68,7 @@ public class LoginFormActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.SRC_ATOP);
+        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 

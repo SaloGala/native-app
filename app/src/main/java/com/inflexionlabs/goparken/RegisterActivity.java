@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -17,6 +18,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -36,6 +40,13 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("NexaLight.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+
         setContentView(R.layout.activity_register);
 
         emailField = (EditText) findViewById(R.id.editTxtCorreo);
@@ -53,14 +64,19 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     private void initializeComponents() {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
-        toolbar.setTitleTextColor(Color.WHITE);
+        toolbar.setTitle("");
         setSupportActionBar(toolbar);
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryActionBar), PorterDuff.Mode.SRC_ATOP);
+        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -79,7 +95,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String nombre = nombreField.getText().toString();
         if(TextUtils.isEmpty(nombre)){
-            nombreField.setError("Required.");
+            nombreField.setError("Campo requerido");
             valid = false;
         }else{
             nombreField.setError(null);
@@ -87,7 +103,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String apellidos = apellidosField.getText().toString();
         if(TextUtils.isEmpty(apellidos)){
-            apellidosField.setError("Required.");
+            apellidosField.setError("Campo requerido");
             valid = false;
         }else{
             apellidosField.setError(null);
@@ -95,7 +111,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String email = emailField.getText().toString();
         if(TextUtils.isEmpty(email)){
-            emailField.setError("Required.");
+            emailField.setError("Campo requerido");
             valid = false;
         }else{
             if(!validEmail(email)){
@@ -106,7 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String emailR = emailFieldR.getText().toString();
         if(TextUtils.isEmpty(emailR)){
-            emailFieldR.setError("Required.");
+            emailFieldR.setError("Campo requerido");
             valid = false;
         }else{
             if(!validEmail(emailR)){
@@ -122,7 +138,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String password = passwordField.getText().toString();
         if(TextUtils.isEmpty(password)){
-            passwordField.setError("Required.");
+            passwordField.setError("Campo requerido");
             valid = false;
         }else{
             if(password.length()<6){
@@ -133,7 +149,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         String passwordR = passwordFieldR.getText().toString();
         if(TextUtils.isEmpty(passwordR)){
-            passwordFieldR.setError("Required.");
+            passwordFieldR.setError("Campo requerido");
             valid = false;
         }else{
             if(passwordR.length()<6){
