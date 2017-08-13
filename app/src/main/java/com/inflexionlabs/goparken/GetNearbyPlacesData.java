@@ -68,15 +68,13 @@ public class GetNearbyPlacesData extends AsyncTask<Object,String, String > {
 
     private void showNearbyPlaces(List<HashMap<String, String>> nearbyPlacesList){
 
-
-
         for(int i =0; i<nearbyPlacesList.size(); i++){
             Log.d("onPostExecute","Entered into showing locations");
 
             MarkerOptions markerOptions = new MarkerOptions();
             HashMap<String,String> googlePlace = nearbyPlacesList.get(i);
-            Long lat = Long.parseLong(googlePlace.get("lat"));
-            Long lng = Long.parseLong(googlePlace.get("lng"));
+            Double lat = Double.parseDouble(googlePlace.get("lat"));
+            Double lng = Double.parseDouble(googlePlace.get("lng"));
             String placeName = googlePlace.get("place_name");
             String vicinity = googlePlace.get("vicinity");
             LatLng latlng = new LatLng(lat,lng);
@@ -90,7 +88,6 @@ public class GetNearbyPlacesData extends AsyncTask<Object,String, String > {
             //mMap.animateCamera(CameraUpdateFactory.zoomTo(12));
 
         }
-
 
     }
 
