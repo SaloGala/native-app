@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -33,6 +34,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.facebook.FacebookSdk;
 import com.facebook.login.LoginManager;
 import com.firebase.geofire.GeoFire;
@@ -69,9 +77,18 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, MapFragment.OnFragmentInteractionListener, LocationListener {
 
@@ -99,8 +116,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private HashBiMap<String, Marker> parkingsMarkers = HashBiMap.create();
     GeoQuery geoQuery;
     Bitmap grayMarker;
+    Bitmap greenMarker;
+    Bitmap redMarker;
+    Bitmap yellowMarker;
+    Bitmap selectedMarker;
+
+    List<String> keys = new ArrayList<String>();
 
     private FirebaseAnalytics mFirebaseAnalytics;
+
+    private RequestQueue mRequestQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +162,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         //Obtain the FirebaseAnalytics instance
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
+        //Create new request queue
+        mRequestQueue = MySingleton.getInstance(this.getApplicationContext()).
+                getRequestQueue();
+
     }
 
     private boolean checkLocationPermissions() {
@@ -166,9 +195,21 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         int height = 120;
         int width = 100;
 
-        BitmapDrawable parkingBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_gris);
-        Bitmap bitmapParking = parkingBitmapDrawable.getBitmap();
-        grayMarker = Bitmap.createScaledBitmap(bitmapParking, width, height, false);
+        BitmapDrawable grayBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_gris);
+        Bitmap bitmapGray = grayBitmapDrawable.getBitmap();
+        grayMarker = Bitmap.createScaledBitmap(bitmapGray, width, height, false);
+
+        BitmapDrawable greenBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_verde);
+        Bitmap bitmapGreen = greenBitmapDrawable.getBitmap();
+        greenMarker= Bitmap.createScaledBitmap(bitmapGreen, width, height, false);
+
+        BitmapDrawable redBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_rojo);
+        Bitmap bitmapRed = redBitmapDrawable.getBitmap();
+        redMarker = Bitmap.createScaledBitmap(bitmapRed, width, height, false);
+
+        BitmapDrawable yellowBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_amarillo);
+        Bitmap bitmapYellow = yellowBitmapDrawable.getBitmap();
+        yellowMarker = Bitmap.createScaledBitmap(bitmapYellow, width, height, false);
 
 
     }
@@ -629,6 +670,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 parkingsMarkers.put(key, newMarker);
                 mValuesUtilities.setParkingsMarkers(parkingsMarkers);
 
+                keys.add(key);
+
             }
 
             @Override
@@ -646,7 +689,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             public void onGeoQueryReady() {
-
+                getParkingDetail();
             }
 
             @Override
@@ -658,6 +701,90 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         GeoFire geoFire = new GeoFire(ref);
         geoQuery = geoFire.queryAtLocation(searchArea, 10);
         geoQuery.addGeoQueryEventListener(parkingsEventListener);
+
+    }
+
+
+    public void getParkingDetail() {
+
+        for(int i = 0; i<keys.size(); i++){
+
+            DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference mParkingDetail = mDatabaseReference.child("parkings").child(keys.get(i)+"/data");
+
+            ValueEventListener parkingListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+
+                    Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
+                    JSONObject mJSONObject = new JSONObject(value);
+
+                    //Log.d(TAG,"mJSONObject: "+mJSONObject);
+
+                    try {
+
+                        Log.d(TAG,"mJSONObject STATUS: "+mJSONObject.get("status"));
+                        Log.d(TAG,"mJSONObject ACCEPT_GO_PARKEN: "+mJSONObject.get("acceptGoParken"));
+                        int parking_id = mJSONObject.getInt("id");
+                        int marker_id = mJSONObject.getInt("id_marker");
+
+
+                        if(mJSONObject.get("status").equals("active")){
+
+                            selectedMarker = grayMarker;
+
+                            if(mJSONObject.getInt("acceptGoParken")==1){
+
+                                //New JSONObject request
+                                String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/MarkerAv?parking_id="+parking_id+"&marker_id="+marker_id;
+                                //String URL_JSON = "";
+
+                                JsonObjectRequest jsArrayRequest = new JsonObjectRequest(
+                                        Request.Method.GET,
+                                        URL_BASE ,
+                                        null,
+                                        new Response.Listener<JSONObject>() {
+
+                                            @Override
+                                            public void onResponse(JSONObject response) {
+                                                Log.d(TAG, "Respuesta en JSON: " + response);
+                                            }
+                                        },
+
+                                        new Response.ErrorListener() {
+                                            @Override
+                                            public void onErrorResponse(VolleyError error) {
+                                                Log.d(TAG, "Error Respuesta en JSON: " + error.getMessage());
+
+                                            }
+                                        }
+                                );
+
+                                // Add request to de queue
+                                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+
+
+                            }
+
+                        }
+                        //Log.d(TAG, "mJSONObject: " + mJSONObject.get("name").toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                    Toast.makeText(MainActivity.this, "Failed to load parking detail", Toast.LENGTH_SHORT).show();
+                }
+            };
+
+            mParkingDetail.addValueEventListener(parkingListener);
+        }
 
     }
 
