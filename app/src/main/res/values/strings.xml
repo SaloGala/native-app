@@ -31,5 +31,8 @@
     <string name="btn_auto">Autolavados</string>
     <string name="title_activity_service">ServiceActivity</string>
 
+    <string name="terminos_y_condiciones"><a href="http://goparken.com/legal"><u>Términos y condiciones</u></a></string>
+    <string name="aviso_de_privacidad"><a href="http://goparken.com/privacidad"><u>Aviso de privacidad.</u></a></string>
+
 
 </resources>

@@ -1,12 +1,16 @@
 package com.inflexionlabs.goparken;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -25,6 +29,9 @@ import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.Arrays;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "FacebookLogIn";
@@ -45,6 +52,14 @@ public class LoginActivity extends AppCompatActivity {
         FacebookSdk.sdkInitialize(getApplicationContext());
         //getSupportActionBar().hide(); // --> hide bar from Activity
         //icons4android.com
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("NexaLight.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+
+
         setContentView(R.layout.activity_login);
 
         callbackManager = CallbackManager.Factory.create();
@@ -52,6 +67,12 @@ public class LoginActivity extends AppCompatActivity {
         facebookLoginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
 
         BTNfacebookLogin = (Button) findViewById(R.id.BTNSigninWithFacebook);
+
+        TextView TVTerminosYCondiciones = (TextView) findViewById(R.id.TVTerminosYCondiciones);
+        TextView TVAvisoDePrivacidad = (TextView) findViewById(R.id.TVAvisoDePrivacidad);
+
+        TVTerminosYCondiciones.setMovementMethod(LinkMovementMethod.getInstance());
+        TVAvisoDePrivacidad.setMovementMethod(LinkMovementMethod.getInstance());
 
         FacebookSdk.sdkInitialize(getApplicationContext());
 
@@ -63,12 +84,12 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-                Toast.makeText(LoginActivity.this,R.string.cancel_login_facebook,Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.cancel_login_facebook, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onError(FacebookException error) {
-                Toast.makeText(LoginActivity.this,R.string.error_login_facebook,Toast.LENGTH_SHORT).show();
+                Toast.makeText(LoginActivity.this, R.string.error_login_facebook, Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -84,12 +105,12 @@ public class LoginActivity extends AppCompatActivity {
         firebaseAuth.signInWithCredential(credencial).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if(!task.isSuccessful()){
+                if (!task.isSuccessful()) {
                     Log.w(TAG, "Facebook log in error", task.getException());
-                    Toast.makeText(LoginActivity.this,R.string.error_login_facebook,Toast.LENGTH_SHORT).show();
-                }else{
+                    Toast.makeText(LoginActivity.this, R.string.error_login_facebook, Toast.LENGTH_SHORT).show();
+                } else {
                     //goMapScreen();
-                    registerEventFirebaseAnalitics("facebook_loggin","El usuario inicio sesion a traves de Facebook");
+                    registerEventFirebaseAnalitics("facebook_loggin", "El usuario inicio sesion a traves de Facebook");
 
                     startActivity(new Intent(LoginActivity.this, MainActivity.class));
                     finish();
@@ -99,9 +120,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     public void loginForm() {
@@ -118,18 +144,18 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void registerEventFirebaseAnalitics(String name , String description){
+    public void registerEventFirebaseAnalitics(String name, String description) {
 
         Bundle params = new Bundle();
-        params.putString("nombre",name);
-        params.putString("descripcion",description);
+        params.putString("nombre", name);
+        params.putString("descripcion", description);
 
-        mFirebaseAnalytics.logEvent("inicio_sesion",params);
+        mFirebaseAnalytics.logEvent("inicio_sesion", params);
 
     }
 
-    public void onClick(View v){
-        switch (v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.btnSignin:
                 loginForm();
                 break;
