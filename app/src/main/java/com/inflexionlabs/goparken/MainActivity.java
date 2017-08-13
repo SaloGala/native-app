@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private FirebaseAnalytics mFirebaseAnalytics;
 
     private RequestQueue mRequestQueue;
+    JsonObjectRequest jsArrayRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -384,6 +385,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (providerId.equals("facebook.com")) {
             LoginManager.getInstance().logOut();
         }
+
+        jsArrayRequest.cancel();
 
         goLoginScreen();
     }
@@ -660,7 +663,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onKeyEntered(String key, GeoLocation location) {
 
-                LatLng markerLatLng = new LatLng(location.latitude, location.longitude);
+                /*LatLng markerLatLng = new LatLng(location.latitude, location.longitude);
 
                 Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
                         .position(markerLatLng)
@@ -668,7 +671,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 );
 
                 parkingsMarkers.put(key, newMarker);
-                mValuesUtilities.setParkingsMarkers(parkingsMarkers);
+                mValuesUtilities.setParkingsMarkers(parkingsMarkers);*/
 
                 keys.add(key);
 
@@ -677,9 +680,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onKeyExited(String key) {
 
-                parkingsMarkers.get(key).remove();
-                parkingsMarkers.remove(key);
-                mValuesUtilities.setParkingsMarkers(parkingsMarkers);
+                try{
+                    keys.clear();
+                    parkingsMarkers.get(key).remove();
+                    parkingsMarkers.remove(key);
+                    mValuesUtilities.setParkingsMarkers(parkingsMarkers);
+                }catch (Exception e){
+
+                }
+
+
             }
 
             @Override
@@ -712,6 +722,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
             DatabaseReference mParkingDetail = mDatabaseReference.child("parkings").child(keys.get(i)+"/data");
 
+            final String k = keys.get(i);
+
             ValueEventListener parkingListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
@@ -724,10 +736,14 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
                     try {
 
-                        Log.d(TAG,"mJSONObject STATUS: "+mJSONObject.get("status"));
-                        Log.d(TAG,"mJSONObject ACCEPT_GO_PARKEN: "+mJSONObject.get("acceptGoParken"));
+                        //Log.d(TAG,"mJSONObject STATUS: "+mJSONObject.get("status"));
+                        //Log.d(TAG,"mJSONObject ACCEPT_GO_PARKEN: "+mJSONObject.get("acceptGoParken"));
                         int parking_id = mJSONObject.getInt("id");
                         int marker_id = mJSONObject.getInt("id_marker");
+                        final Double lat = mJSONObject.getDouble("latitude");
+                        final Double lng = mJSONObject.getDouble("longitude");
+
+                        //Log.d(TAG,"LOCATION: "+lat+lng);
 
 
                         if(mJSONObject.get("status").equals("active")){
@@ -740,7 +756,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/MarkerAv?parking_id="+parking_id+"&marker_id="+marker_id;
                                 //String URL_JSON = "";
 
-                                JsonObjectRequest jsArrayRequest = new JsonObjectRequest(
+                                jsArrayRequest = new JsonObjectRequest(
                                         Request.Method.GET,
                                         URL_BASE ,
                                         null,
@@ -749,6 +765,38 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                             @Override
                                             public void onResponse(JSONObject response) {
                                                 Log.d(TAG, "Respuesta en JSON: " + response);
+
+                                                try {
+
+                                                    JSONObject content = response.getJSONObject("content");
+                                                    JSONObject marker = content.getJSONObject("marker");
+                                                    String availavility = marker.getString("availability");
+
+                                                    if(availavility.equals("full")){
+                                                        selectedMarker = redMarker;
+                                                    } else if (availavility.equals("almost_full")){
+                                                        selectedMarker = yellowMarker;
+                                                    }else{
+                                                        selectedMarker = greenMarker;
+                                                    }
+
+                                                    LatLng markerLatLng = new LatLng(lat, lng);
+
+                                                    Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
+                                                            .position(markerLatLng)
+                                                            .icon(BitmapDescriptorFactory.fromBitmap(selectedMarker))
+                                                    );
+
+                                                    parkingsMarkers.put(k, newMarker);
+                                                    mValuesUtilities.setParkingsMarkers(parkingsMarkers);
+
+
+                                                    //Log.d(TAG, "Availavility: " + availavility);
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+
                                             }
                                         },
 
@@ -765,6 +813,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
 
 
+                            }else {
+
+                                LatLng markerLatLng = new LatLng(lat, lng);
+
+                                Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
+                                        .position(markerLatLng)
+                                        .icon(BitmapDescriptorFactory.fromBitmap(selectedMarker))
+                                );
+
+                                parkingsMarkers.put(k, newMarker);
+                                mValuesUtilities.setParkingsMarkers(parkingsMarkers);
                             }
 
                         }
@@ -783,7 +842,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 }
             };
 
-            mParkingDetail.addValueEventListener(parkingListener);
+            mParkingDetail.addListenerForSingleValueEvent(parkingListener);
         }
 
     }
