@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Go Parken</string>
-    <string name="button_iniciarSesion">Iniciar Sesión</string>
-    <string name="button_registrarse">Registrarse</string>
-    <string name="button_iniciarFB">Iniciar con Facebook</string>
-    <string name="editTxtEmail">email</string>
-    <string name="editTxtPass">contraseña</string>
-    <string name="buttonEnviar">Enviar</string>
+    <string name="button_iniciarSesion">INICIAR SESIÓN</string>
+    <string name="button_registrarse">REGISTRARSE</string>
+    <string name="button_iniciarFB">INICIAR CON FACEBOOK</string>
+    <string name="editTxtEmail">Correo</string>
+    <string name="editTxtPass">Contraseña</string>
+    <string name="buttonEnviar">ENVIAR</string>
     <string name="editTxtNombre">nombre</string>
     <string name="editTxtApellidos">apellidos</string>
     <string name="facebook_app_id">1037322849654372</string>
