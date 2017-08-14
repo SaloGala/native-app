@@ -56,7 +56,6 @@
         <activity
             android:name=".ServiceActivity"
             android:parentActivityName=".MainActivity" />
-
         <activity
             android:name=".ProfileActivity"
             android:parentActivityName=".MainActivity" />
@@ -92,6 +91,9 @@
 
         <!-- End firebase FCM notification icons -->
 
+        <activity
+            android:name=".EditProfileActivity"
+            android:parentActivityName=".ProfileActivity"></activity>
     </application>
 
 </manifest>

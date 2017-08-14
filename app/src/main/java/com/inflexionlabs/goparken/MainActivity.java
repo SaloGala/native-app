@@ -87,6 +87,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -131,6 +132,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private RequestQueue mRequestQueue;
     JsonObjectRequest jsArrayRequest;
 
+    String provider;
+    String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
+
+    String URL_COMPLEMENTO="User/Facebook";
+
+    User objectUser = new User();
+
+    String accessToken;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -157,8 +167,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (mFirebaseUser != null) {
 
 
-            writeNewUser();
+
             initializeComponents();
+            writeNewUser();
+
             initializeApiComponents();
             initializeGraphicComponents();
             createLocationManager();
@@ -294,6 +306,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
+
+        Intent intent = getIntent();
+        accessToken = intent.getStringExtra("accessToken");
+
     }
 
 
@@ -405,17 +421,109 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         } catch (Exception e) {
         }
 
+
         goLoginScreen();
     }
 
     private void writeNewUser() {
-        final DatabaseReference dataBaseRef = FirebaseDatabase.getInstance().getReference();
+
+        final FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+
+        for (UserInfo profile: currentUser.getProviderData()){
+            provider = profile.getProviderId();
+        }
+
+        if(provider.equals("facebook.com")){
+
+            if(accessToken!="emailPassword"){
+                // Mapeo de los pares clave-valor
+                HashMap<String, String > data = new HashMap();
+                data.put("token", accessToken);
+
+                JsonObjectRequest jsArrayRequest = new JsonObjectRequest(
+                        Request.Method.POST,
+                        URL_BASE + URL_COMPLEMENTO,
+                        new JSONObject(data),
+                        new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                // Manejo de la respuesta
+                                Log.d(TAG, "Respuesta en JSON: " + response);
+
+                                try {
+                                    JSONObject content = response.getJSONObject("content");
+                                    JSONObject user = content.getJSONObject("user");
+
+                                    objectUser.setId(user.getInt("id"));
+                                    objectUser.setUid(currentUser.getUid());
+                                    objectUser.setUserName(user.getString("name"));
+                                    objectUser.setEmail(user.getString("email"));
+                                    objectUser.setPassword("");
+                                    objectUser.setToken(user.getString("token"));
+                                    objectUser.setStatus("");
+                                    objectUser.setType(user.getString("type"));
+                                    objectUser.setAccess_token("");
+                                    objectUser.setNickname(user.getString("nickname"));
+                                    objectUser.setFull_name(user.getString("full_name"));
+                                    objectUser.setAvatar("");
+                                    objectUser.setDetails("");
+                                    objectUser.setSocial(user.getString("social"));
+                                    objectUser.setSocial_type("");
+                                    objectUser.setSocial_id(user.getString("social_id"));
+                                    objectUser.setSocial_json("");
+                                    objectUser.setSocial_email(user.getString("social_email"));
+                                    objectUser.setLastname("");
+                                    objectUser.setPhone("");
+                                    objectUser.setPostalcode("");
+                                    objectUser.setState("");
+                                    objectUser.setCity("");
+                                    objectUser.setOpenpay_id("");
+                                    objectUser.setRemember_token("");
+                                    objectUser.setAddress("");
+                                    objectUser.setFacebook_share("");
+                                    objectUser.setProvider(user.getString("social"));
+                                    objectUser.setPhotoUrl(currentUser.getPhotoUrl().toString());
+
+                                    final DatabaseReference dataBaseRef = FirebaseDatabase.getInstance().getReference();
+
+                                    dataBaseRef.child("users").child(currentUser.getUid()).child("data").setValue(objectUser);
+
+                                    //Log.d(TAG, "currentUser: " + currentUser.getUid());
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        },
+                        new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                // Manejo de errores
+                                Log.d(TAG, "Error Respuesta en JSON: " + error.getMessage());
+                            }
+                        });
+
+                // Add request to de queue
+                MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+
+
+                }
+            }
+
+
+
+
+
+
+
+        /*final DatabaseReference dataBaseRef = FirebaseDatabase.getInstance().getReference();
         final User currentUser = new User();
 
         dataBaseRef.child("users").child(currentUser.getUid()).child("userName").setValue(currentUser.getUserName());
         dataBaseRef.child("users").child(currentUser.getUid()).child("email").setValue(currentUser.getEmail());
         dataBaseRef.child("users").child(currentUser.getUid()).child("photoUrl").setValue(currentUser.getPhotoUrl());
-        dataBaseRef.child("users").child(currentUser.getUid()).child("provider").setValue(currentUser.getProvider());
+        dataBaseRef.child("users").child(currentUser.getUid()).child("provider").setValue(currentUser.getProvider());*/
 
     }
 
@@ -697,14 +805,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onKeyExited(String key) {
 
-                try {
+
+                try{
+
                     keys.clear();
                     parkingsMarkers.get(key).remove();
                     parkingsMarkers.remove(key);
                     mValuesUtilities.setParkingsMarkers(parkingsMarkers);
-                } catch (Exception e) {
 
-                }
+
+                }catch (Exception e){
+
 
 
             }
