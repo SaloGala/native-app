@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -26,6 +27,9 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class ServiceActivity extends AppCompatActivity implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
@@ -47,6 +51,13 @@ public class ServiceActivity extends AppCompatActivity implements OnMapReadyCall
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("NexaLight.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+
         setContentView(R.layout.activity_service);
 
         //Check if Google Play Services Available or not
@@ -71,6 +82,11 @@ public class ServiceActivity extends AppCompatActivity implements OnMapReadyCall
             return false;
         }
         return true;
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
 

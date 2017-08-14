@@ -108,6 +108,7 @@
                         android:id="@+id/editTxtPass"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPassword"
                         android:hint="@string/editTxtPass" />
 
                     <Space
@@ -118,6 +119,7 @@
                         android:id="@+id/editTxtPassR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPassword"
                         android:hint="@string/editTxtPass2" />
 
                     <Space
