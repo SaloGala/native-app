@@ -197,7 +197,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Manejo de la respuesta
-                        Log.d(TAG, "Respuesta en JSON editar perfil: " + response.);
+                        Log.d(TAG, "Respuesta en JSON editar perfil: " + response);
 
                     }
                 },

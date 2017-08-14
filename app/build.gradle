@@ -7,8 +7,8 @@ android {
         applicationId "com.inflexionlabs.goparken"
         minSdkVersion 16
         targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        versionCode 100028
+        versionName "1.0.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -57,6 +57,7 @@ dependencies {
     compile 'uk.co.chrisjenx:calligraphy:2.3.0'
     compile 'com.squareup.picasso:picasso:2.3.2'
     compile 'com.android.volley:volley:1.0.0'
+
 
     testCompile 'junit:junit:4.12'
 }

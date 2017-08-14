@@ -814,9 +814,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     mValuesUtilities.setParkingsMarkers(parkingsMarkers);
 
 
-                }catch (Exception e){
+                }catch (Exception e) {
 
-
+                }
 
             }
 
