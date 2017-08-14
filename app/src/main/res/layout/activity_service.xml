@@ -19,9 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        app:title="@string/title_activity_service"
-
-        >
+        app:title="@string/title_activity_service">
 
     </android.support.v7.widget.Toolbar>
 
