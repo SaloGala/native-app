@@ -91,6 +91,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
+
 public class MainActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks, MapFragment.OnFragmentInteractionListener, LocationListener {
 
     private static final String TAG = "MainActivity";
@@ -141,6 +144,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("NexaLight.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
         super.onCreate(savedInstanceState);
 
         mValuesUtilities.setMainContext(this);
@@ -181,6 +189,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+
     private boolean checkLocationPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
@@ -214,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         BitmapDrawable greenBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_verde);
         Bitmap bitmapGreen = greenBitmapDrawable.getBitmap();
-        greenMarker= Bitmap.createScaledBitmap(bitmapGreen, width, height, false);
+        greenMarker = Bitmap.createScaledBitmap(bitmapGreen, width, height, false);
 
         BitmapDrawable redBitmapDrawable = (BitmapDrawable) ContextCompat.getDrawable(this, R.drawable.pin_rojo);
         Bitmap bitmapRed = redBitmapDrawable.getBitmap();
@@ -248,9 +261,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         return super.onOptionsItemSelected(item);
     }
 
-    private void goToProfileScreen(){
+    private void goToProfileScreen() {
 
-        Intent intent = new Intent(this,ProfileActivity.class);
+        Intent intent = new Intent(this, ProfileActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
 
@@ -402,7 +415,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             LoginManager.getInstance().logOut();
         }
 
-        //jsArrayRequest.cancel();
+        try {
+
+            jsArrayRequest.cancel();
+        } catch (Exception e) {
+        }
+
 
         goLoginScreen();
     }
@@ -742,7 +760,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         }
 
-        if(!mValuesUtilities.getGoogleMap().isMyLocationEnabled()){
+        if (!mValuesUtilities.getGoogleMap().isMyLocationEnabled()) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -787,6 +805,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             @Override
             public void onKeyExited(String key) {
 
+
                 try{
 
                     keys.clear();
@@ -794,9 +813,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     parkingsMarkers.remove(key);
                     mValuesUtilities.setParkingsMarkers(parkingsMarkers);
 
+
                 }catch (Exception e){
 
-                }
 
 
             }
@@ -826,10 +845,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     public void getParkingDetail() {
 
-        for(int i = 0; i<keys.size(); i++){
+        for (int i = 0; i < keys.size(); i++) {
 
             DatabaseReference mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference mParkingDetail = mDatabaseReference.child("parkings").child(keys.get(i)+"/data");
+            DatabaseReference mParkingDetail = mDatabaseReference.child("parkings").child(keys.get(i) + "/data");
 
             final String k = keys.get(i);
 
@@ -855,19 +874,19 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                         //Log.d(TAG,"LOCATION: "+lat+lng);
 
 
-                        if(mJSONObject.get("status").equals("active")){
+                        if (mJSONObject.get("status").equals("active")) {
 
                             selectedMarker = grayMarker;
 
-                            if(mJSONObject.getInt("acceptGoParken")==1){
+                            if (mJSONObject.getInt("acceptGoParken") == 1) {
 
                                 //New JSONObject request
-                                String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/MarkerAv?parking_id="+parking_id+"&marker_id="+marker_id;
+                                String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/MarkerAv?parking_id=" + parking_id + "&marker_id=" + marker_id;
                                 //String URL_JSON = "";
 
                                 jsArrayRequest = new JsonObjectRequest(
                                         Request.Method.GET,
-                                        URL_BASE ,
+                                        URL_BASE,
                                         null,
                                         new Response.Listener<JSONObject>() {
 
@@ -881,11 +900,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                                     JSONObject marker = content.getJSONObject("marker");
                                                     String availavility = marker.getString("availability");
 
-                                                    if(availavility.equals("full")){
+                                                    if (availavility.equals("full")) {
                                                         selectedMarker = redMarker;
-                                                    } else if (availavility.equals("almost_full")){
+                                                    } else if (availavility.equals("almost_full")) {
                                                         selectedMarker = yellowMarker;
-                                                    }else{
+                                                    } else {
                                                         selectedMarker = greenMarker;
                                                     }
 
@@ -922,7 +941,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
 
 
-                            }else {
+                            } else {
 
                                 LatLng markerLatLng = new LatLng(lat, lng);
 
