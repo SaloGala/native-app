@@ -35,6 +35,10 @@
 
     <string name="terminos_y_condiciones"><a href="http://goparken.com/legal"><u>Términos y condiciones</u></a></string>
     <string name="aviso_de_privacidad"><a href="http://goparken.com/privacidad"><u>Aviso de privacidad.</u></a></string>
+    <string name="editar_perfil">Editar Perfil</string>
+    <string name="ingresa_datos">Ingresa tus datos</string>
+    <string name="datos_cliente">Datos del Cliente</string>
+    <string name="btn_guardar">Guardar</string>
 
 
 </resources>

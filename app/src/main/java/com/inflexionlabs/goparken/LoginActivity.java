@@ -12,6 +12,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -26,8 +30,15 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -43,7 +54,6 @@ public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth firebaseAuth;
 
     private FirebaseAnalytics mFirebaseAnalytics;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +87,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
+
             }
 
             @Override
@@ -97,8 +108,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void handleFacebookAccessToken(AccessToken accessToken) {
+    private void handleFacebookAccessToken(final AccessToken accessToken) {
         AuthCredential credencial = FacebookAuthProvider.getCredential(accessToken.getToken());
+
         firebaseAuth.signInWithCredential(credencial).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
@@ -109,7 +121,9 @@ public class LoginActivity extends AppCompatActivity {
                     //goMapScreen();
                     registerEventFirebaseAnalitics("facebook_loggin", "El usuario inicio sesion a traves de Facebook");
 
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("accessToken", accessToken.getToken());
+                    startActivity(intent);
                     finish();
                 }
             }

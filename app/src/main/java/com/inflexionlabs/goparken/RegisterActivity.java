@@ -13,11 +13,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
@@ -36,6 +48,12 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText apellidosField;
 
     private FirebaseAuth mAuth;
+
+    String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
+
+    String URL_COMPLEMENTO="User/AddFromEmail";
+
+    User objectUser = new User();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -173,6 +191,89 @@ public class RegisterActivity extends AppCompatActivity {
 
     }
 
+    public void addFromEmail(String nombre, String apellidos, final String email, final String password){
+
+        Log.d(TAG,"addFromEmail:"+email);
+
+        if(!validateForm()){
+            return;
+        }
+
+        // Mapeo de los pares clave-valor
+        HashMap<String, String> data = new HashMap();
+        data.put("USER_NAME", nombre);
+        data.put("USER_LASTNAME", apellidos);
+        data.put("USER_PHONE","0000000000");
+        data.put("USER_EMAIL", email);
+        data.put("USER_PASS",password);
+
+        JsonObjectRequest jsArrayRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                URL_BASE + URL_COMPLEMENTO,
+                new JSONObject(data),
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Manejo de la respuesta
+                        Log.d(TAG, "Respuesta en JSON: " + response);
+
+
+                        try {
+                            JSONObject content = response.getJSONObject("content");
+                            JSONObject user = content.getJSONObject("user");
+
+                            objectUser.setId(user.getInt("id"));
+                            objectUser.setUserName(user.getString("name"));
+                            objectUser.setEmail(user.getString("email"));
+                            objectUser.setPassword(password);
+                            objectUser.setToken(user.getString("token"));
+                            objectUser.setStatus("");
+                            objectUser.setType(user.getString("type"));
+                            objectUser.setAccess_token("");
+                            objectUser.setNickname(user.getString("nickname"));
+                            objectUser.setFull_name(user.getString("full_name"));
+                            objectUser.setAvatar("");
+                            objectUser.setDetails("");
+                            objectUser.setSocial(user.getString("social"));
+                            objectUser.setSocial_type("");
+                            objectUser.setSocial_id("0");
+                            objectUser.setSocial_json(user.getString("social_json"));
+                            objectUser.setSocial_email(user.getString("social_email"));
+                            objectUser.setLastname(user.getString("lastname"));
+                            objectUser.setPhone(user.getString("phone"));
+                            objectUser.setPostalcode("");
+                            objectUser.setState("");
+                            objectUser.setCity("");
+                            objectUser.setOpenpay_id("");
+                            objectUser.setRemember_token("");
+                            objectUser.setAddress("");
+                            objectUser.setFacebook_share("");
+                            objectUser.setProvider("emailAndPassword");
+                            objectUser.setPhotoUrl("https://firebasestorage.googleapis.com/v0/b/goparkennativa-cfff1.appspot.com/o/perfil_imagen%402x.png?alt=media&token=0104417e-f8d8-4b1d-8712-ea90e18ecadd");
+
+                            createAccount(email,password);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejo de errores
+                        Log.d(TAG, "Error Respuesta en JSON: " + error.getMessage());
+                    }
+                });
+
+        // Add request to de queue
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+
+    }
+
     private void createAccount(String email, String password){
         Log.d(TAG,"createAccount:"+email);
         if(!validateForm()){
@@ -189,11 +290,15 @@ public class RegisterActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+
+                            objectUser.setUid(user.getUid());
+                            writeNewUser(objectUser);
                             sendEmailVerification();
+
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(RegisterActivity.this, "Authentication failed.",
+                            Toast.makeText(RegisterActivity.this, "Authentication failed."+ task.getException(),
                                     Toast.LENGTH_SHORT).show();
                         }
 
@@ -231,10 +336,19 @@ public class RegisterActivity extends AppCompatActivity {
         // [END send_email_verification]
     }
 
+    private void writeNewUser(User newUser){
+
+        final DatabaseReference dataBaseRef = FirebaseDatabase.getInstance().getReference();
+
+        dataBaseRef.child("users").child(newUser.getUid()).child("data").setValue(newUser);
+
+    }
+
     public void send(View view) {
         // Do something in response to button
         Log.d(TAG, "send method");
-        createAccount(emailField.getText().toString(),passwordField.getText().toString());
+
+        addFromEmail(nombreField.getText().toString(),apellidosField.getText().toString(),emailField.getText().toString(),passwordField.getText().toString());
 
     }
 
