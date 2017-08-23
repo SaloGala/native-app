@@ -52,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryActionBar), PorterDuff.Mode.SRC_ATOP);
+        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

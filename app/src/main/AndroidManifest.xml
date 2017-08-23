@@ -43,7 +43,9 @@
         <activity
             android:name=".RegisterActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:screenOrientation="portrait" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -55,10 +57,12 @@
 
         <activity
             android:name=".ServiceActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ProfileActivity"
-            android:parentActivityName=".MainActivity" />
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
 
         <!-- Start firebase FCM -->
         <service android:name=".MyFirebaseMessagingService">
@@ -93,7 +97,17 @@
 
         <activity
             android:name=".EditProfileActivity"
-            android:parentActivityName=".ProfileActivity"></activity>
+            android:parentActivityName=".ProfileActivity"
+            android:screenOrientation="portrait"
+            >
+
+        <!--android:theme="@style/Theme.AppCompat.Light.Dialog"-->
+        </activity>
+
+
+
+        <activity android:name=".VehicleActivity" />
+        <activity android:name=".VehiclesActivity"></activity>
     </application>
 
 </manifest>

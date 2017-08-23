@@ -6,7 +6,7 @@
     tools:context=".MainActivity"
     >
 
-    <item
+    <!--<item
         android:id="@+id/action_search_place"
         android:icon="@drawable/magnify"
         android:orderInCategory="2"
@@ -19,7 +19,7 @@
         android:orderInCategory="4"
         android:title="@string/action_logout"
         app:showAsAction="always"
-        />
+        />-->
 
     <item
         android:id="@+id/action_profile"

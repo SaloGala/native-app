@@ -65,7 +65,7 @@ public class EditProfileActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryActionBar), PorterDuff.Mode.SRC_ATOP);
+        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -150,7 +150,11 @@ public class EditProfileActivity extends AppCompatActivity {
 
                 Log.d(TAG,"getInfoUser: "+user.getUid()+user.getEmail());
 
-                guardarBackend(user);
+                try {
+                    guardarBackend(user);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             }
 
@@ -168,7 +172,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
     }
 
-    public void guardarBackend(User user){
+    public void guardarBackend(User user) throws JSONException {
 
         Log.d(TAG,"guardarBackend:"+user.getEmail());
 
@@ -176,23 +180,42 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
-        // Mapeo de los pares clave-valor
-        HashMap<String, String> data = new HashMap();
+        Log.d(TAG, "Datos: ");
+        Log.d(TAG, "USER_NAME: "+user.getUserName());
+        Log.d(TAG, "USER_EMAIL: "+user.getEmail());
+        Log.d(TAG, "USER_LASTNAME: "+user.getLastname());
+        Log.d(TAG, "USER_PHONE: "+user.getPhone());
+        Log.d(TAG, "USER_ADDRESS: "+user.getAddress());
+        Log.d(TAG, "USER_POSTALCODE: "+user.getPostalcode());
+        Log.d(TAG, "USER_STATE: "+user.getState());
+        Log.d(TAG, "USER_CITY: "+user.getCity());
 
-        data.put("USER_EMAIL", user.getEmail());
+        JSONObject data = new JSONObject();
+
+
+        // Mapeo de los pares clave-valor
+        //HashMap<String, String> data = new HashMap();
+        data.put("USER_ID", String.valueOf(user.getId()));
         data.put("USER_NAME", user.getUserName());
-        data.put("USER_LASTNAME", user.getLastname());
-        data.put("USER_PHONE",user.getPhone());
-        data.put("USER_ADDRESS", user.getAddress());
-        data.put("USER_POSTALCODE", user.getPostalcode());
-        data.put("USER_STATE", user.getPostalcode());
-        data.put("USER_CITY", user.getCity());
-        //data.put("token", user.getToken());
+        data.put("USER_EMAIL", user.getEmail());
+        data.put("USER_PICTURE",null);
+        data.put("USER_SOCIALID",user.getSocial_id());
+        data.put("USER_TOKEN",user.getToken());
+        data.put("USER_SOCIAL",user.getSocial());
+        data.put("USER_LASTNAME", "-");
+        data.put("USER_PHONE","-");
+        data.put("USER_ADDRESS", "-");
+        data.put("USER_POSTALCODE", "-");
+        data.put("USER_STATE", "-");
+        data.put("USER_CITY", "-");
+        data.put("FACEBOOK_SHARE", false);
+        data.put("USER_EMAILTWO",user.getEmail());
+        data.put("token", user.getToken());
 
         jsArrayRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 URL_BASE + URL_COMPLEMENTO,
-                new JSONObject(data),
+                data,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -206,7 +229,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
-                        Log.d(TAG, "Respuesta en JSON editar perfil: " + error.getMessage());
+                        Log.d(TAG, "Error en la respuesta editar perfil: " + error.getMessage());
                     }
                 });
 

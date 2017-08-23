@@ -1,17 +1,28 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.ActionBarOverlayLayout;
+import android.support.v7.widget.CardView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -20,7 +31,9 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.maps.model.MarkerOptions;
+import android.widget.LinearLayout.LayoutParams;
 /**
  * Created by odalysmarronsanchez on 25/07/17.
  */
@@ -42,6 +55,11 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
     private OnFragmentInteractionListener mListener;
 
+    PlaceAutocompleteFragment autocompleteFragment;
+
+    Context mContext;
+
+
 
     public MapFragment() {
     }
@@ -52,6 +70,8 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
         mMainActivity = (MainActivity) getActivity();
         mValuesUtilities = ValuesUtilities.getInstance();
+
+
 
 
     }
@@ -66,7 +86,6 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
         mView = inflater.inflate(R.layout.map_fragment, container, false);
 
-
         mMapView = (MapView) (mView.findViewById(R.id.mapView));
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -76,6 +95,37 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                //TODO: GET info about the selected place
+                //Toast.makeText(getActivity(),"Place: "+place.getName(),Toast.LENGTH_SHORT).show();
+
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
+
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                if (mMainActivity.searchLocationMarker != null) {
+                    mMainActivity.searchLocationMarker.remove();
+                }
+
+                mMainActivity.searchLocationMarker = mGoogleMap.addMarker(new MarkerOptions()
+                        .position(place.getLatLng())
+                );
+            }
+
+            @Override
+            public void onError(Status status) {
+                //TODO: Handle the error
+                Toast.makeText(getActivity(),"An error occurred: "+status,Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        mContext = getContext();
 
         return mView;
 
@@ -202,9 +252,34 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        Toast.makeText(mMainActivity, "KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker), Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(mMainActivity, "KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker), Toast.LENGTH_SHORT).show();
 
+                        CardView cardView = new CardView(mContext);
 
+                        LayoutParams params = new LayoutParams(
+                                LayoutParams.MATCH_PARENT,
+                                LayoutParams.WRAP_CONTENT
+                        );
+
+                        cardView.setLayoutParams(params);
+
+                        cardView.setRadius(9);
+
+                        cardView.setPadding(15,15,15,15);
+
+                        cardView.setCardBackgroundColor(Color.parseColor("#FFC6D6C3"));
+
+                        cardView.setMaxCardElevation(15);
+
+                        cardView.setCardElevation(9);
+
+                        TextView tv = new TextView(mContext);
+                        tv.setLayoutParams(params);
+                        tv.setText("KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker));
+
+                        cardView.addView(tv);
+
+                        mMapView.addView(cardView);
 
                         return true;
                     }
@@ -215,9 +290,11 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
     }
 
+
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
+
 
 
 }

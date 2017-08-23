@@ -57,7 +57,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Registro"
+                        android:text="@string/ingresa_datos"
                         android:textSize="30dp" />
 
                     <Space
@@ -65,7 +65,7 @@
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editTxtNombre"
+                        android:id="@+id/editNombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/editTxtNombre" />
@@ -75,7 +75,7 @@
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editTxtApellidos"
+                        android:id="@+id/editApellidos"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/editTxtApellidos" />
@@ -85,7 +85,7 @@
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editTxtCorreo"
+                        android:id="@+id/editEmail"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/editTxtEmail" />
@@ -95,33 +95,10 @@
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editTxtCorreoR"
+                        android:id="@+id/editEmail2"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/editTxtEmail2" />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp" />
-
-                    <EditText
-                        android:id="@+id/editTxtPass"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:hint="@string/editTxtPass"
-                        />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp" />
-
-                    <EditText
-                        android:id="@+id/editTxtPassR"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:inputType="textPassword"
-                        android:hint="@string/editTxtPass2" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -140,8 +117,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_send_button"
-                        android:onClick="send"
-                        android:text="@string/buttonEnviar"
+                        android:onClick="Guardar"
+                        android:text="@string/btn_guardar"
                         android:textAppearance="@style/AppTheme.TextAppearance.Bold"
                         android:textColor="@android:color/white" />
 

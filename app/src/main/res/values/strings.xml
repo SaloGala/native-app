@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Go Parken</string>
+    <string name="app_name">GoParken</string>
     <string name="button_iniciarSesion">INICIAR SESIÓN</string>
     <string name="button_registrarse">REGISTRARSE</string>
     <string name="button_iniciarFB">INICIAR CON FACEBOOK</string>
@@ -39,6 +39,10 @@
     <string name="ingresa_datos">Ingresa tus datos</string>
     <string name="datos_cliente">Datos del Cliente</string>
     <string name="btn_guardar">Guardar</string>
+    <string name="btn_vehiculos">Autos</string>
+    <string name="btn_metodos_pago">Mètodos de Pago</string>
+    <string name="txt_mis_vehiculos">Mis Autos</string>
+    <string name="btn_add_vehivle">Agregar auto</string>
 
 
 </resources>

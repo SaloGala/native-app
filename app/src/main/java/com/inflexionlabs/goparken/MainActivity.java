@@ -250,11 +250,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_logout) {
+        /*if (id == R.id.action_logout) {
             logOut();
         } else if (id == R.id.action_search_place) {
             openAutocompleteActivity();
-        } else if (id == R.id.action_profile) {
+        } else*/
+
+        if (id == R.id.action_profile) {
             goToProfileScreen();
         }
 
@@ -266,10 +268,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         Intent intent = new Intent(this, ProfileActivity.class);
         //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
+        //finish();
 
     }
 
-    private void openAutocompleteActivity() {
+    /*public void openAutocompleteActivity() {
         try {
             // The autocomplete activity requires Google Play Services to be available. The intent
             // builder checks this and throws an exception if it is not the case.
@@ -282,7 +285,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             // Indicates that Google Play Services is either not installed or not up to date. Prompt
             // the user to correct the issue.
             GoogleApiAvailability.getInstance().getErrorDialog(this, e.getConnectionStatusCode(),
-                    0 /* requestCode */).show();
+                    0 /* requestCode ).show();
         } catch (GooglePlayServicesNotAvailableException e) {
             // Indicates that Google Play Services is not available and the problem is not easily
             // resolvable.
@@ -292,7 +295,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Log.e("Message", message);
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
-    }
+    }*/
 
 
     private void initializeComponents() {
@@ -990,11 +993,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
+        Log.d(TAG,"onStop");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        Log.d(TAG,"onPause");
         RequestingLocationUpdatesFlag = false;
         stopLocationUpdates();
     }
@@ -1002,6 +1007,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onResume() {
         super.onResume();
+        Log.d(TAG,"onResume");
         if (mGoogleApiClient.isConnected() && !RequestingLocationUpdatesFlag) {
             startLocationUpdates();
         }
