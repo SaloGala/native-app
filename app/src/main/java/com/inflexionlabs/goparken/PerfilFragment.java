@@ -1,14 +1,13 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
+import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,13 +21,22 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-public class ProfileActivity extends AppCompatActivity {
+/**
+ * Created by odalysmarronsanchez on 23/08/17.
+ */
+
+public class PerfilFragment extends Fragment{
+
+    public View mView;
 
     static final String TAG = "ProfileActivity";
 
     TextView txtUserName;
     TextView txtUserEmail;
     ImageView imgUserPhoto;
+    Button btnEditarPerfil;
+    Button btnAddCard;
+    Button btnAddAuto;
 
     private DatabaseReference mDatabaseReference;
 
@@ -39,36 +47,37 @@ public class ProfileActivity extends AppCompatActivity {
 
     UserUtilities userUtilities = UserUtilities.getInstance();
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+    public PerfilFragment(){
 
-        initializeComponents();
     }
 
-    private void initializeComponents() {
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
-        toolbar.setTitleTextColor(Color.WHITE);
-        setSupportActionBar(toolbar);
-
-        final Drawable upArrow = getResources().getDrawable(R.drawable.abc_ic_ab_back_material);
-        upArrow.setColorFilter(getResources().getColor(R.color.colorPrimaryDark), PorterDuff.Mode.SRC_ATOP);
-        getSupportActionBar().setHomeAsUpIndicator(upArrow);
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        txtUserName = (TextView) findViewById(R.id.txtUserName);
-        txtUserEmail = (TextView) findViewById(R.id.txtUserEmail);
-        imgUserPhoto = (ImageView) findViewById(R.id.imgUserPhoto);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
+    }
 
-        showInfoUser();
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.perfil_fragment, container, false);
+
+        txtUserName = (TextView) mView.findViewById(R.id.txtUserName);
+        txtUserEmail = (TextView) mView.findViewById(R.id.txtUserEmail);
+        imgUserPhoto = (ImageView) mView.findViewById(R.id.imgUserPhoto);
+
+        btnEditarPerfil = (Button) mView.findViewById(R.id.btnEditarPerfil);
+        btnAddAuto = (Button) mView.findViewById(R.id.btnVerVehiculos);
+        btnAddCard = (Button) mView.findViewById(R.id.btnVerMetodosPago);
+
+        btnEditarPerfil.setOnClickListener(btnListener);
+        btnAddAuto.setOnClickListener(btnListener);
+        btnAddCard.setOnClickListener(btnListener);
+        //showInfoUser();
         getInfoUser();
 
-
+        return mView;
     }
 
     private void showInfoUser(){
@@ -86,7 +95,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         txtUserName.setText(currentUser.getDisplayName());
         txtUserEmail.setText(currentUser.getEmail());
-        Picasso.with(getApplicationContext()).load(photoUrl).fit().into(imgUserPhoto);
+        Picasso.with(getContext()).load(photoUrl).fit().into(imgUserPhoto);
     }
 
     private void getInfoUser(){
@@ -101,9 +110,9 @@ public class ProfileActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
 
-                /*txtUserName.setText(user.getUserName());
+                txtUserName.setText(user.getUserName());
                 txtUserEmail.setText(user.getEmail());
-                Picasso.with(getApplicationContext()).load(user.getPhotoUrl()).fit().into(imgUserPhoto);*/
+                Picasso.with(getContext()).load(user.getPhotoUrl()).fit().into(imgUserPhoto);
             }
 
             @Override
@@ -116,32 +125,46 @@ public class ProfileActivity extends AppCompatActivity {
 
         mUserDetail.addListenerForSingleValueEvent(userListener);
 
-
-
     }
 
+    private View.OnClickListener btnListener = new View.OnClickListener() {
 
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.btnEditarPerfil:
-                editProfileForm();
-                break;
+        @Override
+        public void onClick(View view) {
 
+            switch (view.getId()) {
+                case R.id.btnEditarPerfil:
+                    editProfileForm();
+                    break;
 
+                case R.id.btnVerVehiculos:
+                    addAuto();
+                    break;
+
+                case R.id.btnVerMetodosPago:
+                    addCard();
+                    break;
+
+            }
 
         }
-    }
+    };
+
 
     private void editProfileForm() {
 
-        Intent intent = new Intent(this, EditProfileActivity.class);
+        Intent intent = new Intent(getActivity(), EditProfileActivity.class);
         startActivity(intent);
     }
 
-
-    public void onBackPressed() {
-        finish();
+    private void addAuto(){
+        Intent intent = new Intent(getActivity(),AddVehicleActivity.class);
+        startActivity(intent);
     }
 
+    private void addCard(){
+        Intent intent = new Intent(getActivity(),AddCardActivity.class);
+        startActivity(intent);
+    }
 
 }
