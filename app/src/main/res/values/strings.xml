@@ -43,6 +43,24 @@
     <string name="btn_metodos_pago">Mètodos de Pago</string>
     <string name="txt_mis_vehiculos">Mis Autos</string>
     <string name="btn_add_vehivle">Agregar auto</string>
+    <string name="datos_auto">Ingresa los datos de tu auto</string>
+    <string name="edit_placa">Placa *</string>
+    <string name="edit_marca">Marca *</string>
+    <string name="edit_submarca">Submarca *</string>
+    <string name="edit_anio">Año *</string>
+    <string name="datos_tarjeta">Ingresa los datos de tu tarjeta</string>
+    <string name="edit_direccion">Dirección *</string>
+    <string name="edit_postal">Código Postal *</string>
+    <string name="edit_estado">Estado *</string>
+    <string name="edit_ciudad">Ciudad *</string>
+    <string name="datos_card">Datos de la tarjeta</string>
+    <string name="edit_titular">Nombre del titular *</string>
+    <string name="edit_numCard">Número de la tarjeta *</string>
+    <string name="edit_cvv">CVV *</string>
+    <string name="edit_expCard">Fecha de expiración (MM/YY) *</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

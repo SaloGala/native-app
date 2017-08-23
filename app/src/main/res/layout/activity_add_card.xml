@@ -57,7 +57,17 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/datos_auto"
+                        android:text="@string/datos_tarjeta"
+                        android:textSize="20dp" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/datos_cliente"
                         android:textSize="30dp" />
 
                     <Space
@@ -65,40 +75,90 @@
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editNombre"
+                        android:id="@+id/editDireccion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtNombre" />
+                        android:hint="@string/edit_direccion" />
 
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editApellidos"
+                        android:id="@+id/editPostal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtApellidos" />
+                        android:hint="@string/edit_postal" />
 
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editEmail"
+                        android:id="@+id/editEdo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtEmail" />
+                        android:hint="@string/edit_estado" />
 
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
 
                     <EditText
-                        android:id="@+id/editEmail2"
+                        android:id="@+id/editCd"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtEmail2" />
+                        android:hint="@string/edit_ciudad" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/datos_card"
+                        android:textSize="30dp" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <EditText
+                        android:id="@+id/editTitular"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_titular" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <EditText
+                        android:id="@+id/editNoCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_numCard" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <EditText
+                        android:id="@+id/editCVV"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_cvv" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <EditText
+                        android:id="@+id/editFecha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_expCard" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -114,6 +174,7 @@
                         android:layout_height="10dp" />
 
                     <Button
+                        android:id="@+id/btnGuardarAuto"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_send_button"
@@ -131,4 +192,3 @@
     </LinearLayout>
 
 </LinearLayout>
-

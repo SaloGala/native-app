@@ -141,6 +141,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     String accessToken;
 
+    UserUtilities userUtilities = UserUtilities.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -172,8 +174,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             writeNewUser();
 
             initializeApiComponents();
+
+
             initializeGraphicComponents();
             createLocationManager();
+
+            initializeUserInfo();
 
 
         } else {
@@ -186,6 +192,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         //Create new request queue
         mRequestQueue = MySingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
+
+    }
+
+    private void initializeUserInfo() {
+
+        //Traer de la base
+        userUtilities.setNombre("lode la base");
+        userUtilities.setApellido("lode la base");
+
 
     }
 
@@ -254,11 +269,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             logOut();
         } else if (id == R.id.action_search_place) {
             openAutocompleteActivity();
-        } else*/
+        } else
 
         if (id == R.id.action_profile) {
             goToProfileScreen();
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -861,7 +876,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
                     Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
-                    JSONObject mJSONObject = new JSONObject(value);
+                    final JSONObject mJSONObject = new JSONObject(value);
 
                     //Log.d(TAG,"mJSONObject: "+mJSONObject);
 
@@ -916,7 +931,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                                     Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
                                                             .position(markerLatLng)
                                                             .icon(BitmapDescriptorFactory.fromBitmap(selectedMarker))
+
                                                     );
+
+                                                    newMarker.setTag(availavility);
 
                                                     parkingsMarkers.put(k, newMarker);
                                                     mValuesUtilities.setParkingsMarkers(parkingsMarkers);
@@ -952,6 +970,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                         .position(markerLatLng)
                                         .icon(BitmapDescriptorFactory.fromBitmap(selectedMarker))
                                 );
+
+                                newMarker.setTag("none");
 
                                 parkingsMarkers.put(k, newMarker);
                                 mValuesUtilities.setParkingsMarkers(parkingsMarkers);
@@ -1043,6 +1063,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 case 2:
                     fragment = new ServicesFragment();
                     break;
+                case 3:
+                    fragment = new PerfilFragment();
 
             }
 
@@ -1063,7 +1085,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -1074,6 +1096,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     return getString(R.string.map);
                 case 1:
                     return getString(R.string.service);
+                case 2:
+                    return getString(R.string.action_profile);
 
             }
 
