@@ -7,16 +7,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import mx.openpay.android.Openpay;
+import mx.openpay.android.OperationCallBack;
+import mx.openpay.android.OperationResult;
+import mx.openpay.android.exceptions.OpenpayServiceException;
+import mx.openpay.android.exceptions.ServiceUnavailableException;
+import mx.openpay.android.model.Card;
 import mx.openpay.android.validation.CardValidator;
 
 
-public class AddCardActivity extends AppCompatActivity {
+public class AddCardActivity extends AppCompatActivity implements OperationCallBack {
 
     final private String TAG = "AddCardActivity";
 
@@ -35,6 +41,7 @@ public class AddCardActivity extends AppCompatActivity {
     Button btnSaveCard;
 
     private final String MERCHANT_ID = "mtfur53iopbr7ceh01ro";
+    private final String PRIVATE_API_KEY = "sk_99ab173dcfe944e28cc048f5534eb857";
     private final String PUBLIC_API_KEY = "pk_7226b0afacd546e0bb883e90945bdb0a";
     boolean productionMode = false;
     Openpay openpay;
@@ -81,13 +88,27 @@ public class AddCardActivity extends AppCompatActivity {
             }
         });
 
-        openpay = new Openpay(MERCHANT_ID,PUBLIC_API_KEY,productionMode);
+        openpay = new Openpay(MERCHANT_ID,PRIVATE_API_KEY,productionMode);
 
     }
 
     private void saveCard() {
 
-        Toast.makeText(this,"Guardar tarjeta...",Toast.LENGTH_SHORT).show();
+        if(!validateForm()){
+            return;
+        }
+
+        Card card = new Card();
+        card.holderName(editTxtNonbreT.getText().toString());
+        card.cardNumber(editTxtNoCard.getText().toString());
+        card.cvv2(editTxtCVV.getText().toString());
+        card.expirationMonth(Integer.parseInt(editTxtMM.getText().toString()));
+        card.expirationYear(Integer.parseInt(editTxtYY.getText().toString()));
+
+
+        openpay.createCard(card,this);
+        openpay.createToken(card,this);
+
     }
 
     public void showInfoUser(){
@@ -180,7 +201,7 @@ public class AddCardActivity extends AppCompatActivity {
             }
 
         }
-        
+
 
         return valid;
     }
@@ -189,5 +210,26 @@ public class AddCardActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    @Override
+    public void onError(OpenpayServiceException error) {
+
+        error.printStackTrace();
+        Log.d(TAG,"onError: "+error.getErrorCode());
+
+    }
+
+    @Override
+    public void onCommunicationError(ServiceUnavailableException error) {
+
+        Log.d(TAG,"onCommunicationError: "+error.getMessage());
+    }
+
+    @Override
+    public void onSuccess(OperationResult operationResult) {
+
+        Log.d(TAG,"onSucces: "+ operationResult.getResult());
+
     }
 }
