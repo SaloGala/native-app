@@ -9,6 +9,8 @@ import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ColorFilter;
+import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -32,6 +34,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -301,7 +304,15 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void initializeComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
         toolbar.setTitleTextColor(Color.WHITE);
+
+
+        Typeface NexaBold = Typeface.createFromAsset(getApplication().getAssets(), "NexaBold.ttf");
+
+        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        mTitle.setTypeface(NexaBold);
+
         setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(null);
 
         SectionsPageAdapter mSectionsPagerAdapter = new SectionsPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
@@ -309,6 +320,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
+
+        tabLayout.getTabAt(0).setIcon(R.drawable.ic_location_on_black_24dp);
+        tabLayout.getTabAt(1).setIcon(R.drawable.ic_directions_car_black_24dp);
 
         Intent intent = getIntent();
         accessToken = intent.getStringExtra("accessToken");
