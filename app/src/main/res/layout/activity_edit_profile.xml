@@ -114,10 +114,11 @@
                         android:layout_height="10dp" />
 
                     <Button
+                        android:id="@+id/btnSavePerfil"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_send_button"
-                        android:onClick="Guardar"
+                        android:onClick="onClick"
                         android:text="@string/btn_guardar"
                         android:textAppearance="@style/AppTheme.TextAppearance.Bold"
                         android:textColor="@android:color/white" />

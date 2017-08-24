@@ -104,19 +104,23 @@
         </activity>
         <activity android:name=".VehicleActivity" />
         <activity android:name=".VehiclesActivity" />
-
         <activity
             android:name=".ParkingActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait" />
-
-        <activity android:name=".AddVehicleActivity"
+        <activity
+            android:name=".AddVehicleActivity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AddCardActivity"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait" />
 
-        <activity android:name=".AddCardActivity"
+        <activity android:name=".CardsListActivity"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"></activity>
+
     </application>
 
 </manifest>

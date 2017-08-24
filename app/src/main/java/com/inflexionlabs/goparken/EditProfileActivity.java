@@ -9,26 +9,20 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.HashMap;
+import android.widget.Toast;
 
 public class EditProfileActivity extends AppCompatActivity {
 
@@ -40,15 +34,19 @@ public class EditProfileActivity extends AppCompatActivity {
     private EditText emailField;
     private EditText emailFieldR;
 
-    private DatabaseReference mDatabaseReference;
-
-    FirebaseUser currentUser;
+    Button btnGuardar;
 
     JsonObjectRequest jsArrayRequest;
 
     String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
 
     String URL_COMPLEMENTO="User/Update";
+
+    UserUtilities userUtilities = UserUtilities.getInstance();
+
+    JSONObject dataRequest = new JSONObject();
+
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +74,20 @@ public class EditProfileActivity extends AppCompatActivity {
         nombreField = (EditText) findViewById(R.id.editNombre);
         apellidosField = (EditText) findViewById(R.id.editApellidos);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        btnGuardar = (Button) findViewById(R.id.btnSavePerfil);
+        btnGuardar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    guardarBackend();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        showInfoUser();
+
 
     }
 
@@ -137,90 +148,108 @@ public class EditProfileActivity extends AppCompatActivity {
 
     }
 
-    private void getInfoUser(){
+    private void showInfoUser(){
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        DatabaseReference mUserDetail = mDatabaseReference.child("users").child(currentUser.getUid()+"/data");
-
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-
-                Log.d(TAG,"getInfoUser: "+user.getUid()+user.getEmail());
-
-                try {
-                    guardarBackend(user);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-
-
-        };
-
-        mUserDetail.addListenerForSingleValueEvent(userListener);
-
+        nombreField.setText(userUtilities.getUserName());
+        apellidosField.setText(userUtilities.getLastname());
+        emailField.setText(userUtilities.getEmail());
+        emailFieldR.setText(userUtilities.getEmail());
 
 
     }
 
-    public void guardarBackend(User user) throws JSONException {
+    public void constructDataRequest(){
 
-        Log.d(TAG,"guardarBackend:"+user.getEmail());
+        try {
+            dataRequest.put("USER_ID", userUtilities.getId());
+            dataRequest.put("USER_NAME", nombreField.getText());
+            dataRequest.put("USER_EMAIL", emailField.getText());
+            dataRequest.put("USER_PICTURE",null);
+            dataRequest.put("USER_SOCIALID",userUtilities.getSocial_id());
+            dataRequest.put("USER_TOKEN",userUtilities.getToken());
+            dataRequest.put("USER_SOCIAL",userUtilities.getSocial());
+            dataRequest.put("USER_LASTNAME", apellidosField.getText());
+            dataRequest.put("FACEBOOK_SHARE", userUtilities.getFacebook_share());
+            dataRequest.put("USER_EMAILTWO",emailFieldR.getText());
+            dataRequest.put("token", userUtilities.getToken());
+
+            if(userUtilities.getPhone().isEmpty()){
+
+                dataRequest.put("USER_PHONE","-");
+            }else{
+
+                dataRequest.put("USER_PHONE",userUtilities.getPhone());
+            }
+
+
+            if(userUtilities.getAddress().isEmpty()){
+
+                dataRequest.put("USER_ADDRESS", "-");
+
+            }else{
+
+                dataRequest.put("USER_ADDRESS", userUtilities.getAddress());
+            }
+
+
+            if(userUtilities.getPostalcode().isEmpty()){
+
+                dataRequest.put("USER_POSTALCODE", "-");
+
+            }else{
+
+                dataRequest.put("USER_POSTALCODE", userUtilities.getPostalcode());
+            }
+
+
+            if(userUtilities.getState().isEmpty()){
+
+                dataRequest.put("USER_STATE", "-");
+
+            }else{
+
+                dataRequest.put("USER_STATE", userUtilities.getState());
+            }
+
+
+            if(userUtilities.getCity().isEmpty()){
+
+                dataRequest.put("USER_CITY", "-");
+
+            }else{
+
+                dataRequest.put("USER_CITY",userUtilities.getCity());
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void guardarBackend() throws JSONException {
+
 
         if(!validateForm()){
             return;
         }
 
-        Log.d(TAG, "Datos: ");
-        Log.d(TAG, "USER_NAME: "+user.getUserName());
-        Log.d(TAG, "USER_EMAIL: "+user.getEmail());
-        Log.d(TAG, "USER_LASTNAME: "+user.getLastname());
-        Log.d(TAG, "USER_PHONE: "+user.getPhone());
-        Log.d(TAG, "USER_ADDRESS: "+user.getAddress());
-        Log.d(TAG, "USER_POSTALCODE: "+user.getPostalcode());
-        Log.d(TAG, "USER_STATE: "+user.getState());
-        Log.d(TAG, "USER_CITY: "+user.getCity());
-
-        JSONObject data = new JSONObject();
-
-
-        // Mapeo de los pares clave-valor
-        //HashMap<String, String> data = new HashMap();
-        data.put("USER_ID", String.valueOf(user.getId()));
-        data.put("USER_NAME", user.getUserName());
-        data.put("USER_EMAIL", user.getEmail());
-        data.put("USER_PICTURE",null);
-        data.put("USER_SOCIALID",user.getSocial_id());
-        data.put("USER_TOKEN",user.getToken());
-        data.put("USER_SOCIAL",user.getSocial());
-        data.put("USER_LASTNAME", "-");
-        data.put("USER_PHONE","-");
-        data.put("USER_ADDRESS", "-");
-        data.put("USER_POSTALCODE", "-");
-        data.put("USER_STATE", "-");
-        data.put("USER_CITY", "-");
-        data.put("FACEBOOK_SHARE", false);
-        data.put("USER_EMAILTWO",user.getEmail());
-        data.put("token", user.getToken());
+        constructDataRequest();
 
         jsArrayRequest = new JsonObjectRequest(
                 Request.Method.POST,
                 URL_BASE + URL_COMPLEMENTO,
-                data,
+                dataRequest,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Manejo de la respuesta
                         Log.d(TAG, "Respuesta en JSON editar perfil: " + response);
+
+                        updateFireBaseUser();
+
+                        showMessge("Datos guardados con èxito");
 
                     }
                 },
@@ -229,6 +258,8 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
+
+                        showMessge("Ocurrio un error, por favor intente nuevamente");
                         Log.d(TAG, "Error en la respuesta editar perfil: " + error.getMessage());
                     }
                 });
@@ -238,9 +269,30 @@ public class EditProfileActivity extends AppCompatActivity {
 
     }
 
-    public void Guardar(View view){
-        getInfoUser();
+    private void showMessge(String msg) {
+
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
+
+    public void updateFireBaseUser(){
+
+        Log.d(TAG,"updateFireBaseUser");
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("userName").setValue(nombreField.getText().toString());
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("email").setValue(emailField.getText().toString());
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("lastname").setValue(apellidosField.getText().toString());
+
+    }
+
+    public void updateUserUtilities(){
+
+        userUtilities.setUserName(nombreField.getText().toString());
+        userUtilities.setEmail(emailField.getText().toString());
+        userUtilities.setLastname(apellidosField.getText().toString());
+    }
+
 
     @Override
     public void onBackPressed() {

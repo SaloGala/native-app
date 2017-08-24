@@ -58,6 +58,9 @@
     <string name="edit_numCard">Número de la tarjeta *</string>
     <string name="edit_cvv">CVV *</string>
     <string name="edit_expCard">Fecha de expiración (MM/YY) *</string>
+    <string name="datos_actualizados">Datos actualizados con éxito</string>
+    <string name="error_actualizar">Ocurrio un error, por favor intente nuevamente</string>
+    <string name="add_card">AGREGAR MÈTODO DE PAGO</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
