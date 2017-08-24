@@ -37,6 +37,8 @@ public class ProfileActivity extends AppCompatActivity {
     String provider;
     String photoUrl;
 
+    UserUtilities userUtilities = UserUtilities.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

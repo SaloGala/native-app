@@ -1,6 +1,7 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
@@ -33,7 +34,19 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import android.widget.LinearLayout.LayoutParams;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.Map;
+
 /**
  * Created by odalysmarronsanchez on 25/07/17.
  */
@@ -59,7 +72,13 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
     Context mContext;
 
+    String availability;
+    String key;
 
+    ParkingUtilities parkingUtilities = ParkingUtilities.getInstance();
+
+    DatabaseReference mDatabaseReference;
+    DatabaseReference mParkingDetail;
 
     public MapFragment() {
     }
@@ -96,9 +115,11 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
             e.printStackTrace();
         }
 
-        autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        //autocompleteFragment = (PlaceAutocompleteFragment) getActivity().getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+
+
+        /*autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 //TODO: GET info about the selected place
@@ -122,7 +143,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                 //TODO: Handle the error
                 Toast.makeText(getActivity(),"An error occurred: "+status,Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
 
 
         mContext = getContext();
@@ -254,32 +275,13 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
                         //Toast.makeText(mMainActivity, "KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker), Toast.LENGTH_SHORT).show();
 
-                        CardView cardView = new CardView(mContext);
+                        availability = (String) marker.getTag();
+                        key = mValuesUtilities.getParkingsMarkers().inverse().get(marker);
 
-                        LayoutParams params = new LayoutParams(
-                                LayoutParams.MATCH_PARENT,
-                                LayoutParams.WRAP_CONTENT
-                        );
+                        //Toast.makeText(mMainActivity, "Availability: "+ availability+" Key: "+ key, Toast.LENGTH_SHORT).show();
 
-                        cardView.setLayoutParams(params);
+                        getParkingDetail(key);
 
-                        cardView.setRadius(9);
-
-                        cardView.setPadding(15,15,15,15);
-
-                        cardView.setCardBackgroundColor(Color.parseColor("#FFC6D6C3"));
-
-                        cardView.setMaxCardElevation(15);
-
-                        cardView.setCardElevation(9);
-
-                        TextView tv = new TextView(mContext);
-                        tv.setLayoutParams(params);
-                        tv.setText("KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker));
-
-                        cardView.addView(tv);
-
-                        mMapView.addView(cardView);
 
                         return true;
                     }
@@ -288,6 +290,135 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
             }
         });
 
+    }
+
+    private void getParkingDetail(String key) {
+
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+        mParkingDetail = mDatabaseReference.child("parkings").child(key + "/data");
+
+        final ValueEventListener parkingListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
+                final JSONObject mJSONObject = new JSONObject(value);
+
+                try {
+                    parkingUtilities.setAcceptGoParken(mJSONObject.getInt("acceptGoParken"));
+
+                    parkingUtilities.setAddress_colony(mJSONObject.getString("address_colony"));
+                    parkingUtilities.setAddress_country(mJSONObject.getString("address_country"));
+                    parkingUtilities.setAddress_delegation(mJSONObject.getString("address_delegation"));
+                    parkingUtilities.setAddress_number(mJSONObject.getString("address_number"));
+                    parkingUtilities.setAddress_postal_code(mJSONObject.getString("address_postal_code"));
+                    parkingUtilities.setAddress_state(mJSONObject.getString("address_state"));
+                    parkingUtilities.setAddress_street(mJSONObject.getString("address_street"));
+                    parkingUtilities.setAddress_street_between_one(mJSONObject.getString("address_street_between_one"));
+                    parkingUtilities.setAddress_street_between_two(mJSONObject.getString("address_street_between_two"));
+                    parkingUtilities.setComFija(mJSONObject.getDouble("comFija"));
+                    parkingUtilities.setComVar(mJSONObject.getDouble("comVar"));
+                    parkingUtilities.setComision(mJSONObject.getInt("comision"));
+                    parkingUtilities.setExit_code(mJSONObject.getString("exit_code"));
+                    parkingUtilities.setDescription(mJSONObject.getString("description"));
+                    parkingUtilities.setId(mJSONObject.getInt("id"));
+                    parkingUtilities.setId_marker(mJSONObject.getInt("id_marker"));
+                    parkingUtilities.setImage_name(mJSONObject.getString("image_name"));
+                    parkingUtilities.setImage_path(mJSONObject.getString("image_path"));
+                    parkingUtilities.setIva(mJSONObject.getDouble("iva"));
+                    parkingUtilities.setMonto(mJSONObject.getDouble("monto"));
+                    parkingUtilities.setName(mJSONObject.getString("name"));
+                    parkingUtilities.setPrecioPromo(mJSONObject.getDouble("precioPromo"));
+                    parkingUtilities.setSchedule_finish_friday(mJSONObject.getString("schedule_finish_friday"));
+                    parkingUtilities.setSchedule_finish_monday(mJSONObject.getString("schedule_finish_monday"));
+                    parkingUtilities.setSchedule_finish_saturday(mJSONObject.getString("schedule_finish_saturday"));
+                    parkingUtilities.setSchedule_finish_sunday(mJSONObject.getString("schedule_finish_sunday"));
+                    parkingUtilities.setSchedule_finish_thursday(mJSONObject.getString("schedule_finish_thursday"));
+                    parkingUtilities.setSchedule_finish_tuesday(mJSONObject.getString("schedule_finish_tuesday"));
+                    parkingUtilities.setSchedule_finish_wednesday(mJSONObject.getString("schedule_finish_wednesday"));
+                    parkingUtilities.setSchedule_start_friday(mJSONObject.getString("schedule_start_friday"));
+                    parkingUtilities.setSchedule_start_monday(mJSONObject.getString("schedule_start_monday"));
+                    parkingUtilities.setSchedule_start_saturday(mJSONObject.getString("schedule_start_saturday"));
+                    parkingUtilities.setSchedule_start_sunday(mJSONObject.getString("schedule_start_sunday"));
+                    parkingUtilities.setSchedule_start_thursday(mJSONObject.getString("schedule_start_thursday"));
+                    parkingUtilities.setSchedule_start_tuesday(mJSONObject.getString("schedule_start_tuesday"));
+                    parkingUtilities.setSchedule_start_wednesday(mJSONObject.getString("schedule_start_wednesday"));
+                    parkingUtilities.setSize(mJSONObject.getInt("size"));
+                    parkingUtilities.setSize_warning(mJSONObject.getInt("size_warning"));
+                    parkingUtilities.setStatus(mJSONObject.getString("status"));
+                    parkingUtilities.setTarifaPromo(mJSONObject.getInt("tarifaPromo"));
+                    parkingUtilities.setType(mJSONObject.getString("type"));
+
+
+                    if(parkingUtilities.getAcceptGoParken() == 0){
+
+                        parkingUtilities.setCost_goparken_by_fraction(mJSONObject.getDouble("cost_goparken_by_fraction"));
+                        parkingUtilities.setCost_goparken_by_hour(mJSONObject.getDouble("cost_goparken_by_hour"));
+                        parkingUtilities.setCost_public_by_fraction(mJSONObject.getDouble("cost_public_by_fraction"));
+                        parkingUtilities.setCost_public_by_hour(mJSONObject.getDouble("cost_public_by_hour"));
+                        parkingUtilities.setEntry_code(" ");
+                        parkingUtilities.setHorasPromo(" ");
+                        parkingUtilities.setId_form(mJSONObject.getString("id_form"));
+                        parkingUtilities.setLatitude(mJSONObject.getString("latitude"));
+                        parkingUtilities.setLongitude(mJSONObject.getString("longitude"));
+
+                    } else if(parkingUtilities.getAcceptGoParken() == 1){
+
+                        parkingUtilities.setCost_goparken_by_fraction(mJSONObject.getDouble("cost_goparken_by_fraction"));
+                        parkingUtilities.setCost_goparken_by_hour(mJSONObject.getDouble("cost_goparken_by_hour"));
+                        parkingUtilities.setCost_public_by_fraction(mJSONObject.getDouble("cost_public_by_fraction"));
+                        parkingUtilities.setCost_public_by_hour(mJSONObject.getDouble("cost_public_by_hour"));
+                        parkingUtilities.setEntry_code(mJSONObject.getString("entry_code"));
+                        parkingUtilities.setHorasPromo(mJSONObject.getString("horasPromo"));
+                        parkingUtilities.setId_form(mJSONObject.getString("id_form"));
+                        parkingUtilities.setLatitude(mJSONObject.getString("latitude"));
+                        parkingUtilities.setLongitude(mJSONObject.getString("longitude"));
+
+                    } else if (parkingUtilities.getAcceptGoParken() == 2){
+
+                        /*parkingUtilities.setCost_goparken_by_fraction(Double.parseDouble(mJSONObject.getString("cost_goparken_by_fraction")));
+                        parkingUtilities.setCost_goparken_by_hour(Double.parseDouble(mJSONObject.getString("cost_goparken_by_hour")));
+                        parkingUtilities.setCost_public_by_fraction(Double.parseDouble(mJSONObject.getString("cost_public_by_fraction")));
+                        parkingUtilities.setCost_public_by_hour(Double.parseDouble(mJSONObject.getString("cost_public_by_hour")));*/
+
+                        parkingUtilities.setCost_goparken_by_fraction(0);
+                        parkingUtilities.setCost_goparken_by_hour(0);
+                        parkingUtilities.setCost_public_by_fraction(0);
+                        parkingUtilities.setCost_public_by_hour(0);
+
+                        parkingUtilities.setEntry_code(mJSONObject.getString("entry_code"));
+                        parkingUtilities.setHorasPromo(mJSONObject.getString("horasPromo"));
+                        parkingUtilities.setId_form(Long.toString((Long)mJSONObject.get("id_form")));
+                        parkingUtilities.setLatitude(Double.toString((Double) mJSONObject.get("latitude")));
+                        parkingUtilities.setLongitude(Double.toString((Double) mJSONObject.get("longitude")));
+
+
+                    }
+
+                    goToParkingDetailActivity();
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                Log.d(TAG,"dataSnapshot: "+mJSONObject);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        };
+
+        mParkingDetail.addListenerForSingleValueEvent(parkingListener);
+
+    }
+
+    public void goToParkingDetailActivity() {
+
+        Log.d(TAG,"goToParkingDetailActivity");
+
+        Intent intent = new Intent(mMainActivity, ParkingActivity.class);
+        startActivity(intent);
     }
 
 

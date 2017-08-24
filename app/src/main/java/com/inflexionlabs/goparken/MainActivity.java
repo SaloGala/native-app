@@ -144,6 +144,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     String accessToken;
 
+    UserUtilities userUtilities = UserUtilities.getInstance();
+    private DatabaseReference mDatabaseReference;
+    FirebaseUser mFirebaseUser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -165,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         if (mFirebaseUser != null) {
 
@@ -175,8 +179,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             writeNewUser();
 
             initializeApiComponents();
+
+
             initializeGraphicComponents();
             createLocationManager();
+
+            initializeUserInfo();
 
 
         } else {
@@ -189,6 +197,63 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         //Create new request queue
         mRequestQueue = MySingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
+
+    }
+
+    private void initializeUserInfo() {
+
+        //Traer de la base
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        DatabaseReference mUserDetail = mDatabaseReference.child("users").child(mFirebaseUser.getUid()+"/data");
+
+        ValueEventListener userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                userUtilities.setId(user.getId());
+                userUtilities.setUid(user.getUid());
+                userUtilities.setUserName(user.getUserName());
+                userUtilities.setEmail(user.getEmail());
+                userUtilities.setPassword(user.getPassword());
+                userUtilities.setToken(user.getToken());
+                userUtilities.setStatus(user.getStatus());
+                userUtilities.setType(user.getType());
+                userUtilities.setAccess_token(user.getAccess_token());
+                userUtilities.setNickname(user.getNickname());
+                userUtilities.setFull_name(user.getNickname());
+                userUtilities.setAvatar(user.getAvatar());
+                userUtilities.setDetails(user.getDetails());
+                userUtilities.setSocial_id(user.getSocial());
+                userUtilities.setSocial_type(user.getSocial_type());
+                userUtilities.setSocial_id(user.getSocial_id());
+                userUtilities.setSocial_json(user.getSocial_json());
+                userUtilities.setSocial_email(user.getSocial_email());
+                userUtilities.setLastname(user.getLastname());
+                userUtilities.setPhone(user.getPhone());
+                userUtilities.setPostalcode(user.getPostalcode());
+                userUtilities.setState(user.getState());
+                userUtilities.setCity(user.getCity());
+                userUtilities.setOpenpay_id(user.getOpenpay_id());
+                userUtilities.setRemember_token(user.getRemember_token());
+                userUtilities.setAddress(user.getAddress());
+                userUtilities.setFacebook_share(user.getFacebook_share());
+                userUtilities.setProvider(user.getProvider());
+                userUtilities.setPhotoUrl(user.getPhotoUrl());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+
+
+        };
+
+        mUserDetail.addListenerForSingleValueEvent(userListener);
+
 
     }
 
@@ -257,11 +322,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             logOut();
         } else if (id == R.id.action_search_place) {
             openAutocompleteActivity();
-        } else*/
+        } else
 
         if (id == R.id.action_profile) {
             goToProfileScreen();
-        }
+        }*/
 
         return super.onOptionsItemSelected(item);
     }
@@ -875,7 +940,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
                     Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
-                    JSONObject mJSONObject = new JSONObject(value);
+                    final JSONObject mJSONObject = new JSONObject(value);
 
                     //Log.d(TAG,"mJSONObject: "+mJSONObject);
 
@@ -930,7 +995,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                                     Marker newMarker = mValuesUtilities.getGoogleMap().addMarker(new MarkerOptions()
                                                             .position(markerLatLng)
                                                             .icon(BitmapDescriptorFactory.fromBitmap(selectedMarker))
+
                                                     );
+
+                                                    newMarker.setTag(availavility);
 
                                                     parkingsMarkers.put(k, newMarker);
                                                     mValuesUtilities.setParkingsMarkers(parkingsMarkers);
@@ -966,6 +1034,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                         .position(markerLatLng)
                                         .icon(BitmapDescriptorFactory.fromBitmap(selectedMarker))
                                 );
+
+                                newMarker.setTag("none");
 
                                 parkingsMarkers.put(k, newMarker);
                                 mValuesUtilities.setParkingsMarkers(parkingsMarkers);
@@ -1057,6 +1127,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 case 2:
                     fragment = new ServicesFragment();
                     break;
+                case 3:
+                    fragment = new PerfilFragment();
 
             }
 
@@ -1077,7 +1149,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -1088,6 +1160,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     return getString(R.string.map);
                 case 1:
                     return getString(R.string.service);
+                case 2:
+                    return getString(R.string.action_profile);
 
             }
 
