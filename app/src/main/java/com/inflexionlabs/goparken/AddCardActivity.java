@@ -29,7 +29,8 @@ public class AddCardActivity extends AppCompatActivity {
     EditText editTxtNonbreT;
     EditText editTxtNoCard;
     EditText editTxtCVV;
-    EditText editTxtFechaE;
+    EditText editTxtYY;
+    EditText editTxtMM;
 
     Button btnSaveCard;
 
@@ -66,7 +67,8 @@ public class AddCardActivity extends AppCompatActivity {
         editTxtNonbreT = (EditText) findViewById(R.id.editTitular);
         editTxtNoCard = (EditText) findViewById(R.id.editNoCard);
         editTxtCVV = (EditText) findViewById(R.id.editCVV);
-        editTxtFechaE = (EditText) findViewById(R.id.editFecha);
+        editTxtYY = (EditText) findViewById(R.id.editYY);
+        editTxtMM = (EditText) findViewById(R.id.editMM);
 
         showInfoUser();
 
@@ -142,11 +144,43 @@ public class AddCardActivity extends AppCompatActivity {
             valid = false;
         }else{
             if(!CardValidator.validateNumber(card)){
-                
+                editTxtNoCard.setError("La tarjeta no es válida");
+                valid = false;
             }
         }
 
+        String cvv = editTxtCVV.getText().toString();
+        if(TextUtils.isEmpty(cvv)){
+            editTxtCVV.setError("Campo requerido");
+            valid = false;
+        }else{
+            if(!CardValidator.validateCVV(cvv,card)){
+                editTxtCVV.setError("El CVV no es válido");
+                valid = false;
+            }
+        }
 
+        String year = editTxtYY.getText().toString();
+        String month = editTxtMM.getText().toString();
+
+        if(TextUtils.isEmpty(month)){
+            editTxtMM.setError("Campo requerido");
+            valid = false;
+        }else{
+
+            if(TextUtils.isEmpty(year)){
+                editTxtYY.setError("Campo requerido");
+                valid = false;
+            }else{
+                if(!CardValidator.validateExpiryDate(Integer.parseInt(month), Integer.parseInt(year))){
+                    editTxtMM.setError("Mes no válido");
+                    editTxtYY.setError("Año no válido");
+                    valid = false;
+                }
+            }
+
+        }
+        
 
         return valid;
     }

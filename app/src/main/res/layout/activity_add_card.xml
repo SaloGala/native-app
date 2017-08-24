@@ -154,11 +154,27 @@
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
 
-                    <EditText
-                        android:id="@+id/editFecha"
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/edit_expCard" />
+                        android:text="@string/edit_expCard" />
+
+
+                    <EditText
+                        android:id="@+id/editMM"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_mm" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <EditText
+                        android:id="@+id/editYY"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/edit_yy" />
 
                     <Space
                         android:layout_width="match_parent"
