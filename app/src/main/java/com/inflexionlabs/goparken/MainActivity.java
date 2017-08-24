@@ -388,6 +388,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_location_on_black_24dp);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_directions_car_black_24dp);
+        tabLayout.getTabAt(2).setIcon(R.drawable.account_circle);
 
         Intent intent = getIntent();
         accessToken = intent.getStringExtra("accessToken");
