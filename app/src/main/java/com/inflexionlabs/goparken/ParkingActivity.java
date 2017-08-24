@@ -55,14 +55,6 @@ public class ParkingActivity extends AppCompatActivity {
                     navegarWazeMaps();
                     break;
 
-                case R.id.btnVerVehiculos:
-                    //addAuto();
-                    break;
-
-                case R.id.btnVerMetodosPago:
-                    //addCard();
-                    break;
-
             }
 
         }

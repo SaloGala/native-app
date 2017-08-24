@@ -142,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     String accessToken;
 
     UserUtilities userUtilities = UserUtilities.getInstance();
+    private DatabaseReference mDatabaseReference;
+    FirebaseUser mFirebaseUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
-        FirebaseUser mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
 
         if (mFirebaseUser != null) {
 
@@ -198,8 +200,56 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private void initializeUserInfo() {
 
         //Traer de la base
-        userUtilities.setNombre("lode la base");
-        userUtilities.setApellido("lode la base");
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        DatabaseReference mUserDetail = mDatabaseReference.child("users").child(mFirebaseUser.getUid()+"/data");
+
+        ValueEventListener userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                userUtilities.setId(user.getId());
+                userUtilities.setUid(user.getUid());
+                userUtilities.setUserName(user.getUserName());
+                userUtilities.setEmail(user.getEmail());
+                userUtilities.setPassword(user.getPassword());
+                userUtilities.setToken(user.getToken());
+                userUtilities.setStatus(user.getStatus());
+                userUtilities.setType(user.getType());
+                userUtilities.setAccess_token(user.getAccess_token());
+                userUtilities.setNickname(user.getNickname());
+                userUtilities.setFull_name(user.getNickname());
+                userUtilities.setAvatar(user.getAvatar());
+                userUtilities.setDetails(user.getDetails());
+                userUtilities.setSocial_id(user.getSocial());
+                userUtilities.setSocial_type(user.getSocial_type());
+                userUtilities.setSocial_id(user.getSocial_id());
+                userUtilities.setSocial_json(user.getSocial_json());
+                userUtilities.setSocial_email(user.getSocial_email());
+                userUtilities.setLastname(user.getLastname());
+                userUtilities.setPhone(user.getPhone());
+                userUtilities.setPostalcode(user.getPostalcode());
+                userUtilities.setState(user.getState());
+                userUtilities.setCity(user.getCity());
+                userUtilities.setOpenpay_id(user.getOpenpay_id());
+                userUtilities.setRemember_token(user.getRemember_token());
+                userUtilities.setAddress(user.getAddress());
+                userUtilities.setFacebook_share(user.getFacebook_share());
+                userUtilities.setProvider(user.getProvider());
+                userUtilities.setPhotoUrl(user.getPhotoUrl());
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+
+
+        };
+
+        mUserDetail.addListenerForSingleValueEvent(userListener);
 
 
     }

@@ -38,11 +38,6 @@ public class PerfilFragment extends Fragment{
     Button btnAddCard;
     Button btnAddAuto;
 
-    private DatabaseReference mDatabaseReference;
-
-    FirebaseUser currentUser;
-
-    String provider;
     String photoUrl;
 
     UserUtilities userUtilities = UserUtilities.getInstance();
@@ -56,7 +51,6 @@ public class PerfilFragment extends Fragment{
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
     }
 
     @Override
@@ -74,57 +68,23 @@ public class PerfilFragment extends Fragment{
         btnEditarPerfil.setOnClickListener(btnListener);
         btnAddAuto.setOnClickListener(btnListener);
         btnAddCard.setOnClickListener(btnListener);
-        //showInfoUser();
-        getInfoUser();
+        showInfoUser();
 
         return mView;
     }
 
     private void showInfoUser(){
 
-        for (UserInfo profile: currentUser.getProviderData()){
-            provider = profile.getProviderId();
-        }
-
-        if(provider.equals("password")){
+        if(userUtilities.getProvider().equals("password")){
             photoUrl = "https://firebasestorage.googleapis.com/v0/b/goparkennativa-cfff1.appspot.com/o/perfil_imagen%402x.png?alt=media&token=0104417e-f8d8-4b1d-8712-ea90e18ecadd";
 
         }else{
-            photoUrl = currentUser.getPhotoUrl().toString();
+            photoUrl = userUtilities.getPhotoUrl().toString();
         }
 
-        txtUserName.setText(currentUser.getDisplayName());
-        txtUserEmail.setText(currentUser.getEmail());
+        txtUserName.setText(userUtilities.getUserName());
+        txtUserEmail.setText(userUtilities.getEmail());
         Picasso.with(getContext()).load(photoUrl).fit().into(imgUserPhoto);
-    }
-
-    private void getInfoUser(){
-
-
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        DatabaseReference mUserDetail = mDatabaseReference.child("users").child(currentUser.getUid()+"/data");
-
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-
-                txtUserName.setText(user.getUserName());
-                txtUserEmail.setText(user.getEmail());
-                Picasso.with(getContext()).load(user.getPhotoUrl()).fit().into(imgUserPhoto);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-
-
-        };
-
-        mUserDetail.addListenerForSingleValueEvent(userListener);
-
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {
@@ -142,7 +102,7 @@ public class PerfilFragment extends Fragment{
                     break;
 
                 case R.id.btnVerMetodosPago:
-                    addCard();
+                    showCardsList();
                     break;
 
             }
@@ -162,8 +122,8 @@ public class PerfilFragment extends Fragment{
         startActivity(intent);
     }
 
-    private void addCard(){
-        Intent intent = new Intent(getActivity(),AddCardActivity.class);
+    private void showCardsList(){
+        Intent intent = new Intent(getActivity(),CardsListActivity.class);
         startActivity(intent);
     }
 
