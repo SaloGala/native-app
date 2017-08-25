@@ -103,7 +103,14 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
         mValuesUtilities.setInitializeUpdateFlag(false);
         initializeUpdateFlag = mValuesUtilities.getInitializeUpdateFlag();
 
-        mView = inflater.inflate(R.layout.map_fragment, container, false);
+        try{
+            mView = inflater.inflate(R.layout.map_fragment, container, false);
+
+        }catch (Exception e){
+
+        }
+
+
 
         mMapView = (MapView) (mView.findViewById(R.id.mapView));
         mMapView.onCreate(savedInstanceState);

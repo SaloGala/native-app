@@ -1,21 +1,30 @@
 package com.inflexionlabs.goparken;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.ListViewCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class CardsListActivity extends AppCompatActivity {
 
@@ -31,7 +40,12 @@ public class CardsListActivity extends AppCompatActivity {
 
     Button btnAddCard;
 
+    ListView lstCards;
+    ArrayList<Card> cards;
+    CardViewAdapter cardViewAdapter = null;
+    Context context;
 
+    TextView txtUsuario;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +78,14 @@ public class CardsListActivity extends AppCompatActivity {
             }
         });
 
+        lstCards = (ListView) findViewById(R.id.lstCards);
+        cards = new ArrayList<>();
+
+        context = this;
+
+        txtUsuario = (TextView) findViewById(R.id.txtUsuario);
+        txtUsuario.setText(userUtilities.getUserName());
+
     }
 
     private void goToAddCardScreen() {
@@ -85,8 +107,35 @@ public class CardsListActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(JSONObject response) {
                         // Manejo de la respuesta
+
                         Log.d(TAG, "Response : " + response);
 
+                        try {
+                            JSONObject content = response.getJSONObject("content");
+                            JSONArray methods = content.getJSONArray("methods");
+
+                            Log.d(TAG, "Methods : " + methods);
+
+                            for (int i=0; i<methods.length(); i++){
+
+                                Log.d(TAG, "Method " +i+": "+ methods.getJSONObject(i));
+
+                                if(methods.getJSONObject(i).getString("status").equals("active")){
+                                    cards.add(new Card(methods.getJSONObject(i).getInt("id"),
+                                            methods.getJSONObject(i).getString("openpay_card_mask"),
+                                            methods.getJSONObject(i).getString("status"),
+                                            methods.getJSONObject(i).getInt("default")
+                                    ));
+                                }
+
+                            }
+
+                            cardViewAdapter = new CardViewAdapter(cards,context);
+                            lstCards.setAdapter(cardViewAdapter);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
 
                     }

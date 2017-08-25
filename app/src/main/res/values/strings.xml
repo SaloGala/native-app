@@ -39,7 +39,7 @@
     <string name="ingresa_datos">Ingresa tus datos</string>
     <string name="datos_cliente">Datos del Cliente</string>
     <string name="btn_guardar">Guardar</string>
-    <string name="btn_vehiculos">Autos</string>
+    <string name="btn_vehiculos">Mis Autos</string>
     <string name="btn_metodos_pago">Mètodos de Pago</string>
     <string name="txt_mis_vehiculos">Mis Autos</string>
     <string name="btn_add_vehivle">Agregar auto</string>
@@ -63,6 +63,11 @@
     <string name="add_card">AGREGAR MÈTODO DE PAGO</string>
     <string name="edit_mm">MM</string>
     <string name="edit_yy">YY</string>
+    <string name="btn_editar_card">EDITAR</string>
+    <string name="btn_borrar_pago">BORRAR PAGO</string>
+    <string name="btn_predeterminar_pago">PREDETERMINAR</string>
+    <string name="lista_metodos_pago">Lista de métodos de pago</string>
+    <string name="edit_nombre_auto">Nombre para el auto (opcional)</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

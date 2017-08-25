@@ -77,6 +77,20 @@
                     android:layout_height="10dp" />
 
                 <Button
+                    android:id="@+id/btnVerMetodosPago"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/round_send_button"
+                    android:onClick="onClick"
+                    android:text="@string/btn_metodos_pago"
+                    android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+                    android:textColor="@android:color/white" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <Button
                     android:id="@+id/btnVerVehiculos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -86,19 +100,7 @@
                     android:textAppearance="@style/AppTheme.TextAppearance.Bold"
                     android:textColor="@android:color/white" />
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
 
-                <Button
-                    android:id="@+id/btnVerMetodosPago"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/round_send_button"
-                    android:onClick="onClick"
-                    android:text="@string/btn_metodos_pago"
-                    android:textAppearance="@style/AppTheme.TextAppearance.Bold"
-                    android:textColor="@android:color/white" />
 
 
             </LinearLayout>
