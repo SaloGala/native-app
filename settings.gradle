@@ -1,1 +1,2 @@
-include ':app',':openpayandroid'
+include ':app'
+include ':openpayandroid'
