@@ -36,7 +36,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 
 public class ParkingActivity extends AppCompatActivity {
-    final private String TAG="ParkingActivity";
+    final private String TAG = "ParkingActivity";
 
     ParkingUtilities parkingUtilities = ParkingUtilities.getInstance();
     UserUtilities userUtilities = UserUtilities.getInstance();
@@ -55,9 +55,9 @@ public class ParkingActivity extends AppCompatActivity {
 
     String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
 
-    String URL_COMPLEMENTO="OpenPay/GetCards?";
+    String URL_COMPLEMENTO = "OpenPay/GetCards?";
 
-    String URL_PREDET="OpenPay/MakeDefault";
+    String URL_PREDET = "OpenPay/MakeDefault";
 
     JsonObjectRequest jsArrayRequest;
     JsonObjectRequest jsArrayRequestP;
@@ -100,7 +100,7 @@ public class ParkingActivity extends AppCompatActivity {
         btnNav = (ImageButton) findViewById(R.id.btnNavigation);
         btnAddCardActivity = (Button) findViewById(R.id.btnAddCardActivity);
 
-        parkingImage=(ImageView) findViewById(R.id.imgPaking);
+        parkingImage = (ImageView) findViewById(R.id.imgPaking);
         Picasso.with(getApplicationContext()).load(parkingUtilities.getImage_path()).fit().into(parkingImage);
 
         avaImage = (ImageView) findViewById(R.id.imgAva);
@@ -126,13 +126,11 @@ public class ParkingActivity extends AppCompatActivity {
         initializeViewComponents();
 
 
-
-
     }
 
-    public void initializeViewComponents(){
+    public void initializeViewComponents() {
 
-        if(parkingUtilities.getAcceptGoParken()==1){
+        if (parkingUtilities.getAcceptGoParken() == 1) {
 
             if (availability.equals("full")) {
                 avaImage.setImageResource(R.drawable.marca_roja);
@@ -143,28 +141,28 @@ public class ParkingActivity extends AppCompatActivity {
                 avaImage.setImageResource(R.drawable.marca_verde);
             }
 
-            if(parkingUtilities.getTarifaPromo() == 1){
+            if (parkingUtilities.getTarifaPromo() == 1) {
 
                 txtTarifaGP.setText("TARIFA GOPARKEN");
-                txtTarifaGPpesos.setText("$ "+Double.toString(parkingUtilities.getCost_goparken_by_hour())+"(PROMO: "+parkingUtilities.getHorasPromo()+"hrs X $"+Integer.toString(parkingUtilities.getTarifaPromo()));
+                txtTarifaGPpesos.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()) + "(PROMO: " + parkingUtilities.getHorasPromo() + "hrs X $" + Integer.toString(parkingUtilities.getTarifaPromo()));
 
-            }else{
+            } else {
 
                 txtTarifaGP.setText("TARIFA GOPARKEN");
-                txtTarifaGPpesos.setText("$ "+Double.toString(parkingUtilities.getCost_goparken_by_hour()));
+                txtTarifaGPpesos.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()));
             }
 
             lytInfoParking.addView(txtTarifaGP);
             lytInfoParking.addView(txtTarifaGPpesos);
 
 
-        }else {
+        } else {
 
             avaImage.setImageResource(R.drawable.marca_gris);
         }
 
         txtTarifaRegular.setText("TARIFA REGULAR");
-        txtTarifaRegulapesos.setText("$ "+Double.toString(parkingUtilities.getCost_public_by_hour()));
+        txtTarifaRegulapesos.setText("$ " + Double.toString(parkingUtilities.getCost_public_by_hour()));
 
         lytInfoParking.addView(txtTarifaRegular);
         lytInfoParking.addView(txtTarifaRegulapesos);
@@ -192,13 +190,13 @@ public class ParkingActivity extends AppCompatActivity {
 
     private void goToAddCardScreen() {
 
-        Intent intent = new Intent(this,AddCardActivity.class);
+        Intent intent = new Intent(this, AddCardActivity.class);
         startActivity(intent);
     }
 
-    public void getCardList(){
+    public void getCardList() {
 
-        URL_COMPLEMENTO = URL_COMPLEMENTO+"token="+userUtilities.getToken();
+        URL_COMPLEMENTO = URL_COMPLEMENTO + "token=" + userUtilities.getToken();
 
         jsArrayRequest = new JsonObjectRequest(
                 Request.Method.GET,
@@ -219,13 +217,13 @@ public class ParkingActivity extends AppCompatActivity {
 
                             payable = methods.length();
 
-                            if(payable>0){
+                            if (payable > 0) {
 
-                                for (int i=0; i<methods.length(); i++){
+                                for (int i = 0; i < methods.length(); i++) {
 
-                                    Log.d(TAG, "Method " +i+": "+ methods.getJSONObject(i));
+                                    Log.d(TAG, "Method " + i + ": " + methods.getJSONObject(i));
 
-                                    if(methods.getJSONObject(i).getString("status").equals("active")){
+                                    if (methods.getJSONObject(i).getString("status").equals("active")) {
                                         cards.add(new Card(methods.getJSONObject(i).getInt("id"),
                                                 methods.getJSONObject(i).getString("openpay_card_mask"),
                                                 methods.getJSONObject(i).getString("status"),
@@ -235,7 +233,7 @@ public class ParkingActivity extends AppCompatActivity {
 
                                 }
 
-                                spinnerAdapter = new SpinnerItemAdapter(cards,getApplicationContext());
+                                spinnerAdapter = new SpinnerItemAdapter(cards, getApplicationContext());
                                 spinnerCards.setAdapter(spinnerAdapter);
 
                                 spinnerCards.setVisibility(View.VISIBLE);
@@ -244,8 +242,8 @@ public class ParkingActivity extends AppCompatActivity {
                                     @Override
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
-                                        predetCard(Integer.toString(((Card)parent.getItemAtPosition(position)).getId()));
-                                        Toast.makeText(getApplicationContext(),Integer.toString(((Card)parent.getItemAtPosition(position)).getId()),Toast.LENGTH_LONG).show();
+                                        predetCard(Integer.toString(((Card) parent.getItemAtPosition(position)).getId()));
+                                        Toast.makeText(getApplicationContext(), Integer.toString(((Card) parent.getItemAtPosition(position)).getId()), Toast.LENGTH_LONG).show();
                                     }
 
                                     @Override
@@ -254,12 +252,9 @@ public class ParkingActivity extends AppCompatActivity {
                                     }
                                 });
 
-                            } else{
+                            } else {
                                 btnAddCardActivity.setVisibility(View.VISIBLE);
                             }
-
-
-
 
 
                         } catch (JSONException e) {
@@ -283,7 +278,7 @@ public class ParkingActivity extends AppCompatActivity {
 
     }
 
-    public void predetCard(String method_id){
+    public void predetCard(String method_id) {
 
         try {
 
@@ -323,9 +318,9 @@ public class ParkingActivity extends AppCompatActivity {
 
     }
 
-    public void navegarWazeMaps(){
+    public void navegarWazeMaps() {
 
-        String uri = "geo:0,0"+"?q="+parkingUtilities.getLatitude() + "," + parkingUtilities.getLongitude();
+        String uri = "geo:0,0" + "?q=" + parkingUtilities.getLatitude() + "," + parkingUtilities.getLongitude();
         startActivity(new Intent(android.content.Intent.ACTION_VIEW,
                 Uri.parse(uri)));
     }

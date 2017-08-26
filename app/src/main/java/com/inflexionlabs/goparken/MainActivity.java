@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     String provider;
     String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
 
-    String URL_COMPLEMENTO="User/Facebook";
+    String URL_COMPLEMENTO = "User/Facebook";
 
     User objectUser = new User();
 
@@ -174,7 +174,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         if (mFirebaseUser != null) {
 
 
-
             initializeComponents();
             writeNewUser();
 
@@ -183,9 +182,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             initializeGraphicComponents();
             createLocationManager();
-
-            initializeUserInfo();
-
 
         } else {
             goLoginScreen();
@@ -197,63 +193,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         //Create new request queue
         mRequestQueue = MySingleton.getInstance(this.getApplicationContext()).
                 getRequestQueue();
-
-    }
-
-    private void initializeUserInfo() {
-
-        //Traer de la base
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        DatabaseReference mUserDetail = mDatabaseReference.child("users").child(mFirebaseUser.getUid()+"/data");
-
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User user = dataSnapshot.getValue(User.class);
-
-                userUtilities.setId(user.getId());
-                userUtilities.setUid(user.getUid());
-                userUtilities.setUserName(user.getUserName());
-                userUtilities.setEmail(user.getEmail());
-                userUtilities.setPassword(user.getPassword());
-                userUtilities.setToken(user.getToken());
-                userUtilities.setStatus(user.getStatus());
-                userUtilities.setType(user.getType());
-                userUtilities.setAccess_token(user.getAccess_token());
-                userUtilities.setNickname(user.getNickname());
-                userUtilities.setFull_name(user.getNickname());
-                userUtilities.setAvatar(user.getAvatar());
-                userUtilities.setDetails(user.getDetails());
-                userUtilities.setSocial_id(user.getSocial());
-                userUtilities.setSocial_type(user.getSocial_type());
-                userUtilities.setSocial_id(user.getSocial_id());
-                userUtilities.setSocial_json(user.getSocial_json());
-                userUtilities.setSocial_email(user.getSocial_email());
-                userUtilities.setLastname(user.getLastname());
-                userUtilities.setPhone(user.getPhone());
-                userUtilities.setPostalcode(user.getPostalcode());
-                userUtilities.setState(user.getState());
-                userUtilities.setCity(user.getCity());
-                userUtilities.setOpenpay_id(user.getOpenpay_id());
-                userUtilities.setRemember_token(user.getRemember_token());
-                userUtilities.setAddress(user.getAddress());
-                userUtilities.setFacebook_share(user.getFacebook_share());
-                userUtilities.setProvider(user.getProvider());
-                userUtilities.setPhotoUrl(user.getPhotoUrl());
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
-            }
-
-
-        };
-
-        mUserDetail.addListenerForSingleValueEvent(userListener);
-
 
     }
 
@@ -373,14 +312,16 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         Typeface NexaBold = Typeface.createFromAsset(getApplication().getAssets(), "NexaBold.ttf");
 
-        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        mTitle.setTypeface(NexaBold);
+        //TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        //mTitle.setTypeface(NexaBold);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
 
         SectionsPageAdapter mSectionsPagerAdapter = new SectionsPageAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.container);
+
+        mViewPager.setOffscreenPageLimit(2);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -510,17 +451,17 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     private void writeNewUser() {
 
-        final FirebaseUser currentUser =FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        for (UserInfo profile: currentUser.getProviderData()){
+        for (UserInfo profile : currentUser.getProviderData()) {
             provider = profile.getProviderId();
         }
 
-        if(provider.equals("facebook.com")){
+        if (provider.equals("facebook.com")) {
 
-            if(accessToken!="emailPassword"){
+            if (accessToken != "emailPassword") {
                 // Mapeo de los pares clave-valor
-                HashMap<String, String > data = new HashMap();
+                HashMap<String, String> data = new HashMap();
                 data.put("token", accessToken);
 
                 JsonObjectRequest jsArrayRequest = new JsonObjectRequest(
@@ -591,8 +532,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
 
 
-                }
             }
+        }
 
 
 
@@ -889,7 +830,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             public void onKeyExited(String key) {
 
 
-                try{
+                try {
 
                     keys.clear();
                     parkingsMarkers.get(key).remove();
@@ -897,7 +838,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                     mValuesUtilities.setParkingsMarkers(parkingsMarkers);
 
 
-                }catch (Exception e) {
+                } catch (Exception e) {
 
                 }
 
@@ -1078,13 +1019,13 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     protected void onStop() {
         mGoogleApiClient.disconnect();
         super.onStop();
-        Log.d(TAG,"onStop");
+        Log.d(TAG, "onStop");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG,"onPause");
+        Log.d(TAG, "onPause");
         RequestingLocationUpdatesFlag = false;
         stopLocationUpdates();
     }
@@ -1092,7 +1033,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(TAG,"onResume");
+        Log.d(TAG, "onResume");
         if (mGoogleApiClient.isConnected() && !RequestingLocationUpdatesFlag) {
             startLocationUpdates();
         }
