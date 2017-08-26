@@ -13,12 +13,24 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import mx.openpay.android.Openpay;
 import mx.openpay.android.OperationCallBack;
 import mx.openpay.android.OperationResult;
 import mx.openpay.android.exceptions.OpenpayServiceException;
 import mx.openpay.android.exceptions.ServiceUnavailableException;
+import mx.openpay.android.model.Address;
 import mx.openpay.android.model.Card;
+import mx.openpay.android.model.Token;
 import mx.openpay.android.validation.CardValidator;
 
 
@@ -45,6 +57,16 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
     private final String PUBLIC_API_KEY = "pk_7226b0afacd546e0bb883e90945bdb0a";
     boolean productionMode = false;
     Openpay openpay;
+    String deviceIdString;
+    Token tokenResponse;
+    Card cardResponse;
+
+    String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
+    String URL_COMPLEMENTO="OpenPay/Card";
+    JSONObject dataRequest = new JSONObject();
+    JsonObjectRequest jsArrayRequest;
+
+    DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,6 +111,7 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
         });
 
         openpay = new Openpay(MERCHANT_ID,PRIVATE_API_KEY,productionMode);
+        deviceIdString = openpay.getDeviceCollectorDefaultImpl().setup(this);
 
     }
 
@@ -105,8 +128,18 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
         card.expirationMonth(Integer.parseInt(editTxtMM.getText().toString()));
         card.expirationYear(Integer.parseInt(editTxtYY.getText().toString()));
 
+        Address address = new Address();
+        address.line1(editTxtDireccion.getText().toString());
+        address.postalCode(editTxtCodPostal.getText().toString());
+        address.state(editTxtEstado.getText().toString());
+        address.city(editTxtCiudad.getText().toString());
+        address.line2("");
+        address.line3("");
+        address.countryCode("MX");
 
-        openpay.createCard(card,this);
+        card.address(address);
+
+        //openpay.createCard(card,this);
         openpay.createToken(card,this);
 
     }
@@ -206,6 +239,82 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
         return valid;
     }
 
+    public void constructDataRequest(){
+
+        try {
+
+            dataRequest.put("USER_NAME", userUtilities.getUserName());
+            dataRequest.put("USER_EMAIL", userUtilities.getEmail());
+
+            if(userUtilities.getLastname().isEmpty()){
+
+                dataRequest.put("USER_LASTNAME", "-");
+            }else{
+
+                dataRequest.put("USER_LASTNAME", userUtilities.getLastname());
+            }
+
+            if(userUtilities.getPhone().isEmpty()){
+
+                dataRequest.put("USER_PHONE","-");
+            }else{
+
+                dataRequest.put("USER_PHONE",userUtilities.getPhone());
+            }
+
+            dataRequest.put("USER_ADDRESS",userUtilities.getAddress());
+            dataRequest.put("USER_POSTALCODE",userUtilities.getPostalcode());
+            dataRequest.put("USER_STATE",userUtilities.getState());
+            dataRequest.put("USER_CITY",userUtilities.getCity());
+
+            dataRequest.put("deviceSessionId", deviceIdString);
+
+            dataRequest.put("OPENPAY_TOKEN", tokenResponse.getId());
+            dataRequest.put("OPENPAY_CARD",cardResponse);
+            dataRequest.put("OPENPAY_MASK",cardResponse.getCardNumber());
+
+            dataRequest.put("token", userUtilities.getToken());
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public void updateUserUtilities(){
+
+        userUtilities.setAddress(editTxtDireccion.getText().toString());
+        userUtilities.setPostalcode(editTxtCodPostal.getText().toString());
+        userUtilities.setState(editTxtEstado.getText().toString());
+        userUtilities.setCity(editTxtCiudad.getText().toString());
+    }
+
+    private void showMessge(String msg) {
+
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
+    }
+
+    public void updateFireBaseUser(){
+
+        Log.d(TAG,"updateFireBaseUser");
+
+        databaseReference = FirebaseDatabase.getInstance().getReference();
+
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("address").setValue(editTxtDireccion.getText().toString());
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("postalcode").setValue(editTxtCodPostal.getText().toString());
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("state").setValue(editTxtEstado.getText().toString());
+        databaseReference.child("users").child(userUtilities.getUid()).child("data").child("city").setValue(editTxtCiudad.getText().toString());
+
+        //method payment
+        /*databaseReference.child("users").child(userUtilities.getUid()).child("cards").child(tokenResponse.getId()).child("openpay_token").setValue(tokenResponse.getId());
+        databaseReference.child("users").child(userUtilities.getUid()).child("cards").child(tokenResponse.getId()).child("openpay_card_mask").setValue(cardResponse.getCardNumber());
+        databaseReference.child("users").child(userUtilities.getUid()).child("cards").child(tokenResponse.getId()).child("response_from_openpay").setValue(cardResponse);
+        databaseReference.child("users").child(userUtilities.getUid()).child("cards").child(tokenResponse.getId()).child("deviceSessionId").setValue(deviceIdString);
+        databaseReference.child("users").child(userUtilities.getUid()).child("cards").child(tokenResponse.getId()).child("status").setValue("active");
+        databaseReference.child("users").child(userUtilities.getUid()).child("cards").child(tokenResponse.getId()).child("default").setValue(1);*/
+
+    }
 
     @Override
     public void onBackPressed() {
@@ -229,7 +338,43 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
     @Override
     public void onSuccess(OperationResult operationResult) {
 
-        Log.d(TAG,"onSucces: "+ operationResult.getResult());
+        updateUserUtilities();
+
+        tokenResponse  = (Token)operationResult.getResult();
+        cardResponse = tokenResponse.getCard();
+
+        constructDataRequest();
+
+        jsArrayRequest = new JsonObjectRequest(
+                Request.Method.POST,
+                URL_BASE + URL_COMPLEMENTO,
+                dataRequest,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Manejo de la respuesta
+                        Log.d(TAG, "Respuesta en JSON: " + response);
+
+                        updateFireBaseUser();
+
+                        showMessge("Datos guardados con èxito");
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejo de errores
+
+                        showMessge("Ocurrio un error, por favor intente nuevamente");
+                        Log.d(TAG, "Error: " + error.getMessage());
+                    }
+                });
+
+        // Add request to de queue
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+
 
     }
 }

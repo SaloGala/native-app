@@ -31,6 +31,22 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <TextView
+        android:id="@+id/txtUsuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="30dp" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:text="@string/lista_metodos_pago"/>
+
     <Button
         android:id="@+id/btnAddCard"
         android:layout_width="match_parent"
@@ -40,5 +56,13 @@
         android:text="@string/add_card"
         android:textAppearance="@style/AppTheme.TextAppearance.Bold"
         android:textColor="@android:color/white" />
+
+    <ListView
+        android:id="@+id/lstCards"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </ListView>
+
 
 </LinearLayout>

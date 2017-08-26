@@ -247,6 +247,8 @@ public class EditProfileActivity extends AppCompatActivity {
                         // Manejo de la respuesta
                         Log.d(TAG, "Respuesta en JSON editar perfil: " + response);
 
+                        updateUserUtilities();
+
                         updateFireBaseUser();
 
                         showMessge("Datos guardados con èxito");
@@ -293,9 +295,14 @@ public class EditProfileActivity extends AppCompatActivity {
         userUtilities.setLastname(apellidosField.getText().toString());
     }
 
-
     @Override
     public void onBackPressed() {
         finish();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 }

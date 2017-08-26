@@ -55,60 +55,20 @@
                     android:padding="15dp">
 
                     <TextView
+                        android:id="@+id/txtNombreUsuario"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="@string/datos_auto"
-                        android:textSize="30dp" />
+                        android:textSize="20dp" />
 
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
 
-                    <EditText
-                        android:id="@+id/editNombreAuto"
+                    <TextView
+                        android:id="@+id/txtEmailUsuario"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/edit_nombre_auto" />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp" />
-
-                    <EditText
-                        android:id="@+id/editPlaca"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/edit_placa" />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp" />
-
-                    <EditText
-                        android:id="@+id/editMarca"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/edit_marca" />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp" />
-
-                    <EditText
-                        android:id="@+id/editSubmarca"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/edit_submarca" />
-
-                    <Space
-                        android:layout_width="match_parent"
-                        android:layout_height="10dp" />
-
-                    <EditText
-                        android:id="@+id/editAnio"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:hint="@string/edit_anio" />
+                        android:textSize="20dp" />
 
                     <Space
                         android:layout_width="match_parent"
@@ -117,19 +77,44 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="* Campo obligatorio" />
+                        android:text="@string/edit_numCard"
+                        android:textSize="20dp" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <TextView
+                        android:id="@+id/txtNumTarjeta"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="28dp" />
 
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="10dp" />
 
                     <Button
-                        android:id="@+id/btnGuardarAuto"
+                        android:id="@+id/btnDeleteCard"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@drawable/round_send_button"
-                        android:onClick="Guardar"
-                        android:text="@string/btn_add_vehivle"
+                        android:onClick="onClick"
+                        android:text="@string/btn_borrar_pago"
+                        android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+                        android:textColor="@android:color/white" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="10dp" />
+
+                    <Button
+                        android:id="@+id/btnPredetCard"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/round_send_button"
+                        android:onClick="onClick"
+                        android:text="@string/btn_predeterminar_pago"
                         android:textAppearance="@style/AppTheme.TextAppearance.Bold"
                         android:textColor="@android:color/white" />
 
@@ -142,4 +127,3 @@
     </LinearLayout>
 
 </LinearLayout>
-
