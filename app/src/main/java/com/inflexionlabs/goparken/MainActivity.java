@@ -21,6 +21,7 @@ import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -34,6 +35,10 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -250,6 +255,12 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
+        autocompleteFragment.setHint("GoParken");
+
+        /*ViewGroup.LayoutParams params = autocompleteFragment.getView().getLayoutParams();
+        params.height = 5;
+        autocompleteFragment.getView().setLayoutParams(params);*/
+
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
@@ -358,6 +369,35 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
         tabLayout.setupWithViewPager(mViewPager);
+
+        final LinearLayout linearLayoutMap = (LinearLayout) findViewById(R.id.LLMap);
+        final LinearLayout linearLayoutGeneric = (LinearLayout) findViewById(R.id.LLGeneric);
+        final AppBarLayout ABLMain = (AppBarLayout) findViewById(R.id.ABLMain);
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+                if (position == 0) {
+                    linearLayoutMap.setVisibility(View.VISIBLE);
+                    linearLayoutGeneric.setVisibility(View.GONE);
+                } else {
+                    linearLayoutGeneric.setVisibility(View.VISIBLE);
+                    linearLayoutMap.setVisibility(View.GONE);
+                }
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
 
         tabLayout.getTabAt(0).setIcon(R.drawable.ic_location_on_black_24dp);
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_directions_car_black_24dp);
@@ -1115,6 +1155,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         public SectionsPageAdapter(FragmentManager fm) {
             super(fm);
         }
+
 
         @Override
         public Fragment getItem(int position) {
