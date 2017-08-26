@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_map_opacity"
+    android:orientation="vertical"
+    tools:context="com.inflexionlabs.goparken.LoginActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp">
+
+        <ImageView
+            android:id="@+id/IVPictureLogo"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="7"
+            android:paddingBottom="5dp"
+            android:paddingTop="30dp"
+            android:src="@drawable/login_imago2x" />
+
+        <ImageView
+            android:id="@+id/IVTextLogo"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="3"
+            android:padding="20dp"
+            android:src="@drawable/login_logo2x" />
+
+
+        <Button
+            android:id="@+id/btnSignin"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="2"
+            android:background="@android:color/transparent"
+            android:onClick="onClick"
+            android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+            android:text="@string/button_iniciarSesion"
+            android:textColor="@color/colorPrimary" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight=".5" />
+
+        <Button
+            android:id="@+id/btnRegister"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="2"
+            android:background="@drawable/round_register_button"
+            android:onClick="onClick"
+            android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+            android:text="@string/button_registrarse"
+
+            android:textColor="@android:color/white" />
+
+        <com.facebook.login.widget.LoginButton
+            android:id="@+id/btnSigninWithFacebook"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight=".5" />
+
+        <Button
+            android:id="@+id/BTNSigninWithFacebook"
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight="2"
+            android:background="@drawable/round_facebook_button"
+            android:drawableLeft="@drawable/facebook_login_button_size"
+            android:onClick="onClick"
+            android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+            android:text="@string/button_iniciarFB"
+            android:textAlignment="center"
+            android:textColor="@android:color/white" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight=".5" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:orientation="vertical"
+            android:layout_weight="2">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Al registrarte estás aceptando los"
+                android:textAlignment="center" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/TVTerminosYCondiciones"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/terminos_y_condiciones"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/AppTheme.TextAppearance.Bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" así como el"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/TVAvisoDePrivacidad"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/aviso_de_privacidad"
+                android:textAlignment="center"
+                android:textAppearance="@style/AppTheme.TextAppearance.Bold" />
+
+
+        </LinearLayout>
+
+        <!--Bold font-->
+        <!--android:textAppearance="@style/AppTheme.TextAppearance.Bold"-->
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0px"
+            android:layout_weight=".5" />
+
+
+    </LinearLayout>
+</LinearLayout>
