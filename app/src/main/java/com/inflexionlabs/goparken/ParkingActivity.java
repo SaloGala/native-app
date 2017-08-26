@@ -11,10 +11,14 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,6 +31,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import android.widget.LinearLayout.LayoutParams;
+
 
 public class ParkingActivity extends AppCompatActivity {
     final private String TAG="ParkingActivity";
@@ -50,9 +57,23 @@ public class ParkingActivity extends AppCompatActivity {
 
     String URL_COMPLEMENTO="OpenPay/GetCards?";
 
+    String URL_PREDET="OpenPay/MakeDefault";
+
     JsonObjectRequest jsArrayRequest;
+    JsonObjectRequest jsArrayRequestP;
+    JSONObject dataRequest = new JSONObject();
+
     ArrayList<Card> cards;
     Context context;
+
+    LinearLayout lytInfoParking;
+
+    TextView txtTarifaGP;
+    TextView txtTarifaGPpesos;
+    TextView txtTarifaRegular;
+    TextView txtTarifaRegulapesos;
+
+    LayoutParams layoutparams;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +82,7 @@ public class ParkingActivity extends AppCompatActivity {
 
         initializeComponents();
         getCardList();
-        initializeViewComponents();
+        //initializeViewComponents();
     }
 
     private void initializeComponents() {
@@ -85,6 +106,12 @@ public class ParkingActivity extends AppCompatActivity {
         avaImage = (ImageView) findViewById(R.id.imgAva);
         spinnerCards = (Spinner) findViewById(R.id.spinnerCards);
 
+        lytInfoParking = (LinearLayout) findViewById(R.id.lytInfoParking);
+
+        txtTarifaGP = new TextView(this);
+        txtTarifaGPpesos = new TextView(this);
+        txtTarifaRegular = new TextView(this);
+        txtTarifaRegulapesos = new TextView(this);
 
         btnNav.setOnClickListener(btnListener);
         btnAddCardActivity.setOnClickListener(btnListener);
@@ -96,6 +123,8 @@ public class ParkingActivity extends AppCompatActivity {
         cards = new ArrayList<>();
         context = this;
 
+        initializeViewComponents();
+
 
 
 
@@ -104,6 +133,7 @@ public class ParkingActivity extends AppCompatActivity {
     public void initializeViewComponents(){
 
         if(parkingUtilities.getAcceptGoParken()==1){
+
             if (availability.equals("full")) {
                 avaImage.setImageResource(R.drawable.marca_roja);
 
@@ -112,18 +142,32 @@ public class ParkingActivity extends AppCompatActivity {
             } else {
                 avaImage.setImageResource(R.drawable.marca_verde);
             }
+
+            if(parkingUtilities.getTarifaPromo() == 1){
+
+                txtTarifaGP.setText("TARIFA GOPARKEN");
+                txtTarifaGPpesos.setText("$ "+Double.toString(parkingUtilities.getCost_goparken_by_hour())+"(PROMO: "+parkingUtilities.getHorasPromo()+"hrs X $"+Integer.toString(parkingUtilities.getTarifaPromo()));
+
+            }else{
+
+                txtTarifaGP.setText("TARIFA GOPARKEN");
+                txtTarifaGPpesos.setText("$ "+Double.toString(parkingUtilities.getCost_goparken_by_hour()));
+            }
+
+            lytInfoParking.addView(txtTarifaGP);
+            lytInfoParking.addView(txtTarifaGPpesos);
+
+
         }else {
+
             avaImage.setImageResource(R.drawable.marca_gris);
         }
 
+        txtTarifaRegular.setText("TARIFA REGULAR");
+        txtTarifaRegulapesos.setText("$ "+Double.toString(parkingUtilities.getCost_public_by_hour()));
 
-        if(payable>0){
-            spinnerCards.setVisibility(View.VISIBLE);
-        }else{
-            btnAddCardActivity.setVisibility(View.VISIBLE);
-        }
-
-
+        lytInfoParking.addView(txtTarifaRegular);
+        lytInfoParking.addView(txtTarifaRegulapesos);
 
     }
 
@@ -193,6 +237,25 @@ public class ParkingActivity extends AppCompatActivity {
 
                                 spinnerAdapter = new SpinnerItemAdapter(cards,getApplicationContext());
                                 spinnerCards.setAdapter(spinnerAdapter);
+
+                                spinnerCards.setVisibility(View.VISIBLE);
+
+                                spinnerCards.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                    @Override
+                                    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+                                        predetCard(Integer.toString(((Card)parent.getItemAtPosition(position)).getId()));
+                                        Toast.makeText(getApplicationContext(),Integer.toString(((Card)parent.getItemAtPosition(position)).getId()),Toast.LENGTH_LONG).show();
+                                    }
+
+                                    @Override
+                                    public void onNothingSelected(AdapterView<?> parent) {
+
+                                    }
+                                });
+
+                            } else{
+                                btnAddCardActivity.setVisibility(View.VISIBLE);
                             }
 
 
@@ -217,6 +280,46 @@ public class ParkingActivity extends AppCompatActivity {
 
         // Add request to de queue
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+
+    }
+
+    public void predetCard(String method_id){
+
+        try {
+
+            dataRequest.put("method_id", method_id);
+            dataRequest.put("token", userUtilities.getToken());
+
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        jsArrayRequestP = new JsonObjectRequest(
+                Request.Method.POST,
+                URL_BASE + URL_PREDET,
+                dataRequest,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Manejo de la respuesta
+                        Log.d(TAG, "Respuesta en JSON: " + response);
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejo de errores
+
+
+                        Log.d(TAG, "Error: " + error.getMessage());
+                    }
+                });
+
+        // Add request to de queue
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequestP);
 
     }
 
