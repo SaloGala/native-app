@@ -1,6 +1,2 @@
 <?xml version="1.0" encoding="utf-8"?>
-<<<<<<< HEAD
-<merger version="3"><dataSet config="main"><source path="C:\Users\Salo\Documents\UBroApps\native-app\openpayandroid\src\main\jniLibs"/></dataSet><dataSet config="release"><source path="C:\Users\Salo\Documents\UBroApps\native-app\openpayandroid\src\release\jniLibs"/></dataSet></merger>
-=======
 <merger version="3"><dataSet config="main"><source path="/Users/odalysmarronsanchez/Documents/GoParken/AppMovil/GoParkenNativa/openpayandroid/src/main/jniLibs"/></dataSet><dataSet config="release"><source path="/Users/odalysmarronsanchez/Documents/GoParken/AppMovil/GoParkenNativa/openpayandroid/src/release/jniLibs"/></dataSet></merger>
->>>>>>> 9024403b934ae077c90ea2c7a77bc2c94cb00e6a
