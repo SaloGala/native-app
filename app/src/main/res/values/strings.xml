@@ -68,6 +68,7 @@
     <string name="btn_predeterminar_pago">PREDETERMINAR</string>
     <string name="lista_metodos_pago">Lista de métodos de pago</string>
     <string name="edit_nombre_auto">Nombre para el auto (opcional)</string>
+    <string name="bnt_registrar_pago">REGISTRAR UNA FORMA DE PAGO</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

@@ -425,6 +425,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
         Log.d(TAG,"goToParkingDetailActivity");
 
         Intent intent = new Intent(mMainActivity, ParkingActivity.class);
+        intent.putExtra("availability",availability);
         startActivity(intent);
     }
 

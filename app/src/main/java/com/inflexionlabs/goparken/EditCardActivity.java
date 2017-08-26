@@ -153,6 +153,8 @@ public class EditCardActivity extends AppCompatActivity {
                                 // Manejo de la respuesta
                                 Log.d(TAG, "Respuesta en JSON: " + response);
 
+
+
                                 showMessge("Tarjeta eliminada con éxito");
 
                                 finish();
