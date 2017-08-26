@@ -68,6 +68,8 @@ import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -245,6 +247,36 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         yellowMarker = Bitmap.createScaledBitmap(bitmapYellow, width, height, false);
 
 
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+                GoogleMap tempMap = mValuesUtilities.getGoogleMap();
+
+                if (tempMap != null) {
+
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
+
+                    tempMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                    if (searchLocationMarker != null) {
+                        searchLocationMarker.remove();
+                    }
+
+                    searchLocationMarker = tempMap.addMarker(new MarkerOptions()
+                            .position(place.getLatLng())
+                    );
+                }
+
+            }
+
+            @Override
+            public void onError(Status status) {
+            }
+        });
     }
 
     @Override
