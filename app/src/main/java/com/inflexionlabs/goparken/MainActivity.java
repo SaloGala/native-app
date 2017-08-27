@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final int REQUEST_CODE_AUTOCOMPLETE = 3;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    //Este cambio lo hizo Salo
     public GoogleApiClient mGoogleApiClient;
     LocationManager locationManager;
     LocationRequest mLocationRequest;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     Bitmap redMarker;
     Bitmap yellowMarker;
     Bitmap selectedMarker;
+    //Este cambio lo hizo Salo
 
     List<String> keys = new ArrayList<String>();
 
@@ -237,6 +239,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    //Este cambio lo hizo Salo
+
+
     private void initializeGraphicComponents() {
         //este cambio lo hizo odalys(yo)
 
@@ -330,6 +335,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
+
+    //Este cambio lo hizo Salo
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -532,6 +539,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     };
 
+    //Este cambio lo hizo Salo
+
     public void logOut() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -708,6 +717,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
+    //Este cambio lo hizo Salo
+
     protected void startLocationUpdates() {
 
         RequestingLocationUpdatesFlag = true;
@@ -775,6 +786,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             MapInitializedFlag = true;
         }
     }
+
+    //Este cambio lo hizo Salo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -887,6 +900,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    //Este cambio lo hizo Salo
+
     private void updateUserLocation(Location location) {
 
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -918,6 +933,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
+    //Este cambio lo hizo Salo
 
     public void searchParkings(GeoLocation searchArea) {
 
@@ -982,6 +998,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
+    //Este cambio lo hizo Salo
 
     public void getParkingDetail() {
 
@@ -1194,6 +1211,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    //Este cambio lo hizo Salo
+
     public class SectionsPageAdapter extends FragmentPagerAdapter {
 
         public SectionsPageAdapter(FragmentManager fm) {
@@ -1238,3 +1257,9 @@ interface GooglePlayServicesLocationFromActivity {
 //este cambio lo hizo odalys(yo)
 //este cambio lo hizo odalys(yo)
 
+
+//Este cambio lo hizo Salo
+
+//Este cambio lo hizo Salo
+
+//Este cambio lo hizo Salo
