@@ -69,9 +69,12 @@
     <string name="lista_metodos_pago">Lista de métodos de pago</string>
     <string name="edit_nombre_auto">Nombre para el auto (opcional)</string>
     <string name="bnt_registrar_pago">REGISTRAR UNA FORMA DE PAGO</string>
+    <string name="tarifa_hora">TARIFA POR HORA</string>
+    <string name="tarifa_msg">Tarifas aproximadas en precio por hora</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 
 </resources>

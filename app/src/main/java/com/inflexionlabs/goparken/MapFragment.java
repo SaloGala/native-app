@@ -401,7 +401,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
                     }
 
-                    goToParkingDetailActivity();
+                    goToParkingDetailActivity(parkingUtilities.getAcceptGoParken());
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -420,13 +420,22 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
     }
 
-    public void goToParkingDetailActivity() {
+    public void goToParkingDetailActivity(int acceptGoParken) {
 
         Log.d(TAG,"goToParkingDetailActivity");
+        Intent intent;
 
-        Intent intent = new Intent(mMainActivity, ParkingActivity.class);
-        intent.putExtra("availability",availability);
+        if(acceptGoParken == 1){
+            intent = new Intent(mMainActivity, ParkingActivity.class);
+            intent.putExtra("availability",availability);
+        }else{
+            intent = new Intent(mMainActivity, NoGPParkingActivity.class);
+        }
+
         startActivity(intent);
+
+
+
     }
 
 

@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -31,6 +32,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 import android.widget.LinearLayout.LayoutParams;
 
@@ -152,6 +154,7 @@ public class ParkingActivity extends AppCompatActivity {
                 txtTarifaGPpesos.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()));
             }
 
+
             lytInfoParking.addView(txtTarifaGP);
             lytInfoParking.addView(txtTarifaGPpesos);
 
@@ -253,7 +256,10 @@ public class ParkingActivity extends AppCompatActivity {
                                 });
 
                             } else {
+                                Log.d(TAG,"ELSE");
+
                                 btnAddCardActivity.setVisibility(View.VISIBLE);
+
                             }
 
 
@@ -330,4 +336,11 @@ public class ParkingActivity extends AppCompatActivity {
     public void onBackPressed() {
         finish();
     }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
 }

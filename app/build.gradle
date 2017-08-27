@@ -31,6 +31,7 @@ dependencies {
     // Firebase Authentication
     compile 'com.android.support:design:25.2.0'
     compile 'com.firebase:geofire-android:2.1.1'
+    compile project(':openpayandroid')
     compile 'com.android.support:design:25.2.0'
     compile 'com.firebase:geofire-android:2.1.1'
     compile 'com.android.support:appcompat-v7:25.2.0'
@@ -54,7 +55,6 @@ dependencies {
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.github.mancj:MaterialSearchBar:0.7.1'
     testCompile 'junit:junit:4.12'
-    compile project(':openpayandroid')
 }
 // Add to the bottom of the file
 apply plugin: 'com.google.gms.google-services'
