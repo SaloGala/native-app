@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final int REQUEST_CODE_AUTOCOMPLETE = 3;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    //Este cambio lo hizo Salo
     public GoogleApiClient mGoogleApiClient;
     LocationManager locationManager;
     LocationRequest mLocationRequest;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     Bitmap redMarker;
     Bitmap yellowMarker;
     Bitmap selectedMarker;
+    //Este cambio lo hizo Salo
 
     List<String> keys = new ArrayList<String>();
 
@@ -234,6 +236,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    //Este cambio lo hizo Salo
+
+
     private void initializeGraphicComponents() {
 
         int height = 120;
@@ -326,6 +331,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         return true;
     }
 
+    //Este cambio lo hizo Salo
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -376,6 +383,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
         }
     }*/
+
+    //Este cambio lo hizo Salo
 
 
     private void initializeComponents() {
@@ -525,6 +534,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         }
     };
+
+    //Este cambio lo hizo Salo
 
     public void logOut() {
 
@@ -700,6 +711,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         });
     }
 
+    //Este cambio lo hizo Salo
+
     protected void startLocationUpdates() {
 
         RequestingLocationUpdatesFlag = true;
@@ -765,6 +778,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             MapInitializedFlag = true;
         }
     }
+
+    //Este cambio lo hizo Salo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -875,6 +890,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    //Este cambio lo hizo Salo
+
     private void updateUserLocation(Location location) {
 
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -904,6 +921,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
+    //Este cambio lo hizo Salo
 
     public void searchParkings(GeoLocation searchArea) {
 
@@ -968,6 +986,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
     }
 
+    //Este cambio lo hizo Salo
 
     public void getParkingDetail() {
 
@@ -1180,6 +1199,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
+    //Este cambio lo hizo Salo
+
     public class SectionsPageAdapter extends FragmentPagerAdapter {
 
         public SectionsPageAdapter(FragmentManager fm) {
@@ -1219,3 +1240,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 interface GooglePlayServicesLocationFromActivity {
     void onLocationAcquired(Location location);
 }
+
+//Este cambio lo hizo Salo
+
+//Este cambio lo hizo Salo
+
+//Este cambio lo hizo Salo
