@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -50,6 +51,8 @@ public class NoGPParkingActivity extends AppCompatActivity {
         parkingImage = (ImageView) findViewById(R.id.imgPakingNGP);
 
         Picasso.with(getApplicationContext()).load(parkingUtilities.getImage_path()).fit().into(parkingImage);
+
+        Log.d(TAG,parkingUtilities.getImage_path());
 
         txtCostoHora = (TextView) findViewById(R.id.txtCostoHora);
 

@@ -161,6 +161,9 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     FirebaseUser mFirebaseUser;
     ImageView IVGoParkenLogo;
 
+    //este cambio lo hizo odalys(yo)
+    //este cambio lo hizo odalys(yo)
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -240,6 +243,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
 
     private void initializeGraphicComponents() {
+        //este cambio lo hizo odalys(yo)
 
         int height = 120;
         int width = 100;
@@ -305,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if (tempMap != null) {
 
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
+                    //este cambio lo hizo odalys(yo)
 
                     tempMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -384,8 +389,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }*/
 
-    //Este cambio lo hizo Salo
-
 
     private void initializeComponents() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarMain);
@@ -421,6 +424,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             public void onPageSelected(int position) {
+                //este cambio lo hizo odalys(yo)
 
                 if (position == 0) {
                     linearLayoutMap.setVisibility(View.VISIBLE);
@@ -587,7 +591,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 // Manejo de la respuesta
                                 Log.d(TAG, "Respuesta en JSON: " + response);
 
-                                try {
+                                try {    //este cambio lo hizo odalys(yo)
+
                                     JSONObject content = response.getJSONObject("content");
                                     JSONObject user = content.getJSONObject("user");
 
@@ -676,6 +681,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
+        //este cambio lo hizo odalys(yo)
 
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
@@ -767,6 +773,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             googlePlayServicesLocationFromActivityCallback.onLocationAcquired(null);
             MapInitializedFlag = true;
 
+            //este cambio lo hizo odalys(yo)
+
             return;
         }
 
@@ -855,6 +863,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             if (resultCode == Activity.RESULT_OK) {
             } else if (resultCode == Activity.RESULT_CANCELED) {
+                //este cambio lo hizo odalys(yo)
+
             }
 
         } else if (requestCode == REQUEST_CODE_AUTOCOMPLETE) {
@@ -918,6 +928,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         mValuesUtilities.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
+        //este cambio lo hizo odalys(yo)
+
 
     }
 
@@ -1240,6 +1252,11 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 interface GooglePlayServicesLocationFromActivity {
     void onLocationAcquired(Location location);
 }
+
+//este cambio lo hizo odalys(yo)
+//este cambio lo hizo odalys(yo)
+//este cambio lo hizo odalys(yo)
+
 
 //Este cambio lo hizo Salo
 
