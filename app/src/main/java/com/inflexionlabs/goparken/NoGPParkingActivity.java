@@ -16,6 +16,9 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class NoGPParkingActivity extends AppCompatActivity {
     final private String TAG = "NoGPParkingActivity";
 
@@ -24,6 +27,9 @@ public class NoGPParkingActivity extends AppCompatActivity {
     ImageButton btnNav;
     ImageView parkingImage;
     TextView txtCostoHora;
+    TextView txtAddressParking;
+    TextView txtDiaHora;
+    TextView txtDescripcion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,26 +53,106 @@ public class NoGPParkingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnNav = (ImageButton) findViewById(R.id.btnNavigationNGP);
-
         parkingImage = (ImageView) findViewById(R.id.imgPakingNGP);
-
-        Picasso.with(getApplicationContext()).load(parkingUtilities.getImage_path()).fit().into(parkingImage);
-
-        Log.d(TAG,parkingUtilities.getImage_path());
-
         txtCostoHora = (TextView) findViewById(R.id.txtCostoHora);
+        txtAddressParking = (TextView) findViewById(R.id.txtParkingAddressNGP);
+        txtDiaHora = (TextView) findViewById(R.id.txtDiaHoraNGP);
+        txtDescripcion = (TextView) findViewById(R.id.txtDescripcionNGP);
 
+
+        Picasso.with(this).load(parkingUtilities.getImage_path()).fit().into(parkingImage);
         txtCostoHora.setText("$ "+ parkingUtilities.getCost_public_by_hour());
-
+        txtAddressParking.setText(formatAddress());
+        txtDiaHora.setText(calculateSchedule());
+        txtDescripcion.setText(parkingUtilities.getDescription());
 
         btnNav.setOnClickListener(btnListener);
-        //initializeViewComponents();
-
 
     }
 
-    public void initializeViewComponents() {
 
+    public String formatAddress(){
+        String address="";
+
+        address = parkingUtilities.getAddress_street()+", "
+                +parkingUtilities.getAddress_number()+", "
+                +parkingUtilities.getAddress_colony()+", C.P. "
+                +parkingUtilities.getAddress_postal_code()+", "
+                +parkingUtilities.getAddress_delegation()+", "
+                +parkingUtilities.getAddress_state();
+
+        return address;
+    }
+
+    public String calculateSchedule(){
+        String DiaHora="";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        Date d = new Date();
+        String dayOfTheWeek = sdf.format(d);
+        String start = "";
+        String finish = "";
+
+        switch (dayOfTheWeek){
+            case "Lunes":
+
+                start = parkingUtilities.getSchedule_start_monday();
+                finish = parkingUtilities.getSchedule_finish_monday();
+
+                break;
+            case "Martes":
+
+                start = parkingUtilities.getSchedule_start_tuesday();
+                finish = parkingUtilities.getSchedule_finish_tuesday();
+
+                break;
+            case "Miércoles":
+
+                start = parkingUtilities.getSchedule_start_wednesday();
+                finish = parkingUtilities.getSchedule_finish_wednesday();
+
+                break;
+            case "Jueves":
+
+                start = parkingUtilities.getSchedule_start_thursday();
+                finish = parkingUtilities.getSchedule_finish_thursday();
+
+                break;
+            case "Viernes":
+
+                start = parkingUtilities.getSchedule_start_friday();
+                finish = parkingUtilities.getSchedule_finish_friday();
+
+                break;
+            case "Sábado":
+
+                start = parkingUtilities.getSchedule_start_saturday();
+                finish = parkingUtilities.getSchedule_finish_saturday();
+
+                break;
+            case "Domingo":
+
+                start = parkingUtilities.getSchedule_start_sunday();
+                finish = parkingUtilities.getSchedule_finish_sunday();
+
+                break;
+        }
+
+        if(start.equals("Cerrado")){
+            //mostar "ESTACIONAMIENTO CERRADO";
+        }
+
+        if(start.equals("24 horas") || start.equals("Cerrado")){
+            DiaHora = dayOfTheWeek+" "+start;
+        }else{
+            DiaHora = dayOfTheWeek+" De "+start+" hrs a "+finish+" hrs";
+        }
+
+        if(start.equals("")){
+            DiaHora = dayOfTheWeek;
+        }
+
+        return DiaHora;
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {

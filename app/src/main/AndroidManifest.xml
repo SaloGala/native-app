@@ -11,6 +11,8 @@
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -128,7 +130,12 @@
         <activity
             android:name=".NoGPParkingActivity"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"></activity>
+
+        <activity android:name=".CheckInActivity"
+            android:parentActivityName=".ParkingActivity"
             android:screenOrientation="portrait">
+
         </activity>
     </application>
 
