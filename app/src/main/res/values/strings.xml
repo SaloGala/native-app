@@ -28,9 +28,9 @@
     <string name="accept">Aceptar</string>
     <string name="cancel">Cancelar</string>
     <string name="msg_location_user">¿Permitir a Go Parken utilizar la ubicación de tu dispositivo?</string>
-    <string name="btn_taller">Talleres</string>
-    <string name="btn_gas">Gasolinerías</string>
-    <string name="btn_auto">Autolavados</string>
+    <string name="btn_taller">TALLERES</string>
+    <string name="btn_gas">GASOLINERÍAS</string>
+    <string name="btn_auto">AUTOLAVADOS</string>
     <string name="title_activity_service">ServiceActivity</string>
 
     <string name="terminos_y_condiciones"><a href="http://goparken.com/legal"><u>Términos y condiciones</u></a></string>

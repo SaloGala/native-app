@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.Uri;
@@ -18,9 +19,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by odalysmarronsanchez on 25/07/17.
@@ -37,12 +53,35 @@ public class ServicesFragment extends Fragment {
     Button btnGasolineras;
     Button btnAutolavados;
     ValuesUtilities valuesUtilities = ValuesUtilities.getInstance();
+    boolean servicesLoadedFlag = false;
     public View mView;
+    RequestQueue queue;
 
+    TextView TVCarWashDistance;
+    TextView TVGasStationDistance;
+    TextView TVCarRepairDistance;
+
+    TextView TVCarWashTitle;
+    TextView TVGasStationTitle;
+    TextView TVCarRepairTitle;
+
+    TextView TVCarWashDescription;
+    TextView TVGasStationDescription;
+    TextView TVCarRepairDescription;
+
+    TextView TVCarWashIndications;
+    TextView TVGasStationIndications;
+    TextView TVCarRepairIndications;
+
+    List<HashMap<String, String>> nearbyCarWashesList = null;
+    List<HashMap<String, String>> nearbyGasStationsList = null;
+    List<HashMap<String, String>> nearbyCarRepairsList = null;
+
+    ScrollView SVServicesLoaded;
+    ScrollView SVServicesNotLoaded;
 
     MainActivity mMainActivity;
     private OnFragmentInteractionListener mListener;
-
 
     public ServicesFragment() {
     }
@@ -60,7 +99,140 @@ public class ServicesFragment extends Fragment {
         initializeComponents();
         initializeVariables();
 
+        initializeServices();
         return mView;
+    }
+
+    private void initializeServices() {
+        if (!servicesLoadedFlag) {
+
+            FusedLocationProviderClient mFusedLocationClient;
+            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(getActivity());
+
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+
+                return;
+            }
+
+            mFusedLocationClient.getLastLocation()
+                    .addOnSuccessListener(getActivity(), new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+
+                            if (location != null) {
+
+                                StringBuilder googlePlacesUrl = new StringBuilder("https://maps.googleapis.com/maps/api/place/nearbysearch/json?");
+
+                                googlePlacesUrl.append("location=" + location.getLatitude() + "," + location.getLongitude());
+                                googlePlacesUrl.append("&radius=" + 10000);
+                                googlePlacesUrl.append("&sensor=true");
+                                googlePlacesUrl.append("&key=" + "AIzaSyC-EQ7WdjOHIwnSI0Hh6MSUKD4d5OmYv2Y");
+
+                                String carRepairURL = googlePlacesUrl.toString() + "&type=car_repair";
+                                String gasStationURL = googlePlacesUrl.toString() + "&type=gas_station";
+                                String carWashURL = googlePlacesUrl.toString() + "&type=car_wash";
+
+                                doRequest(carRepairURL, "car_repair", location);
+                                doRequest(gasStationURL, "gas_station", location);
+                                doRequest(carWashURL, "car_wash", location);
+
+
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void doRequest(String url, final String type, final Location location) {
+
+        if (queue == null) {
+            queue = Volley.newRequestQueue(getActivity());
+        }
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        List<HashMap<String, String>> nearbyPlacesList = null;
+                        DataParser dataParser = new DataParser();
+                        nearbyPlacesList = dataParser.parse(response);
+
+                        for (Iterator<HashMap<String, String>> i = nearbyPlacesList.iterator(); i.hasNext(); ) {
+                            HashMap<String, String> item = i.next();
+
+                            float[] results = new float[1];
+
+                            Double lat = Double.parseDouble(item.get("lat"));
+                            Double lng = Double.parseDouble(item.get("lng"));
+
+                            Location.distanceBetween(lat, lng, location.getLatitude(), location.getLongitude(), results);
+
+                            item.put("distance", results[0] + "");
+                        }
+
+                        Collections.sort(nearbyPlacesList, new Comparator<HashMap<String, String>>() {
+                            @Override
+                            public int compare(HashMap<String, String> h1, HashMap<String, String> h2) {
+                                return Double.compare(Double.parseDouble(h1.get("distance")), Double.parseDouble(h2.get("distance")));
+                            }
+                        });
+
+
+                        /*for (Iterator<HashMap<String, String>> i = nearbyPlacesList.iterator(); i.hasNext(); ) {
+                            HashMap<String, String> item = i.next();
+
+                            System.out.println("Distance: " + item.get("distance") + " meters -" + "Type: " + type + item);
+
+                        }*/
+
+                        System.out.println("Type: " + type + " Nearest: " + nearbyPlacesList.get(0));
+                        int finalDistance = Math.round(Float.parseFloat(nearbyPlacesList.get(0).get("distance")));
+                        String finalTitle = nearbyPlacesList.get(0).get("place_name");
+                        String finalDescription = nearbyPlacesList.get(0).get("vicinity");
+
+                        if (type.equals("car_wash")) {
+
+                            TVCarWashDistance.setText(finalDistance + "");
+                            TVCarWashTitle.setText(finalTitle);
+                            TVCarWashDescription.setText(finalDescription);
+
+                            nearbyCarWashesList = nearbyPlacesList;
+
+                        } else if (type.equals("gas_station")) {
+                            TVGasStationDistance.setText(finalDistance + "");
+                            TVGasStationTitle.setText(finalTitle);
+                            TVGasStationDescription.setText(finalDescription);
+
+                            nearbyGasStationsList = nearbyPlacesList;
+
+                        } else {
+                            TVCarRepairDistance.setText(finalDistance + "");
+                            TVCarRepairTitle.setText(finalTitle);
+                            TVCarRepairDescription.setText(finalDescription);
+
+                            nearbyCarRepairsList = nearbyPlacesList;
+                        }
+
+                        SVServicesLoaded.setVisibility(View.VISIBLE);
+                        SVServicesNotLoaded.setVisibility(View.GONE);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Show an error
+            }
+        });
+
+        queue.add(stringRequest);
     }
 
     private void initializeVariables() {
@@ -75,6 +247,86 @@ public class ServicesFragment extends Fragment {
         btnTalleres.setOnClickListener(btnListener);
         btnGasolineras.setOnClickListener(btnListener);
         btnAutolavados.setOnClickListener(btnListener);
+
+        TextView TVCarWash = (TextView) mView.findViewById(R.id.TVCarWash);
+        TextView TVGasStation = (TextView) mView.findViewById(R.id.TVGasStation);
+        TextView TVCarRepair = (TextView) mView.findViewById(R.id.TVCarRepair);
+
+
+        Typeface type = Typeface.createFromAsset(getActivity().getAssets(), "NexaBold.ttf");
+
+        TVCarWash.setTypeface(type);
+        TVGasStation.setTypeface(type);
+        TVCarRepair.setTypeface(type);
+
+        TVCarWashDistance = (TextView) mView.findViewById(R.id.TVCarWashDistance);
+        TVGasStationDistance = (TextView) mView.findViewById(R.id.TVGasStationDistance);
+        TVCarRepairDistance = (TextView) mView.findViewById(R.id.TVCarRepairDistance);
+
+        TVCarWashTitle = (TextView) mView.findViewById(R.id.TVCarWashTitle);
+        TVGasStationTitle = (TextView) mView.findViewById(R.id.TVGasStationTitle);
+        TVCarRepairTitle = (TextView) mView.findViewById(R.id.TVCarRepairTitle);
+
+        TVCarWashDescription = (TextView) mView.findViewById(R.id.TVCarWashDescription);
+        TVGasStationDescription = (TextView) mView.findViewById(R.id.TVGasStationDescription);
+        TVCarRepairDescription = (TextView) mView.findViewById(R.id.TVCarRepairDescription);
+
+        TVCarWashIndications = (TextView) mView.findViewById(R.id.TVCarWashIndications);
+        TVGasStationIndications = (TextView) mView.findViewById(R.id.TVGasStationIndications);
+        TVCarRepairIndications = (TextView) mView.findViewById(R.id.TVCarRepairIndications);
+
+        TVCarWashTitle.setTypeface(type);
+        TVGasStationTitle.setTypeface(type);
+        TVCarRepairTitle.setTypeface(type);
+
+        SVServicesLoaded = (ScrollView) mView.findViewById(R.id.SVServicesLoaded);
+        SVServicesNotLoaded = (ScrollView) mView.findViewById(R.id.SVServicesNotLoaded);
+
+        TVCarWashIndications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goTo("car_wash");
+            }
+        });
+
+        TVGasStationIndications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goTo("gas_station");
+            }
+        });
+
+        TVCarRepairIndications.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goTo("car_repair");
+            }
+        });
+
+        Button BTNRefreshServices = (Button) mView.findViewById(R.id.BTNRefreshServices);
+
+        BTNRefreshServices.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                initializeServices();
+            }
+        });
+    }
+
+    private void goTo(String type) {
+        HashMap<String, String> placeToGo;
+
+        if (type.equals("car_wash")) {
+            placeToGo = nearbyCarWashesList.get(0);
+        } else if (type.equals("gas_station")) {
+            placeToGo = nearbyGasStationsList.get(0);
+        } else {
+            placeToGo = nearbyCarRepairsList.get(0);
+        }
+
+        String uri = "geo:0,0" + "?q=" + placeToGo.get("lat") + "," + placeToGo.get("lng");
+        startActivity(new Intent(android.content.Intent.ACTION_VIEW,
+                Uri.parse(uri)));
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {

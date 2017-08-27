@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private static final int REQUEST_CODE_AUTOCOMPLETE = 3;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
-    //Este cambio lo hizo Salo
     public GoogleApiClient mGoogleApiClient;
     LocationManager locationManager;
     LocationRequest mLocationRequest;
@@ -138,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     Bitmap redMarker;
     Bitmap yellowMarker;
     Bitmap selectedMarker;
-    //Este cambio lo hizo Salo
 
     List<String> keys = new ArrayList<String>();
 
@@ -160,9 +158,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     private DatabaseReference mDatabaseReference;
     FirebaseUser mFirebaseUser;
     ImageView IVGoParkenLogo;
-
-    //este cambio lo hizo odalys(yo)
-    //este cambio lo hizo odalys(yo)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,11 +234,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    //Este cambio lo hizo Salo
-
-
     private void initializeGraphicComponents() {
-        //este cambio lo hizo odalys(yo)
 
         int height = 120;
         int width = 100;
@@ -309,7 +300,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                 if (tempMap != null) {
 
                     CameraPosition cameraPosition = new CameraPosition.Builder().target(place.getLatLng()).zoom(16).build();
-                    //este cambio lo hizo odalys(yo)
 
                     tempMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
@@ -335,8 +325,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-
-    //Este cambio lo hizo Salo
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -424,7 +412,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             @Override
             public void onPageSelected(int position) {
-                //este cambio lo hizo odalys(yo)
 
                 if (position == 0) {
                     linearLayoutMap.setVisibility(View.VISIBLE);
@@ -539,8 +526,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     };
 
-    //Este cambio lo hizo Salo
-
     public void logOut() {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -591,7 +576,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
                                 // Manejo de la respuesta
                                 Log.d(TAG, "Respuesta en JSON: " + response);
 
-                                try {    //este cambio lo hizo odalys(yo)
+                                try {
 
                                     JSONObject content = response.getJSONObject("content");
                                     JSONObject user = content.getJSONObject("user");
@@ -681,7 +666,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
                 .addLocationRequest(mLocationRequest);
-        //este cambio lo hizo odalys(yo)
 
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
@@ -716,8 +700,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             }
         });
     }
-
-    //Este cambio lo hizo Salo
 
     protected void startLocationUpdates() {
 
@@ -773,8 +755,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             googlePlayServicesLocationFromActivityCallback.onLocationAcquired(null);
             MapInitializedFlag = true;
 
-            //este cambio lo hizo odalys(yo)
-
             return;
         }
 
@@ -786,8 +766,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             MapInitializedFlag = true;
         }
     }
-
-    //Este cambio lo hizo Salo
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -863,8 +841,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
             if (resultCode == Activity.RESULT_OK) {
             } else if (resultCode == Activity.RESULT_CANCELED) {
-                //este cambio lo hizo odalys(yo)
-
             }
 
         } else if (requestCode == REQUEST_CODE_AUTOCOMPLETE) {
@@ -900,8 +876,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    //Este cambio lo hizo Salo
-
     private void updateUserLocation(Location location) {
 
         LatLng userLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -928,12 +902,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
 
         mValuesUtilities.setUserLocation(new LatLng(location.getLatitude(), location.getLongitude()));
-        //este cambio lo hizo odalys(yo)
-
 
     }
-
-    //Este cambio lo hizo Salo
 
     public void searchParkings(GeoLocation searchArea) {
 
@@ -997,8 +967,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         geoQuery.addGeoQueryEventListener(parkingsEventListener);
 
     }
-
-    //Este cambio lo hizo Salo
 
     public void getParkingDetail() {
 
@@ -1211,8 +1179,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    //Este cambio lo hizo Salo
-
     public class SectionsPageAdapter extends FragmentPagerAdapter {
 
         public SectionsPageAdapter(FragmentManager fm) {
@@ -1252,14 +1218,3 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 interface GooglePlayServicesLocationFromActivity {
     void onLocationAcquired(Location location);
 }
-
-//este cambio lo hizo odalys(yo)
-//este cambio lo hizo odalys(yo)
-//este cambio lo hizo odalys(yo)
-
-
-//Este cambio lo hizo Salo
-
-//Este cambio lo hizo Salo
-
-//Este cambio lo hizo Salo
