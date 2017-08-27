@@ -37,7 +37,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -154,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
     UserUtilities userUtilities = UserUtilities.getInstance();
     private DatabaseReference mDatabaseReference;
     FirebaseUser mFirebaseUser;
+    ImageView IVGoParkenLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,10 +256,34 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         yellowMarker = Bitmap.createScaledBitmap(bitmapYellow, width, height, false);
 
 
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+        final PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
 
-        autocompleteFragment.setHint("GoParken");
+        ImageButton BTNCancelSearch = (ImageButton) findViewById(R.id.place_autocomplete_clear_button);
+
+        IVGoParkenLogo = (ImageView) findViewById(R.id.IVGoParkenLogo);
+
+        autocompleteFragment.setHint("");
+
+        BTNCancelSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                IVGoParkenLogo.setVisibility(View.VISIBLE);
+                autocompleteFragment.setText("");
+            }
+        });
+
+        //autocompleteFragment.getView().setBackground(getResources().getDrawable(R.drawable.login_logo2x));
+
+        //autocompleteFragment.getView().setPadding(15,15,15,15);
+
+        //EditText ETHint = (EditText) findViewById(R.id.place_autocomplete_search_input);
+
+        //ETHint.setHintTextColor(Color.parseColor("#993F51B5"));
+
+        //Typeface type = Typeface.createFromAsset(getAssets(), "NexaBold.ttf");
+
+        //ETHint.setTypeface(type);
 
         /*ViewGroup.LayoutParams params = autocompleteFragment.getView().getLayoutParams();
         params.height = 5;
@@ -264,6 +292,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
+
+                IVGoParkenLogo.setVisibility(View.INVISIBLE);
 
                 GoogleMap tempMap = mValuesUtilities.getGoogleMap();
 
