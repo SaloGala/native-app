@@ -1,6 +1,9 @@
 package com.inflexionlabs.goparken;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -31,7 +34,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.concurrent.ExecutionException;
 
 import android.widget.LinearLayout.LayoutParams;
@@ -46,14 +51,9 @@ public class ParkingActivity extends AppCompatActivity {
     ImageButton btnNav;
     ImageView parkingImage;
     ImageView avaImage;
-    Button btnAddCardActivity;
-
 
     String availability;
     int payable = 0;
-
-    Spinner spinnerCards;
-    SpinnerItemAdapter spinnerAdapter = null;
 
     String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
 
@@ -68,14 +68,19 @@ public class ParkingActivity extends AppCompatActivity {
     ArrayList<Card> cards;
     Context context;
 
+    TextView txtTarifaGP;
+    TextView txtTarifaRegular;
+    TextView txtAddress;
+    TextView txtDiaHora;
+    TextView txtDescripcion;
+
     LinearLayout lytInfoParking;
 
-    TextView txtTarifaGP;
-    TextView txtTarifaGPpesos;
-    TextView txtTarifaRegular;
-    TextView txtTarifaRegulapesos;
-
     LayoutParams layoutparams;
+
+    Boolean isOpen = true;
+    Boolean isAvailable = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,8 +88,7 @@ public class ParkingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_parking);
 
         initializeComponents();
-        getCardList();
-        //initializeViewComponents();
+
     }
 
     private void initializeComponents() {
@@ -100,30 +104,31 @@ public class ParkingActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         btnNav = (ImageButton) findViewById(R.id.btnNavigation);
-        btnAddCardActivity = (Button) findViewById(R.id.btnAddCardActivity);
+        //btnAddCardActivity = (Button) findViewById(R.id.btnAddCardActivity);
 
         parkingImage = (ImageView) findViewById(R.id.imgPaking);
-        Picasso.with(getApplicationContext()).load(parkingUtilities.getImage_path()).fit().into(parkingImage);
+        Picasso.with(this).load(parkingUtilities.getImage_path()).fit().into(parkingImage);
 
         avaImage = (ImageView) findViewById(R.id.imgAva);
-        spinnerCards = (Spinner) findViewById(R.id.spinnerCards);
+        //spinnerCards = (Spinner) findViewById(R.id.spinnerCards);
+        txtTarifaGP = (TextView) findViewById(R.id.txtCostoHoraGP);
+        txtTarifaRegular = (TextView) findViewById(R.id.txtCostoHoraR);
+        txtAddress = (TextView) findViewById(R.id.txtParkingAddress);
+        txtDiaHora = (TextView) findViewById(R.id.txtDiaHora);
+        txtDescripcion = (TextView) findViewById(R.id.txtDescripcion);
 
         lytInfoParking = (LinearLayout) findViewById(R.id.lytInfoParking);
 
-        txtTarifaGP = new TextView(this);
-        txtTarifaGPpesos = new TextView(this);
-        txtTarifaRegular = new TextView(this);
-        txtTarifaRegulapesos = new TextView(this);
-
         btnNav.setOnClickListener(btnListener);
-        btnAddCardActivity.setOnClickListener(btnListener);
-        //
+        //btnAddCardActivity.setOnClickListener(btnListener);
 
         Intent intent = getIntent();
         availability = intent.getStringExtra("availability");
 
         cards = new ArrayList<>();
         context = this;
+
+        //getCardList();
 
         initializeViewComponents();
 
@@ -132,44 +137,154 @@ public class ParkingActivity extends AppCompatActivity {
 
     public void initializeViewComponents() {
 
-        if (parkingUtilities.getAcceptGoParken() == 1) {
+        if (availability.equals("full")) {
 
-            if (availability.equals("full")) {
-                avaImage.setImageResource(R.drawable.marca_roja);
+            avaImage.setImageResource(R.drawable.marca_roja);
+            isAvailable = false;
 
-            } else if (availability.equals("almost_full")) {
-                avaImage.setImageResource(R.drawable.marca_amarilla);
-            } else {
-                avaImage.setImageResource(R.drawable.marca_verde);
-            }
+        } else if (availability.equals("almost_full")) {
 
-            if (parkingUtilities.getTarifaPromo() == 1) {
-
-                txtTarifaGP.setText("TARIFA GOPARKEN");
-                txtTarifaGPpesos.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()) + "(PROMO: " + parkingUtilities.getHorasPromo() + "hrs X $" + Integer.toString(parkingUtilities.getTarifaPromo()));
-
-            } else {
-
-                txtTarifaGP.setText("TARIFA GOPARKEN");
-                txtTarifaGPpesos.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()));
-            }
-
-
-            lytInfoParking.addView(txtTarifaGP);
-            lytInfoParking.addView(txtTarifaGPpesos);
-
+            avaImage.setImageResource(R.drawable.marca_amarilla);
 
         } else {
 
-            avaImage.setImageResource(R.drawable.marca_gris);
+            avaImage.setImageResource(R.drawable.marca_verde);
         }
 
-        txtTarifaRegular.setText("TARIFA REGULAR");
-        txtTarifaRegulapesos.setText("$ " + Double.toString(parkingUtilities.getCost_public_by_hour()));
+        if (parkingUtilities.getTarifaPromo() == 1) {
 
-        lytInfoParking.addView(txtTarifaRegular);
-        lytInfoParking.addView(txtTarifaRegulapesos);
+            txtTarifaGP.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()) + "(PROMO: " + parkingUtilities.getHorasPromo() + "hrs X $" + Integer.toString(parkingUtilities.getTarifaPromo()));
 
+        } else {
+
+            txtTarifaGP.setText("$ " + Double.toString(parkingUtilities.getCost_goparken_by_hour()));
+        }
+
+
+        txtTarifaRegular.setText("$ " + Double.toString(parkingUtilities.getCost_public_by_hour()));
+        txtAddress.setText(formatAddress());
+        txtDiaHora.setText(calculateSchedule());
+        txtDescripcion.setText(parkingUtilities.getDescription());
+
+        if(isOpen){
+
+            if(isAvailable){
+                getCardList();
+            }else{
+                TextView txtNoPlace = new TextView(this);
+
+                txtNoPlace.setText(getString(R.string.no_place));
+                txtNoPlace.setTextSize(30);
+                txtNoPlace.setLayoutParams(new LayoutParams(
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.WRAP_CONTENT
+                ));
+
+                lytInfoParking.addView(txtNoPlace);
+            }
+
+        }else{
+
+            TextView txtParkingClosed = new TextView(this);
+
+            txtParkingClosed.setText(getString(R.string.parking_closed));
+            txtParkingClosed.setTextSize(30);
+            txtParkingClosed.setLayoutParams(new LayoutParams(
+                    LayoutParams.MATCH_PARENT,
+                    LayoutParams.WRAP_CONTENT
+            ));
+
+            lytInfoParking.addView(txtParkingClosed);
+        }
+
+
+
+
+    }
+
+    public String formatAddress(){
+        String address="";
+
+        address = parkingUtilities.getAddress_street()+", "
+                +parkingUtilities.getAddress_number()+", "
+                +parkingUtilities.getAddress_colony()+", C.P. "
+                +parkingUtilities.getAddress_postal_code()+", "
+                +parkingUtilities.getAddress_delegation()+", "
+                +parkingUtilities.getAddress_state();
+
+        return address;
+    }
+
+    public String calculateSchedule(){
+        String DiaHora="";
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
+        Date d = new Date();
+        String dayOfTheWeek = sdf.format(d);
+        String start = "";
+        String finish = "";
+
+        switch (dayOfTheWeek){
+            case "Lunes":
+
+                start = parkingUtilities.getSchedule_start_monday();
+                finish = parkingUtilities.getSchedule_finish_monday();
+
+                break;
+            case "Martes":
+
+                start = parkingUtilities.getSchedule_start_tuesday();
+                finish = parkingUtilities.getSchedule_finish_tuesday();
+
+                break;
+            case "Miércoles":
+
+                start = parkingUtilities.getSchedule_start_wednesday();
+                finish = parkingUtilities.getSchedule_finish_wednesday();
+
+                break;
+            case "Jueves":
+
+                start = parkingUtilities.getSchedule_start_thursday();
+                finish = parkingUtilities.getSchedule_finish_thursday();
+
+                break;
+            case "Viernes":
+
+                start = parkingUtilities.getSchedule_start_friday();
+                finish = parkingUtilities.getSchedule_finish_friday();
+
+                break;
+            case "Sábado":
+
+                start = parkingUtilities.getSchedule_start_saturday();
+                finish = parkingUtilities.getSchedule_finish_saturday();
+
+                break;
+            case "Domingo":
+
+                start = parkingUtilities.getSchedule_start_sunday();
+                finish = parkingUtilities.getSchedule_finish_sunday();
+
+                break;
+        }
+
+        if(start.equals("Cerrado")){
+            //mostar "ESTACIONAMIENTO CERRADO";
+            isOpen = false;
+        }
+
+        if(start.equals("24 horas") || start.equals("Cerrado")){
+            DiaHora = dayOfTheWeek+" "+start;
+        }else{
+            DiaHora = dayOfTheWeek+" De "+start+" hrs a "+finish+" hrs";
+        }
+
+        if(start.equals("")){
+            DiaHora = dayOfTheWeek;
+        }
+
+        return DiaHora;
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {
@@ -183,9 +298,9 @@ public class ParkingActivity extends AppCompatActivity {
 
                     break;
 
-                case R.id.btnAddCardActivity:
+                /*case R.id.btnAddCardActivity:
                     goToAddCardScreen();
-                    break;
+                    break;*/
             }
 
         }
@@ -195,6 +310,85 @@ public class ParkingActivity extends AppCompatActivity {
 
         Intent intent = new Intent(this, AddCardActivity.class);
         startActivity(intent);
+    }
+
+    private void goToAddCheckInScreen(String promo) {
+
+        Intent intent = new Intent(this, CheckInActivity.class);
+        intent.putExtra("promo",promo);
+        startActivity(intent);
+    }
+
+    private void verificarTarifa(final String promo){
+
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.tarifa_dialog);
+        dialog.setTitle("Aviso");
+        // set the custom dialog components - text, image and button
+        Button btnOK = (Button) dialog.findViewById(R.id.btnOK);
+
+        TextView txtTarifa = (TextView) dialog.findViewById(R.id.txtTarifa);
+        txtTarifa.setText("En este estacionamiento se cobrará una comisión de $"+ Double.toString(parkingUtilities.getComFija())+" + "+Double.toString(parkingUtilities.getComVar())+"%  + I.V.A ");
+
+        // if button is clicked, close the custom dialog
+        btnOK.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                goToAddCheckInScreen(promo);
+
+            }
+        });
+
+        dialog.show();
+
+    }
+
+    private void verifcarPromo(){
+
+        // custom dialog
+        final Dialog dialog = new Dialog(context);
+        dialog.setContentView(R.layout.promo_dialog);
+        dialog.setTitle("Información");
+        // set the custom dialog components - text, image and button
+        Button btnPromo = (Button) dialog.findViewById(R.id.btnPromo);
+        Button btnCheckInNormal = (Button) dialog.findViewById(R.id.btnCheckInNormal);
+
+        btnPromo.setText("Promo "+parkingUtilities.getHorasPromo()+" hrs X $"+Double.toString(parkingUtilities.getPrecioPromo()));
+        btnCheckInNormal.setText("Cada hora X $"+Double.toString(parkingUtilities.getCost_goparken_by_hour()));
+
+        // if button is clicked, close the custom dialog
+        btnPromo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+                if(parkingUtilities.getComision() == 1){
+                    verificarTarifa("true");
+                }else{
+                    goToAddCheckInScreen("true");
+                }
+
+            }
+        });
+
+        btnCheckInNormal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+                if(parkingUtilities.getComision() == 1){
+                    verificarTarifa("false");
+                }else{
+                    goToAddCheckInScreen("false");
+                }
+
+            }
+        });
+
+        dialog.show();
+
     }
 
     public void getCardList() {
@@ -236,10 +430,33 @@ public class ParkingActivity extends AppCompatActivity {
 
                                 }
 
-                                spinnerAdapter = new SpinnerItemAdapter(cards, getApplicationContext());
-                                spinnerCards.setAdapter(spinnerAdapter);
+                                ImageView imgCard = new ImageView(context);
 
-                                spinnerCards.setVisibility(View.VISIBLE);
+                                imgCard.setImageResource(R.drawable.icono_tarjeta);
+                                imgCard.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        LayoutParams.WRAP_CONTENT
+                                ));
+
+                                TextView txtTusMetodos = new TextView(context);
+                                txtTusMetodos.setText(getString(R.string.tu_metodo_msg));
+                                txtTusMetodos.setTextSize(18);
+                                txtTusMetodos.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        LayoutParams.WRAP_CONTENT
+                                ));
+                                txtTusMetodos.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                                Spinner spinnerCards = new Spinner(context);
+                                spinnerCards.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        LayoutParams.WRAP_CONTENT
+                                ));
+
+                                //spinnerCards.setBackgroundColor(Color.GRAY);
+
+                                SpinnerItemAdapter spinnerAdapter = new SpinnerItemAdapter(cards, context);
+                                spinnerCards.setAdapter(spinnerAdapter);
 
                                 spinnerCards.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                                     @Override
@@ -255,13 +472,56 @@ public class ParkingActivity extends AppCompatActivity {
                                     }
                                 });
 
-                            } else {
-                                Log.d(TAG,"ELSE");
+                                Button btnCheckin = new Button(context);
 
-                                btnAddCardActivity.setVisibility(View.VISIBLE);
+                                btnCheckin.setText(getString(R.string.btn_checkin));
+                                btnCheckin.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        LayoutParams.WRAP_CONTENT
+                                ));
 
+                                btnCheckin.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+
+                                        if(parkingUtilities.getTarifaPromo() ==1){
+                                            verifcarPromo();
+                                        }else{
+                                            if(parkingUtilities.getComision()==1){
+                                                verificarTarifa("false");
+                                            }else{
+                                                goToAddCheckInScreen("false");
+                                            }
+
+                                        }
+
+                                    }
+                                });
+
+                                lytInfoParking.addView(imgCard);
+                                lytInfoParking.addView(txtTusMetodos);
+                                lytInfoParking.addView(spinnerCards);
+                                lytInfoParking.addView(btnCheckin);
+
+                            }else{
+                                Button btnAddCardActivity = new Button(context);
+
+                                btnAddCardActivity.setText(getString(R.string.bnt_registrar_pago));
+                                btnAddCardActivity.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        LayoutParams.WRAP_CONTENT
+                                ));
+
+                                btnAddCardActivity.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        goToAddCardScreen();
+                                    }
+                                });
+
+                                lytInfoParking.addView(btnAddCardActivity);
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();
