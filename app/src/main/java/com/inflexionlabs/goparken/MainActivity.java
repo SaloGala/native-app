@@ -882,7 +882,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if (mValuesUtilities.getUserLocation() == null) {
 
-            CameraPosition cameraPosition = new CameraPosition.Builder().target(userLocation).zoom(19).build();
+            CameraPosition cameraPosition = new CameraPosition.Builder().target(userLocation).zoom(16).build();
             mValuesUtilities.getGoogleMap().animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         }
