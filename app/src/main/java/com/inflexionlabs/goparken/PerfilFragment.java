@@ -129,12 +129,10 @@ public class PerfilFragment extends Fragment {
                     photoUrl = userUtilities.getPhotoUrl().toString();
                 }
 
-                System.out.println("Photo URL: " + photoUrl);
                 txtUserName.setText(userUtilities.getUserName() + " " + userUtilities.getLastname());
                 txtUserEmail.setText(userUtilities.getEmail());
 
-
-                Picasso.with(getContext()).load(photoUrl).fit().into(imgUserPhoto);
+                Picasso.with(getContext()).load(photoUrl).noFade().fit().into(imgUserPhoto);
             }
 
             @Override
