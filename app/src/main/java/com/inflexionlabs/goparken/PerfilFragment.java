@@ -1,6 +1,7 @@
 package com.inflexionlabs.goparken;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -53,7 +54,6 @@ public class PerfilFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -129,18 +129,18 @@ public class PerfilFragment extends Fragment {
                     photoUrl = userUtilities.getPhotoUrl().toString();
                 }
 
-                txtUserName.setText(userUtilities.getUserName());
+                System.out.println("Photo URL: " + photoUrl);
+                txtUserName.setText(userUtilities.getUserName() + " " + userUtilities.getLastname());
                 txtUserEmail.setText(userUtilities.getEmail());
-                Picasso.with(getContext()).load(photoUrl).fit().into(imgUserPhoto);
 
+
+                Picasso.with(getContext()).load(photoUrl).fit().into(imgUserPhoto);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
             }
-
-
         };
 
         mUserDetail.addListenerForSingleValueEvent(userListener);

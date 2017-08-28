@@ -200,6 +200,8 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
                 mGoogleMap = mMap;
                 mGoogleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                mGoogleMap.getUiSettings().setZoomControlsEnabled(true);
+
                 mValuesUtilities.setGoogleMap(mGoogleMap);
 
 
@@ -223,7 +225,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     final LatLng userLatLng = new LatLng(latitude, longitude);
 
 
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(userLatLng).zoom(19).build();
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(userLatLng).zoom(16).build();
 
                     mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), new GoogleMap.CancelableCallback() {
                         @Override
