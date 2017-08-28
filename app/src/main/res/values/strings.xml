@@ -80,6 +80,7 @@
     <string name="btn_ok">OK</string>
     <string name="inst_msg">Ingresa el código del estacionamiento</string>
     <string name="btn_validar">VALIDAR</string>
+    <string name="btn_checkout">CHECK OUT</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

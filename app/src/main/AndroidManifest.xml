@@ -10,7 +10,6 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
@@ -126,17 +125,15 @@
             android:name=".EditCardActivity"
             android:parentActivityName=".CardsListActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".NoGPParkingActivity"
             android:parentActivityName=".MainActivity"
-            android:screenOrientation="portrait"></activity>
-
-        <activity android:name=".CheckInActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".CheckInActivity"
             android:parentActivityName=".ParkingActivity"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".TimerActivity"></activity>
     </application>
 
 </manifest>
