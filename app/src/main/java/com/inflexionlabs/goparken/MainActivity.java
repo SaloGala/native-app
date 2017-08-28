@@ -178,6 +178,8 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             checkLocationPermissions();
         }
 
+        hasCheckInActive();
+
         mFirebaseAuth = FirebaseAuth.getInstance();
 
         mFirebaseUser = mFirebaseAuth.getCurrentUser();
@@ -232,6 +234,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         } else {
             return true;
         }
+    }
+
+    public void hasCheckInActive(){
+        String URL_HASCKINACT = "";
     }
 
     private void initializeGraphicComponents() {
@@ -435,6 +441,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         Intent intent = getIntent();
         accessToken = intent.getStringExtra("accessToken");
+        Log.d(TAG,"accessToken: "+accessToken);
 
     }
 
