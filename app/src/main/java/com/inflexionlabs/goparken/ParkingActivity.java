@@ -83,6 +83,8 @@ public class ParkingActivity extends AppCompatActivity {
     Boolean isOpen = true;
     Boolean isAvailable = true;
 
+    CheckInUtilities checkInUtilities = CheckInUtilities.getInstance();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -331,14 +333,13 @@ public class ParkingActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void goToAddCheckInScreen(String promo) {
+    private void goToAddCheckInScreen() {
 
         Intent intent = new Intent(this, CheckInActivity.class);
-        intent.putExtra("promo", promo);
         startActivity(intent);
     }
 
-    private void verificarTarifa(final String promo) {
+    private void verificarTarifa() {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
@@ -355,7 +356,7 @@ public class ParkingActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 dialog.dismiss();
-                goToAddCheckInScreen(promo);
+                goToAddCheckInScreen();
 
             }
         });
@@ -383,10 +384,12 @@ public class ParkingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
+                checkInUtilities.setPromo(true);
                 if (parkingUtilities.getComision() == 1) {
-                    verificarTarifa("true");
+                    verificarTarifa();
                 } else {
-                    goToAddCheckInScreen("true");
+
+                    goToAddCheckInScreen();
                 }
 
             }
@@ -397,10 +400,12 @@ public class ParkingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
+                checkInUtilities.setPromo(false);
                 if (parkingUtilities.getComision() == 1) {
-                    verificarTarifa("false");
+                    verificarTarifa();
                 } else {
-                    goToAddCheckInScreen("false");
+
+                    goToAddCheckInScreen();
                 }
 
             }
@@ -487,7 +492,7 @@ public class ParkingActivity extends AppCompatActivity {
                                     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                                         predetCard(Integer.toString(((Card) parent.getItemAtPosition(position)).getId()));
-                                        Toast.makeText(getApplicationContext(), Integer.toString(((Card) parent.getItemAtPosition(position)).getId()), Toast.LENGTH_LONG).show();
+                                        //Toast.makeText(getApplicationContext(), Integer.toString(((Card) parent.getItemAtPosition(position)).getId()), Toast.LENGTH_LONG).show();
                                     }
 
                                     @Override
@@ -520,10 +525,11 @@ public class ParkingActivity extends AppCompatActivity {
                                         if (parkingUtilities.getTarifaPromo() == 1) {
                                             verifcarPromo();
                                         } else {
+                                            checkInUtilities.setPromo(false);
                                             if (parkingUtilities.getComision() == 1) {
-                                                verificarTarifa("false");
+                                                verificarTarifa();
                                             } else {
-                                                goToAddCheckInScreen("false");
+                                                goToAddCheckInScreen();
                                             }
 
                                         }

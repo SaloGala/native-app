@@ -259,7 +259,7 @@ public class CheckOutActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
                         progress.dismiss();
-                        showMessge("Ocurrio un error por favor intente mas tarde");
+                        showMessge("Código de salida invalido, por favor verifique");
                         Log.d(TAG, "Error: " + error.getMessage());
                     }
                 });
