@@ -91,8 +91,6 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
         mValuesUtilities = ValuesUtilities.getInstance();
 
 
-
-
     }
 
 
@@ -103,13 +101,12 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
         mValuesUtilities.setInitializeUpdateFlag(false);
         initializeUpdateFlag = mValuesUtilities.getInitializeUpdateFlag();
 
-        try{
+        try {
             mView = inflater.inflate(R.layout.map_fragment, container, false);
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
-
 
 
         mMapView = (MapView) (mView.findViewById(R.id.mapView));
@@ -205,7 +202,6 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                 mValuesUtilities.setGoogleMap(mGoogleMap);
 
 
-
                 try {
                     mGoogleMap.clear();
                 } catch (Exception e) {
@@ -247,28 +243,28 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     mValuesUtilities.setUserLocation(null);
                 }
 
-                mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener(){
+                mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
 
                     @Override
                     public void onCameraIdle() {
 
                         CameraPosition cameraPosition = mGoogleMap.getCameraPosition();
 
-                        if(cameraPosition.zoom >=10){
+                        if (cameraPosition.zoom >= 10) {
                             mAbsoluteCenter = new GeoLocation(cameraPosition.target.latitude, cameraPosition.target.longitude);
 
-                            if(!mValuesUtilities.getInitializeUpdateFlag()){
+                            if (!mValuesUtilities.getInitializeUpdateFlag()) {
 
                                 mMainActivity.searchParkings(mAbsoluteCenter);
                                 mValuesUtilities.setInitializeUpdateFlag(true);
                                 oldAbsoluteCenter = mAbsoluteCenter;
-                            }else{
+                            } else {
 
                                 float[] results = new float[1];
 
-                                Location.distanceBetween(mAbsoluteCenter.latitude,mAbsoluteCenter.longitude,oldAbsoluteCenter.latitude,oldAbsoluteCenter.longitude,results);
+                                Location.distanceBetween(mAbsoluteCenter.latitude, mAbsoluteCenter.longitude, oldAbsoluteCenter.latitude, oldAbsoluteCenter.longitude, results);
 
-                                if (results[0]>10000) {
+                                if (results[0] > 10000) {
                                     mMainActivity.updateParkingsSearch(mAbsoluteCenter);
                                     oldAbsoluteCenter = mAbsoluteCenter;
                                 }
@@ -277,20 +273,26 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     }
                 });
 
-                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener(){
+                mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
                     @Override
                     public boolean onMarkerClick(Marker marker) {
 
-                        //Toast.makeText(mMainActivity, "KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker), Toast.LENGTH_SHORT).show();
 
-                        availability = (String) marker.getTag();
-                        key = mValuesUtilities.getParkingsMarkers().inverse().get(marker);
+                        if (!marker.equals(((MainActivity) getActivity()).searchLocationMarker)) {
 
-                        //Toast.makeText(mMainActivity, "Availability: "+ availability+" Key: "+ key, Toast.LENGTH_SHORT).show();
 
-                        getParkingDetail(key);
+                            //Toast.makeText(mMainActivity, "KEY: "+ mValuesUtilities.getParkingsMarkers().inverse().get(marker), Toast.LENGTH_SHORT).show();
 
+                            availability = (String) marker.getTag();
+
+                            key = mValuesUtilities.getParkingsMarkers().inverse().get(marker);
+
+
+                            //Toast.makeText(mMainActivity, "Availability: "+ availability+" Key: "+ key, Toast.LENGTH_SHORT).show();
+
+                            getParkingDetail(key);
+                        }
 
                         return true;
                     }
@@ -310,6 +312,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Map<String, String> value = (Map<String, String>) dataSnapshot.getValue();
+
                 final JSONObject mJSONObject = new JSONObject(value);
 
                 try {
@@ -358,7 +361,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     parkingUtilities.setType(mJSONObject.getString("type"));
 
 
-                    if(parkingUtilities.getAcceptGoParken() == 0){
+                    if (parkingUtilities.getAcceptGoParken() == 0) {
 
                         parkingUtilities.setCost_goparken_by_fraction(mJSONObject.getDouble("cost_goparken_by_fraction"));
                         parkingUtilities.setCost_goparken_by_hour(mJSONObject.getDouble("cost_goparken_by_hour"));
@@ -370,7 +373,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                         parkingUtilities.setLatitude(mJSONObject.getString("latitude"));
                         parkingUtilities.setLongitude(mJSONObject.getString("longitude"));
 
-                    } else if(parkingUtilities.getAcceptGoParken() == 1){
+                    } else if (parkingUtilities.getAcceptGoParken() == 1) {
 
                         parkingUtilities.setCost_goparken_by_fraction(mJSONObject.getDouble("cost_goparken_by_fraction"));
                         parkingUtilities.setCost_goparken_by_hour(mJSONObject.getDouble("cost_goparken_by_hour"));
@@ -382,7 +385,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                         parkingUtilities.setLatitude(mJSONObject.getString("latitude"));
                         parkingUtilities.setLongitude(mJSONObject.getString("longitude"));
 
-                    } else if (parkingUtilities.getAcceptGoParken() == 2){
+                    } else if (parkingUtilities.getAcceptGoParken() == 2) {
 
                         /*parkingUtilities.setCost_goparken_by_fraction(Double.parseDouble(mJSONObject.getString("cost_goparken_by_fraction")));
                         parkingUtilities.setCost_goparken_by_hour(Double.parseDouble(mJSONObject.getString("cost_goparken_by_hour")));
@@ -396,7 +399,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
                         parkingUtilities.setEntry_code(mJSONObject.getString("entry_code"));
                         parkingUtilities.setHorasPromo(mJSONObject.getString("horasPromo"));
-                        parkingUtilities.setId_form(Long.toString((Long)mJSONObject.get("id_form")));
+                        parkingUtilities.setId_form(Long.toString((Long) mJSONObject.get("id_form")));
                         parkingUtilities.setLatitude(Double.toString((Double) mJSONObject.get("latitude")));
                         parkingUtilities.setLongitude(Double.toString((Double) mJSONObject.get("longitude")));
 
@@ -409,7 +412,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
                     e.printStackTrace();
                 }
 
-                Log.d(TAG,"dataSnapshot: "+mJSONObject);
+                Log.d(TAG, "dataSnapshot: " + mJSONObject);
             }
 
             @Override
@@ -424,18 +427,17 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
     public void goToParkingDetailActivity(int acceptGoParken) {
 
-        Log.d(TAG,"goToParkingDetailActivity");
+        Log.d(TAG, "goToParkingDetailActivity");
         Intent intent;
 
-        if(acceptGoParken == 1){
+        if (acceptGoParken == 1) {
             intent = new Intent(mMainActivity, ParkingActivity.class);
-            intent.putExtra("availability",availability);
-        }else{
+            intent.putExtra("availability", availability);
+        } else {
             intent = new Intent(mMainActivity, NoGPParkingActivity.class);
         }
 
         startActivity(intent);
-
 
 
     }
@@ -444,7 +446,6 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
-
 
 
 }
