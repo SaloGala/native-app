@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.app.AlertDialog;
 import android.widget.Toast;
@@ -19,6 +21,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,6 +47,9 @@ public class EditCardActivity extends AppCompatActivity {
     String URL_PREDET="OpenPay/MakeDefault";
     JSONObject dataRequest = new JSONObject();
     JsonObjectRequest jsArrayRequest;
+
+    ImageView imgUserPhoto;
+    String photoUrl;
 
 
     @Override
@@ -73,12 +79,16 @@ public class EditCardActivity extends AppCompatActivity {
         btnDeleteCard = (Button) findViewById(R.id.btnDeleteCard);
         btnPredetCard = (Button) findViewById(R.id.btnPredetCard);
 
+        imgUserPhoto = (ImageView) findViewById(R.id.imgUserFoto);
+
         btnDeleteCard.setOnClickListener(btnListener);
         btnPredetCard.setOnClickListener(btnListener);
 
         Intent intent = getIntent();
         method_id = Integer.parseInt(intent.getStringExtra("method_id"));
         card_mask = intent.getStringExtra("card_mask");
+
+
 
         initializeViewComponents();
 
@@ -91,7 +101,13 @@ public class EditCardActivity extends AppCompatActivity {
         txtEmailUser.setText(userUtilities.getEmail());
         txtCardNumber.setText(card_mask);
 
-        Log.d(TAG,"Method_id "+method_id);
+        if (userUtilities.getProvider().equals("password")) {
+            photoUrl = "https://firebasestorage.googleapis.com/v0/b/goparkennativa-cfff1.appspot.com/o/perfil_imagen%402x.png?alt=media&token=0104417e-f8d8-4b1d-8712-ea90e18ecadd";
+
+        } else {
+            photoUrl = userUtilities.getPhotoUrl().toString();
+        }
+        Picasso.with(this).load(photoUrl).noFade().fit().into(imgUserPhoto);
     }
 
     private View.OnClickListener btnListener = new View.OnClickListener() {
@@ -134,12 +150,27 @@ public class EditCardActivity extends AppCompatActivity {
 
     public void deleteCard(){
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-        builder.setTitle("¿Seguro que quieres eliminar esta tarjeta?");
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.alert_dialog);
+        dialog.setTitle("Aviso");
 
-        builder.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+        // set the custom dialog components - text, image and button
+        TextView txtTexto = (TextView) dialog.findViewById(R.id.txtTexto);
+        Button btnAceptar = (Button) dialog.findViewById(R.id.btnAceptar);
+        Button btnCancelar = (Button) dialog.findViewById(R.id.btnCancelar);
+
+        txtTexto.setText("¿Seguro que quieres eliminar esta tarjeta?");
+
+        btnAceptar.setText("Aceptar");
+        btnCancelar.setText("Cancelar");
+
+        // if button is clicked, close the custom dialog
+        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
 
                 constructDataRequest();
 
@@ -177,12 +208,14 @@ public class EditCardActivity extends AppCompatActivity {
 
             }
         });
-        builder.setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
+
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
             }
         });
-
-        AlertDialog dialog = builder.create();
 
         dialog.show();
 

@@ -1,9 +1,7 @@
 package com.inflexionlabs.goparken;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -14,7 +12,6 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -37,7 +34,6 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 import android.widget.LinearLayout.LayoutParams;
 
@@ -323,7 +319,7 @@ public class ParkingActivity extends AppCompatActivity {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
-        dialog.setContentView(R.layout.tarifa_dialog);
+        dialog.setContentView(R.layout.aviso_dialog);
         dialog.setTitle("Aviso");
         // set the custom dialog components - text, image and button
         Button btnOK = (Button) dialog.findViewById(R.id.btnOK);

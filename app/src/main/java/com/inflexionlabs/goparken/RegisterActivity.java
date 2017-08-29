@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -55,6 +56,8 @@ public class RegisterActivity extends AppCompatActivity {
 
     User objectUser = new User();
 
+    ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +80,8 @@ public class RegisterActivity extends AppCompatActivity {
         apellidosField = (EditText) findViewById(R.id.editTxtApellidos);
 
         mAuth = FirebaseAuth.getInstance();
+
+        progress = new ProgressDialog(this);
 
         initializeComponents();
 
@@ -280,6 +285,10 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        progress.setMessage("Guardando...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
         // [START create_user_with_email]
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -321,10 +330,14 @@ public class RegisterActivity extends AppCompatActivity {
                         // Re-enable button
 
                         if (task.isSuccessful()) {
+                            progress.dismiss();
+
                             Toast.makeText(RegisterActivity.this,
                                     "Verification email sent to " + user.getEmail(),
                                     Toast.LENGTH_SHORT).show();
                         } else {
+                            progress.dismiss();
+
                             Log.e(TAG, "sendEmailVerification", task.getException());
                             Toast.makeText(RegisterActivity.this,
                                     "Failed to send verification email.",

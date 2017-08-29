@@ -35,26 +35,36 @@
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 
-                <Button
-                    android:id="@+id/btnPromo"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/round_send_button"
-                    android:textAppearance="@style/AppTheme.TextAppearance.Bold"
-                    android:textColor="@android:color/white" />
+                    android:orientation="horizontal"
+                    android:gravity="center">
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
+                    <Button
+                        android:id="@+id/btnCancelar"
+                        android:layout_width="100dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/round_white_button"
+                        android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+                         />
 
-                <Button
-                    android:id="@+id/btnCheckInNormal"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/round_send_button"
-                    android:textAppearance="@style/AppTheme.TextAppearance.Bold"
-                    android:textColor="@android:color/white" />
+                    <Space
+                        android:layout_width="10dp"
+                        android:layout_height="wrap_content" />
 
+                    <Button
+                        android:id="@+id/btnAceptar"
+                        android:layout_width="100dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/round_send_button"
+                        android:textAppearance="@style/AppTheme.TextAppearance.Bold"
+                        android:textColor="@android:color/white"
+                        android:gravity="center"/>
+
+
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -48,6 +49,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
     DatabaseReference databaseReference;
 
+    ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +76,8 @@ public class EditProfileActivity extends AppCompatActivity {
 
         nombreField = (EditText) findViewById(R.id.editNombre);
         apellidosField = (EditText) findViewById(R.id.editApellidos);
+
+        progress = new ProgressDialog(this);
 
         btnGuardar = (Button) findViewById(R.id.btnSavePerfil);
         btnGuardar.setOnClickListener(new View.OnClickListener() {
@@ -235,6 +240,10 @@ public class EditProfileActivity extends AppCompatActivity {
             return;
         }
 
+        progress.setMessage("Actualizando datos...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
         constructDataRequest();
 
         jsArrayRequest = new JsonObjectRequest(
@@ -251,6 +260,7 @@ public class EditProfileActivity extends AppCompatActivity {
 
                         updateFireBaseUser();
 
+                        progress.dismiss();
                         showMessge("Datos guardados con èxito");
 
                     }
@@ -260,7 +270,7 @@ public class EditProfileActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
-
+                        progress.dismiss();
                         showMessge("Ocurrio un error, por favor intente nuevamente");
                         Log.d(TAG, "Error en la respuesta editar perfil: " + error.getMessage());
                     }
