@@ -517,7 +517,7 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         Intent intent = getIntent();
         accessToken = intent.getStringExtra("accessToken");
-        Log.d(TAG,"accessToken: "+accessToken);
+        Log.d(TAG, "accessToken: " + accessToken);
 
     }
 
