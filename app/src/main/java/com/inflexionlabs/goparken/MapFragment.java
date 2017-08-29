@@ -291,6 +291,7 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
                             //Toast.makeText(mMainActivity, "Availability: "+ availability+" Key: "+ key, Toast.LENGTH_SHORT).show();
 
+
                             getParkingDetail(key);
                         }
 
@@ -406,7 +407,9 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
 
                     }
 
-                    goToParkingDetailActivity(parkingUtilities.getAcceptGoParken());
+                    Intent intent = new Intent(mMainActivity, ParkingPreviewActivity.class);
+                    intent.putExtra("availability", availability);
+                    startActivity(intent);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -424,24 +427,6 @@ public class MapFragment extends Fragment implements GooglePlayServicesLocationF
         mParkingDetail.addListenerForSingleValueEvent(parkingListener);
 
     }
-
-    public void goToParkingDetailActivity(int acceptGoParken) {
-
-        Log.d(TAG, "goToParkingDetailActivity");
-        Intent intent;
-
-        if (acceptGoParken == 1) {
-            intent = new Intent(mMainActivity, ParkingActivity.class);
-            intent.putExtra("availability", availability);
-        } else {
-            intent = new Intent(mMainActivity, NoGPParkingActivity.class);
-        }
-
-        startActivity(intent);
-
-
-    }
-
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
