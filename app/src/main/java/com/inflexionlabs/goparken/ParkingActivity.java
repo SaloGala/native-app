@@ -5,18 +5,21 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Space;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +39,9 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import android.widget.LinearLayout.LayoutParams;
+
+import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
 
 public class ParkingActivity extends AppCompatActivity {
@@ -81,10 +87,22 @@ public class ParkingActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        CalligraphyConfig.initDefault(new CalligraphyConfig.Builder()
+                .setDefaultFontPath("NexaLight.ttf")
+                .setFontAttrId(R.attr.fontPath)
+                .build()
+        );
+
         setContentView(R.layout.activity_parking);
 
         initializeComponents();
 
+    }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
     }
 
     private void initializeComponents() {
@@ -162,11 +180,11 @@ public class ParkingActivity extends AppCompatActivity {
         txtDiaHora.setText(calculateSchedule());
         txtDescripcion.setText(parkingUtilities.getDescription());
 
-        if(isOpen){
+        if (isOpen) {
 
-            if(isAvailable){
+            if (isAvailable) {
                 getCardList();
-            }else{
+            } else {
                 TextView txtNoPlace = new TextView(this);
 
                 txtNoPlace.setText(getString(R.string.no_place));
@@ -179,7 +197,7 @@ public class ParkingActivity extends AppCompatActivity {
                 lytInfoParking.addView(txtNoPlace);
             }
 
-        }else{
+        } else {
 
             TextView txtParkingClosed = new TextView(this);
 
@@ -190,29 +208,34 @@ public class ParkingActivity extends AppCompatActivity {
                     LayoutParams.WRAP_CONTENT
             ));
 
+            Typeface type = Typeface.createFromAsset(getApplication().getAssets(), "NexaLight.ttf");
+            txtParkingClosed.setTypeface(type);
+
+            txtParkingClosed.setTextColor(Color.RED);
+
+            txtParkingClosed.setGravity(Gravity.CENTER);
+
             lytInfoParking.addView(txtParkingClosed);
         }
 
 
-
-
     }
 
-    public String formatAddress(){
-        String address="";
+    public String formatAddress() {
+        String address = "";
 
-        address = parkingUtilities.getAddress_street()+", "
-                +parkingUtilities.getAddress_number()+", "
-                +parkingUtilities.getAddress_colony()+", C.P. "
-                +parkingUtilities.getAddress_postal_code()+", "
-                +parkingUtilities.getAddress_delegation()+", "
-                +parkingUtilities.getAddress_state();
+        address = parkingUtilities.getAddress_street() + ", "
+                + parkingUtilities.getAddress_number() + ", "
+                + parkingUtilities.getAddress_colony() + ", C.P. "
+                + parkingUtilities.getAddress_postal_code() + ", "
+                + parkingUtilities.getAddress_delegation() + ", "
+                + parkingUtilities.getAddress_state();
 
         return address;
     }
 
-    public String calculateSchedule(){
-        String DiaHora="";
+    public String calculateSchedule() {
+        String DiaHora = "";
 
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE");
         Date d = new Date();
@@ -220,7 +243,7 @@ public class ParkingActivity extends AppCompatActivity {
         String start = "";
         String finish = "";
 
-        switch (dayOfTheWeek){
+        switch (dayOfTheWeek) {
             case "Lunes":
 
                 start = parkingUtilities.getSchedule_start_monday();
@@ -265,18 +288,18 @@ public class ParkingActivity extends AppCompatActivity {
                 break;
         }
 
-        if(start.equals("Cerrado")){
+        if (start.equals("Cerrado")) {
             //mostar "ESTACIONAMIENTO CERRADO";
             isOpen = false;
         }
 
-        if(start.equals("24 horas") || start.equals("Cerrado")){
-            DiaHora = dayOfTheWeek+" "+start;
-        }else{
-            DiaHora = dayOfTheWeek+" De "+start+" hrs a "+finish+" hrs";
+        if (start.equals("24 horas") || start.equals("Cerrado")) {
+            DiaHora = dayOfTheWeek + " " + start;
+        } else {
+            DiaHora = dayOfTheWeek + " De " + start + " hrs a " + finish + " hrs";
         }
 
-        if(start.equals("")){
+        if (start.equals("")) {
             DiaHora = dayOfTheWeek;
         }
 
@@ -311,11 +334,11 @@ public class ParkingActivity extends AppCompatActivity {
     private void goToAddCheckInScreen(String promo) {
 
         Intent intent = new Intent(this, CheckInActivity.class);
-        intent.putExtra("promo",promo);
+        intent.putExtra("promo", promo);
         startActivity(intent);
     }
 
-    private void verificarTarifa(final String promo){
+    private void verificarTarifa(final String promo) {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
@@ -325,7 +348,7 @@ public class ParkingActivity extends AppCompatActivity {
         Button btnOK = (Button) dialog.findViewById(R.id.btnOK);
 
         TextView txtTarifa = (TextView) dialog.findViewById(R.id.txtTarifa);
-        txtTarifa.setText("En este estacionamiento se cobrará una comisión de $"+ Double.toString(parkingUtilities.getComFija())+" + "+Double.toString(parkingUtilities.getComVar())+"%  + I.V.A ");
+        txtTarifa.setText("En este estacionamiento se cobrará una comisión de $" + Double.toString(parkingUtilities.getComFija()) + " + " + Double.toString(parkingUtilities.getComVar()) + "%  + I.V.A ");
 
         // if button is clicked, close the custom dialog
         btnOK.setOnClickListener(new View.OnClickListener() {
@@ -341,7 +364,7 @@ public class ParkingActivity extends AppCompatActivity {
 
     }
 
-    private void verifcarPromo(){
+    private void verifcarPromo() {
 
         // custom dialog
         final Dialog dialog = new Dialog(context);
@@ -351,8 +374,8 @@ public class ParkingActivity extends AppCompatActivity {
         Button btnPromo = (Button) dialog.findViewById(R.id.btnPromo);
         Button btnCheckInNormal = (Button) dialog.findViewById(R.id.btnCheckInNormal);
 
-        btnPromo.setText("Promo "+parkingUtilities.getHorasPromo()+" hrs X $"+Double.toString(parkingUtilities.getPrecioPromo()));
-        btnCheckInNormal.setText("Cada hora X $"+Double.toString(parkingUtilities.getCost_goparken_by_hour()));
+        btnPromo.setText("Promo " + parkingUtilities.getHorasPromo() + " hrs X $" + Double.toString(parkingUtilities.getPrecioPromo()));
+        btnCheckInNormal.setText("Cada hora X $" + Double.toString(parkingUtilities.getCost_goparken_by_hour()));
 
         // if button is clicked, close the custom dialog
         btnPromo.setOnClickListener(new View.OnClickListener() {
@@ -360,9 +383,9 @@ public class ParkingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
-                if(parkingUtilities.getComision() == 1){
+                if (parkingUtilities.getComision() == 1) {
                     verificarTarifa("true");
-                }else{
+                } else {
                     goToAddCheckInScreen("true");
                 }
 
@@ -374,9 +397,9 @@ public class ParkingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 dialog.dismiss();
 
-                if(parkingUtilities.getComision() == 1){
+                if (parkingUtilities.getComision() == 1) {
                     verificarTarifa("false");
-                }else{
+                } else {
                     goToAddCheckInScreen("false");
                 }
 
@@ -435,13 +458,18 @@ public class ParkingActivity extends AppCompatActivity {
                                 ));
 
                                 TextView txtTusMetodos = new TextView(context);
+                                Typeface type = Typeface.createFromAsset(getApplication().getAssets(), "NexaBold.ttf");
+                                txtTusMetodos.setTypeface(type);
                                 txtTusMetodos.setText(getString(R.string.tu_metodo_msg));
                                 txtTusMetodos.setTextSize(18);
                                 txtTusMetodos.setLayoutParams(new LayoutParams(
                                         LayoutParams.MATCH_PARENT,
                                         LayoutParams.WRAP_CONTENT
                                 ));
-                                txtTusMetodos.setGravity(View.TEXT_ALIGNMENT_CENTER);
+
+                                txtTusMetodos.setGravity(Gravity.CENTER);
+
+                                txtTusMetodos.setTextColor(getResources().getColor(R.color.colorPrimary));
 
                                 Spinner spinnerCards = new Spinner(context);
                                 spinnerCards.setLayoutParams(new LayoutParams(
@@ -476,17 +504,25 @@ public class ParkingActivity extends AppCompatActivity {
                                         LayoutParams.WRAP_CONTENT
                                 ));
 
+                                btnCheckin.setBackground(getResources().getDrawable(R.drawable.round_checkin_button));
+
+                                btnCheckin.setTextSize(24);
+
+                                btnCheckin.setTextColor(Color.WHITE);
+
+                                btnCheckin.setTypeface(type);
+
                                 btnCheckin.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
 
 
-                                        if(parkingUtilities.getTarifaPromo() ==1){
+                                        if (parkingUtilities.getTarifaPromo() == 1) {
                                             verifcarPromo();
-                                        }else{
-                                            if(parkingUtilities.getComision()==1){
+                                        } else {
+                                            if (parkingUtilities.getComision() == 1) {
                                                 verificarTarifa("false");
-                                            }else{
+                                            } else {
                                                 goToAddCheckInScreen("false");
                                             }
 
@@ -495,12 +531,37 @@ public class ParkingActivity extends AppCompatActivity {
                                     }
                                 });
 
+                                Space space1 = new Space(context);
+                                Space space2 = new Space(context);
+                                Space space3 = new Space(context);
+
+                                final float scale = context.getResources().getDisplayMetrics().density;
+                                int pixels = (int) (15 * scale + 0.5f);
+
+                                space1.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        pixels
+                                ));
+
+                                space2.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        pixels
+                                ));
+
+                                space3.setLayoutParams(new LayoutParams(
+                                        LayoutParams.MATCH_PARENT,
+                                        pixels
+                                ));
+
                                 lytInfoParking.addView(imgCard);
+                                lytInfoParking.addView(space1);
                                 lytInfoParking.addView(txtTusMetodos);
+                                lytInfoParking.addView(space2);
                                 lytInfoParking.addView(spinnerCards);
+                                lytInfoParking.addView(space3);
                                 lytInfoParking.addView(btnCheckin);
 
-                            }else{
+                            } else {
                                 Button btnAddCardActivity = new Button(context);
 
                                 btnAddCardActivity.setText(getString(R.string.bnt_registrar_pago));
@@ -508,6 +569,15 @@ public class ParkingActivity extends AppCompatActivity {
                                         LayoutParams.MATCH_PARENT,
                                         LayoutParams.WRAP_CONTENT
                                 ));
+
+                                Typeface type = Typeface.createFromAsset(getApplication().getAssets(), "NexaLight.ttf");
+                                btnAddCardActivity.setTypeface(type);
+
+                                btnAddCardActivity.setTextColor(Color.WHITE);
+
+                                btnAddCardActivity.setTextSize(24);
+
+                                btnAddCardActivity.setBackground(getResources().getDrawable(R.drawable.round_send_button));
 
                                 btnAddCardActivity.setOnClickListener(new View.OnClickListener() {
                                     @Override
