@@ -28,7 +28,7 @@
                 android:layout_weight="1"
                 android:text="@string/action_profile"
                 android:textAppearance="@style/AppTheme.TextAppearance.Bold"
-                android:textColor="@color/textColor"
+                android:textColor="@color/colorPrimary"
                 android:textSize="28dp" />
 
 

@@ -50,6 +50,7 @@
                                 android:paddingLeft="8dp"
                                 android:paddingTop="3dp"
                                 android:text="@string/btn_auto"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="20dp" />
 
                             <Button
@@ -170,6 +171,7 @@
                                 android:paddingLeft="8dp"
                                 android:paddingTop="3dp"
                                 android:text="@string/btn_gas"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="20dp" />
 
                             <Button
@@ -290,6 +292,7 @@
                                 android:paddingLeft="8dp"
                                 android:paddingTop="3dp"
                                 android:text="@string/btn_taller"
+                                android:textColor="@color/colorPrimary"
                                 android:textSize="20dp" />
 
                             <Button
