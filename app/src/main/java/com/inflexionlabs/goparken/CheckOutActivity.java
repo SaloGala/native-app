@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -59,6 +61,8 @@ public class CheckOutActivity extends AppCompatActivity {
 
     TextView txtExitCode;
 
+    ProgressDialog progress;
+
 
 
     @Override
@@ -89,6 +93,7 @@ public class CheckOutActivity extends AppCompatActivity {
         editTxtECode4 = (EditText) findViewById(R.id.editTxtECode_4);
 
         btnValidarE = (Button) findViewById(R.id.btnValidarE);
+        progress = new ProgressDialog(this);
 
         txtExitCode = (TextView) findViewById(R.id.txtExitCode);
         txtExitCode.setText(checkInUtilities.getExit_code());
@@ -219,6 +224,10 @@ public class CheckOutActivity extends AppCompatActivity {
             return;
         }
 
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
         String codigo = editTxtECode1.getText().toString()+editTxtECode2.getText().toString()+editTxtECode3.getText().toString()+editTxtECode4.getText().toString();
 
         URL_EXITCODE = URL_EXITCODE+"token="+userUtilities.getToken()+"&parking_id="+Integer.toString(checkInUtilities.getParking_id())+
@@ -234,7 +243,13 @@ public class CheckOutActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         // Manejo de la respuesta
                         Log.d(TAG, "Respuesta en JSON: " + response);
-                        checkOutNormal();
+
+                        if(checkInUtilities.isPromo()){
+                            checkOutPromo();
+                        }else{
+                            checkOutNormal();
+                        }
+
 
                     }
                 },
@@ -243,13 +258,58 @@ public class CheckOutActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
-
+                        progress.dismiss();
+                        showMessge("Ocurrio un error por favor intente mas tarde");
                         Log.d(TAG, "Error: " + error.getMessage());
                     }
                 });
 
         // Add request to de queue
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+    }
+
+    private void checkOutPromo() {
+
+        Openpay openpay = new Openpay(MERCHANT_ID,PRIVATE_API_KEY,productionMode);
+
+
+        try {
+            dataRequest.put("checkin_id",checkInUtilities.getId());
+            dataRequest.put("deviceSessionId",openpay.getDeviceCollectorDefaultImpl().setup(this));
+            dataRequest.put("token",userUtilities.getToken());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        jsArrayRequest2 = new JsonObjectRequest(
+                Request.Method.POST,
+                URL_BASE + "Checkoutonly",
+                dataRequest,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Manejo de la respuesta
+                        Log.d(TAG, "Respuesta en JSON: " + response);
+                        progress.dismiss();
+                        showMessge("El checkout ha sido realizado de forma exitosa.");
+                        goToGoodbayScreen();
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejo de errores
+                        progress.dismiss();
+                        showMessge("Ocurrio un error por favor intenrte mas tarde");
+                        Log.d(TAG, "Error: " + error.getMessage());
+                    }
+                });
+
+        // Add request to de queue
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest2);
     }
 
     private void callme() {
@@ -297,8 +357,6 @@ public class CheckOutActivity extends AppCompatActivity {
 
         Openpay openpay = new Openpay(MERCHANT_ID,PRIVATE_API_KEY,productionMode);
 
-        String deviceSessionId;
-
         try {
             dataRequest.put("checkin_id",checkInUtilities.getId());
             dataRequest.put("deviceSessionId",openpay.getDeviceCollectorDefaultImpl().setup(this));
@@ -317,6 +375,8 @@ public class CheckOutActivity extends AppCompatActivity {
                     public void onResponse(JSONObject response) {
                         // Manejo de la respuesta
                         Log.d(TAG, "Respuesta en JSON: " + response);
+                        progress.dismiss();
+                        showMessge("El checkout ha sido realizado de forma exitosa.");
                         goToGoodbayScreen();
 
 
@@ -327,13 +387,19 @@ public class CheckOutActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
-
+                        progress.dismiss();
+                        showMessge("Ocurrio un error por favor intenrte mas tarde");
                         Log.d(TAG, "Error: " + error.getMessage());
                     }
                 });
 
         // Add request to de queue
         MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest2);
+    }
+
+    private void showMessge(String msg) {
+
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 
     public void goToTimerActivity(){

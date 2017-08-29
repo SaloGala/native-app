@@ -163,7 +163,7 @@ public class PerfilFragment extends Fragment {
                     break;
 
                 case R.id.btnVerVehiculos:
-                    addAuto();
+                    showCarsList();
                     break;
 
                 case R.id.btnVerMetodosPago:
@@ -210,8 +210,8 @@ public class PerfilFragment extends Fragment {
         startActivity(intent);
     }
 
-    private void addAuto() {
-        Intent intent = new Intent(getActivity(), AddVehicleActivity.class);
+    private void showCarsList() {
+        Intent intent = new Intent(getActivity(), AutosListActivity.class);
         startActivity(intent);
     }
 

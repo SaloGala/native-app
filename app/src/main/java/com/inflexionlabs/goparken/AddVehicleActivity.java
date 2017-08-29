@@ -17,6 +17,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AddVehicleActivity extends AppCompatActivity {
 
     private final String TAG = "AddVehicleActivity";
@@ -122,12 +125,22 @@ public class AddVehicleActivity extends AppCompatActivity {
 
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        databaseReference.child("users").child(userUtilities.getUid()).child("vehiculos").child(editPlaca.getText().toString()).child("nombreAuto").setValue(editNombreAuto.getText().toString());
-        databaseReference.child("users").child(userUtilities.getUid()).child("vehiculos").child(editPlaca.getText().toString()).child("placa").setValue(editPlaca.getText().toString());
-        databaseReference.child("users").child(userUtilities.getUid()).child("vehiculos").child(editPlaca.getText().toString()).child("marca").setValue(editMarca.getText().toString());
-        databaseReference.child("users").child(userUtilities.getUid()).child("vehiculos").child(editPlaca.getText().toString()).child("submarca").setValue(editSubmarca.getText().toString());
-        databaseReference.child("users").child(userUtilities.getUid()).child("vehiculos").child(editPlaca.getText().toString()).child("year").setValue(editYear.getText().toString());
-        databaseReference.child("users").child(userUtilities.getUid()).child("vehiculos").child(editPlaca.getText().toString()).child("predeterminado").setValue(1);
+        String key = databaseReference.child("users_vehicles").push().getKey();
+
+        Auto auto = new Auto(userUtilities.getUid(),
+                editNombreAuto.getText().toString(),
+                editPlaca.getText().toString(),
+                editMarca.getText().toString(),
+                editSubmarca.getText().toString(),
+                editYear.getText().toString()
+                );
+        Map<String, Object> autoValues = auto.toMap();
+
+        Map<String, Object> childUpdates = new HashMap<>();
+
+        childUpdates.put("/users_vehicles/" + userUtilities.getUid() + "/" + key, autoValues);
+
+        databaseReference.updateChildren(childUpdates);
 
         Toast.makeText(this,"Auto agregado con exito",Toast.LENGTH_LONG).show();
     }

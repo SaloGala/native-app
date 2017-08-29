@@ -14,6 +14,7 @@ class CheckInUtilities {
     private String out;
     private int comision;
     private String exit_code;
+    private boolean promo;
 
     static CheckInUtilities getInstance() {
         return ourInstance;
@@ -76,5 +77,13 @@ class CheckInUtilities {
 
     public void setExit_code(String exit_code) {
         this.exit_code = exit_code;
+    }
+
+    public boolean isPromo() {
+        return promo;
+    }
+
+    public void setPromo(boolean promo) {
+        this.promo = promo;
     }
 }

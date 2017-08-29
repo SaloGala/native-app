@@ -111,7 +111,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".AddVehicleActivity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".AutosListActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".AddCardActivity"
@@ -133,12 +133,18 @@
             android:name=".CheckInActivity"
             android:parentActivityName=".ParkingActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".TimerActivity" />
+
+        <activity android:name=".TimerActivity"
+            android:screenOrientation="portrait"/>
+
         <activity
             android:name=".CheckOutActivity"
             android:parentActivityName=".TimerActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".GoodbyeActivity"></activity>
+        <activity android:name=".GoodbyeActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".AutosListActivity"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
