@@ -1,5 +1,7 @@
 package com.inflexionlabs.goparken;
 
+import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -7,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -15,11 +18,21 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.firebase.ui.database.FirebaseListAdapter;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -27,11 +40,12 @@ public class AutosListActivity extends AppCompatActivity {
 
     private final String TAG = "AutosListActivity";
 
-    private DatabaseReference mDataBaseReference;
+    private DatabaseReference mDatabaseReference;
+    private DatabaseReference userVehiclesReference;
 
-    private FirebaseRecyclerAdapter<Auto,AutoViewHolder> mAdapter;
+    private FirebaseListAdapter<Auto> mAdapter;
 
-    ListView lsyAutosList;
+    ListView lstAutosList;
 
     TextView txtUsuario;
     ImageView imgUserPhoto;
@@ -40,6 +54,7 @@ public class AutosListActivity extends AppCompatActivity {
     Button btnAddCar;
 
     UserUtilities userUtilities = UserUtilities.getInstance();
+    Context context;
 
 
     @Override
@@ -48,6 +63,7 @@ public class AutosListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_autos_list);
 
         initializeComponents();
+        setupView();
     }
 
     private void initializeComponents() {
@@ -62,9 +78,9 @@ public class AutosListActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        mDataBaseReference = FirebaseDatabase.getInstance().getReference();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        lsyAutosList = (ListView)findViewById(R.id.lstCars);
+        lstAutosList = (ListView)findViewById(R.id.lstCars);
 
         btnAddCar = (Button) findViewById(R.id.btnAddCar);
 
@@ -89,6 +105,7 @@ public class AutosListActivity extends AppCompatActivity {
         }
         Picasso.with(this).load(photoUrl).noFade().fit().into(imgUserPhoto);
 
+        context = this;
 
 
     }
@@ -101,25 +118,91 @@ public class AutosListActivity extends AppCompatActivity {
 
     public void setupView(){
 
-        Query autosQuery = getQuery(mDataBaseReference);
+        userVehiclesReference = mDatabaseReference.child("users_vehicles").child(userUtilities.getUid());
 
-        mAdapter = new FirebaseRecyclerAdapter<Auto, AutoViewHolder>(Auto.class,R.layout.auto_list,AutoViewHolder.class,autosQuery) {
+        mAdapter = new FirebaseListAdapter<Auto>(this, Auto.class, R.layout.auto_list, userVehiclesReference) {
+
             @Override
-            protected void populateViewHolder(AutoViewHolder viewHolder, Auto model, int position) {
-                final DatabaseReference autoRef = getRef(position);
+            protected void populateView(final View view, Auto model, final int position) {
+                final String key = mAdapter.getRef(position).getKey();
 
-                final String autoKey = autoRef.getKey();
-
-                viewHolder.bindToAuto(model, new View.OnClickListener() {
+                userVehiclesReference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onClick(View v) {
-                        Toast.makeText(getApplicationContext(),"Borrar auto",Toast.LENGTH_SHORT).show();
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        View currentView = lstAutosList.getChildAt(position - lstAutosList.getFirstVisiblePosition());
+
+                        String placa = dataSnapshot.child("placa").getValue().toString();
+                        String submarca = dataSnapshot.child("submarca").getValue().toString();
+
+                        if (placa != null && placa.length() > 0) {
+                            ((TextView) view.findViewById(R.id.auto_placa)).setText(placa);
+                        } else {
+                            ((TextView) view.findViewById(R.id.auto_placa)).setText("SIN PLACA");
+                        }
+
+                        if (submarca != null && submarca.length() > 0) {
+                            ((TextView) view.findViewById(R.id.auto_submarca)).setText(submarca);
+                        } else {
+                            ((TextView) view.findViewById(R.id.auto_submarca)).setText("SIM SUBMARCA");
+                        }
+
+                        Button btnEliminar = (Button) view.findViewById(R.id.btnEliminarAuto);
+
+                        btnEliminar.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+
+                                final Dialog dialog = new Dialog(context);
+                                dialog.setContentView(R.layout.alert_dialog);
+                                dialog.setTitle("Aviso");
+
+
+                                TextView txtTexto = (TextView) dialog.findViewById(R.id.txtTexto);
+                                Button btnAceptar = (Button) dialog.findViewById(R.id.btnAceptar);
+                                Button btnCancelar = (Button) dialog.findViewById(R.id.btnCancelar);
+
+                                txtTexto.setText("¿Seguro que quieres eliminar esta auto?");
+
+                                btnAceptar.setText("Aceptar");
+                                btnCancelar.setText("Cancelar");
+
+
+                                btnAceptar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+                                        userVehiclesReference.child(key).removeValue();
+                                        Toast.makeText(context,"Auto eliminado con éxito",Toast.LENGTH_SHORT).show();
+                                    }
+                                });
+
+                                btnCancelar.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        dialog.dismiss();
+
+                                    }
+                                });
+
+                                dialog.show();
+
+                                /*userVehiclesReference.child(key).removeValue();
+                                Toast.makeText(getApplicationContext(),"Auto eliminado con éxito",Toast.LENGTH_SHORT).show();*/
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
                     }
                 });
+
             }
         };
 
-        lsyAutosList.setAdapter((ListAdapter) mAdapter);
+        lstAutosList.setAdapter(mAdapter);
 
     }
 
@@ -134,9 +217,4 @@ public class AutosListActivity extends AppCompatActivity {
         return true;
     }
 
-    public Query getQuery(DatabaseReference databaseReference) {
-        // All my posts
-        return databaseReference.child("user-posts")
-                .child(userUtilities.getUid());
-    }
 }

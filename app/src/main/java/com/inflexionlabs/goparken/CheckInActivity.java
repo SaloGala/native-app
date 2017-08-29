@@ -43,7 +43,7 @@ public class CheckInActivity extends AppCompatActivity {
     private final String PRIVATE_API_KEY = "sk_99ab173dcfe944e28cc048f5534eb857";
     boolean productionMode = false;
 
-    String promo;
+    //String promo;
     ImageButton btnCallme;
 
     String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
@@ -93,7 +93,7 @@ public class CheckInActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent intent = getIntent();
-        promo = intent.getStringExtra("promo");
+        //promo = intent.getStringExtra("promo");
 
         btnCallme = (ImageButton) findViewById(R.id.btnCallme);
 
@@ -185,7 +185,7 @@ public class CheckInActivity extends AppCompatActivity {
             }
         });
 
-        checkInUtilities.setPromo(false);
+        //checkInUtilities.setPromo(false);
 
 
     }
@@ -445,7 +445,7 @@ public class CheckInActivity extends AppCompatActivity {
     public void goToTimerActivity(){
         Intent intent = new Intent(this, TimerActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("promo",promo);
+        //intent.putExtra("promo",promo);
         startActivity(intent);
         finish();
     }

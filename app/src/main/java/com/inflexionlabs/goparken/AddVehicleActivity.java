@@ -134,13 +134,13 @@ public class AddVehicleActivity extends AppCompatActivity {
                 editSubmarca.getText().toString(),
                 editYear.getText().toString()
                 );
-        Map<String, Object> autoValues = auto.toMap();
 
-        Map<String, Object> childUpdates = new HashMap<>();
-
-        childUpdates.put("/users_vehicles/" + userUtilities.getUid() + "/" + key, autoValues);
-
-        databaseReference.updateChildren(childUpdates);
+        databaseReference.child("users_vehicles").child(userUtilities.getUid()).child(key).child("uid").setValue(auto.uidA);
+        databaseReference.child("users_vehicles").child(userUtilities.getUid()).child(key).child("nombre").setValue(auto.nombreA);
+        databaseReference.child("users_vehicles").child(userUtilities.getUid()).child(key).child("placa").setValue(auto.placa);
+        databaseReference.child("users_vehicles").child(userUtilities.getUid()).child(key).child("marca").setValue(auto.marca);
+        databaseReference.child("users_vehicles").child(userUtilities.getUid()).child(key).child("submarca").setValue(auto.submarca);
+        databaseReference.child("users_vehicles").child(userUtilities.getUid()).child(key).child("anio").setValue(auto.anio);
 
         Toast.makeText(this,"Auto agregado con exito",Toast.LENGTH_LONG).show();
     }
