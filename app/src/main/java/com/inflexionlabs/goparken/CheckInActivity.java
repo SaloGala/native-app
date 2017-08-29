@@ -1,5 +1,9 @@
 package com.inflexionlabs.goparken;
 
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -17,6 +21,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -27,10 +33,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import mx.openpay.android.Openpay;
+
 
 public class CheckInActivity extends AppCompatActivity {
 
     private final String TAG = "CheckInActivity";
+    private final String MERCHANT_ID = "mtfur53iopbr7ceh01ro";
+    private final String PRIVATE_API_KEY = "sk_99ab173dcfe944e28cc048f5534eb857";
+    boolean productionMode = false;
 
     String promo;
     ImageButton btnCallme;
@@ -41,7 +52,9 @@ public class CheckInActivity extends AppCompatActivity {
     String URL_ADDCHECKIN ="Checkin";
     JsonObjectRequest jsArrayRequest;
     JsonObjectRequest jsArrayRequest2;
+    JsonObjectRequest jsArrayRequest3;
     JSONObject dataRequest = new JSONObject();
+    JSONObject dataRequest1 = new JSONObject();
 
     UserUtilities userUtilities = UserUtilities.getInstance();
     ParkingUtilities parkingUtilities = ParkingUtilities.getInstance();
@@ -52,6 +65,12 @@ public class CheckInActivity extends AppCompatActivity {
     EditText editTxtCode4;
 
     Button btnValidar;
+    ProgressDialog progress;
+
+    CheckInUtilities checkInUtilities = CheckInUtilities.getInstance();
+
+    Context context;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +103,10 @@ public class CheckInActivity extends AppCompatActivity {
         editTxtCode4 = (EditText) findViewById(R.id.editTxtCode_4);
 
         btnValidar = (Button) findViewById(R.id.btnValidar);
+
+        progress = new ProgressDialog(this);
+
+        context = this;
 
         editTxtCode1.addTextChangedListener(new TextWatcher() {
 
@@ -162,6 +185,9 @@ public class CheckInActivity extends AppCompatActivity {
             }
         });
 
+        checkInUtilities.setPromo(false);
+
+
     }
 
     private void validar() {
@@ -170,7 +196,11 @@ public class CheckInActivity extends AppCompatActivity {
             return;
         }
 
-        if(promo.equals("true")){
+        progress.setMessage("Cargando...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
+        if(checkInUtilities.isPromo()){
             checkInPromo();
         }else{
             checkInNormal();
@@ -209,6 +239,7 @@ public class CheckInActivity extends AppCompatActivity {
                                         public void onResponse(JSONObject response) {
                                             // Manejo de la respuesta
                                             Log.d(TAG, "Respuesta en JSON 2: " + response);
+                                            progress.dismiss();
                                             goToTimerActivity();
 
 
@@ -219,7 +250,8 @@ public class CheckInActivity extends AppCompatActivity {
                                         @Override
                                         public void onErrorResponse(VolleyError error) {
                                             // Manejo de errores
-
+                                            progress.dismiss();
+                                            showMessge("Ocurrio un error por favor intente mas tarde");
                                             Log.d(TAG, "Error: " + error.getMessage());
                                         }
                                     });
@@ -239,7 +271,8 @@ public class CheckInActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
-
+                        progress.dismiss();
+                        showMessge("Ocurrio un error por favor intente mas tarde");
                         Log.d(TAG, "Error: " + error.getMessage());
                     }
                 });
@@ -253,6 +286,159 @@ public class CheckInActivity extends AppCompatActivity {
     private void checkInPromo() {
 
 
+        String codigo = editTxtCode1.getText().toString()+editTxtCode2.getText().toString()+editTxtCode3.getText().toString()+editTxtCode4.getText().toString();
+
+        URL_ENTRYCODE = URL_ENTRYCODE+"token="+userUtilities.getToken()+"&parking_id="+Integer.toString(parkingUtilities.getId())+
+                "&entry_code="+codigo;
+
+        jsArrayRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                URL_BASE + URL_ENTRYCODE,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Manejo de la respuesta
+                        Log.d(TAG, "Respuesta en JSON PROMO: " + response);
+
+                        try {
+                            dataRequest.put("marker_id",parkingUtilities.getId_marker());
+                            dataRequest.put("token",userUtilities.getToken());
+
+                            jsArrayRequest2 = new JsonObjectRequest(
+                                    Request.Method.POST,
+                                    URL_BASE + URL_ADDCHECKIN,
+                                    dataRequest,
+                                    new Response.Listener<JSONObject>() {
+                                        @Override
+                                        public void onResponse(JSONObject response) {
+                                            // Manejo de la respuesta
+                                            Log.d(TAG, "Respuesta en JSON 2 PROMO: " + response);
+
+                                            if(response != null){
+
+                                                try {
+                                                    JSONObject content = response.getJSONObject("content");
+                                                    final JSONObject checkin = content.getJSONObject("checkin");
+
+                                                    if(checkin != null){
+
+                                                        Openpay openpay = new Openpay(MERCHANT_ID,PRIVATE_API_KEY,productionMode);
+
+                                                        try {
+                                                            dataRequest1.put("checkin_id",checkin.getInt("id"));
+                                                            dataRequest1.put("deviceSessionId",openpay.getDeviceCollectorDefaultImpl().setup((Activity) context));
+                                                            dataRequest1.put("comision",parkingUtilities.getComision());
+                                                            dataRequest1.put("token",userUtilities.getToken());
+                                                        } catch (JSONException e) {
+                                                            e.printStackTrace();
+                                                        }
+
+                                                        jsArrayRequest3 = new JsonObjectRequest(
+                                                                Request.Method.POST,
+                                                                URL_BASE + "Checkoutpromo",
+                                                                dataRequest1,
+                                                                new Response.Listener<JSONObject>() {
+                                                                    @Override
+                                                                    public void onResponse(JSONObject response) {
+                                                                        // Manejo de la respuesta
+                                                                        Log.d(TAG, "Respuesta en JSON 3 PROMO: " + response);
+
+
+                                                                        try {
+                                                                            JSONObject content = response.getJSONObject("content");
+                                                                            JSONObject checkin2 = content.getJSONObject("checkin");
+
+                                                                            // custom dialog
+                                                                            final Dialog dialog = new Dialog(context);
+                                                                            dialog.setContentView(R.layout.aviso_dialog);
+                                                                            dialog.setTitle("Aviso");
+                                                                            // set the custom dialog components - text, image and button
+                                                                            Button btnOK = (Button) dialog.findViewById(R.id.btnOK);
+
+                                                                            TextView txtTarifa = (TextView) dialog.findViewById(R.id.txtTarifa);
+                                                                            txtTarifa.setText("El Pago ha sido realizado de forma exitosa. Total de $"+ Double.toString(checkin2.getDouble("price")));
+
+                                                                            // if button is clicked, close the custom dialog
+                                                                            btnOK.setOnClickListener(new View.OnClickListener() {
+                                                                                @Override
+                                                                                public void onClick(View v) {
+                                                                                    dialog.dismiss();
+                                                                                    goToTimerActivity();
+
+                                                                                }
+                                                                            });
+
+                                                                            dialog.show();
+
+                                                                        } catch (JSONException e) {
+                                                                            e.printStackTrace();
+                                                                        }
+
+
+
+                                                                    }
+                                                                },
+                                                                new Response.ErrorListener() {
+
+                                                                    @Override
+                                                                    public void onErrorResponse(VolleyError error) {
+                                                                        // Manejo de errores
+                                                                        progress.dismiss();
+                                                                        showMessge("Ocurrio un error por favor intenrte mas tarde");
+                                                                        Log.d(TAG, "Error: " + error.getMessage());
+                                                                    }
+                                                                });
+
+                                                        // Add request to de queue
+                                                        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest3);
+
+
+                                                    }
+
+                                                } catch (JSONException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+
+                                        }
+                                    },
+                                    new Response.ErrorListener() {
+
+                                        @Override
+                                        public void onErrorResponse(VolleyError error) {
+                                            // Manejo de errores
+                                            progress.dismiss();
+                                            showMessge("Ocurrio un error por favor intente mas tarde");
+                                            Log.d(TAG, "Error: " + error.getMessage());
+                                        }
+                                    });
+
+                            // Add request to de queue
+                            MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest2);
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejo de errores
+                        progress.dismiss();
+                        showMessge("Ocurrio un error por favor intente mas tarde");
+                        Log.d(TAG, "Error: " + error.getMessage());
+                    }
+                });
+
+        // Add request to de queue
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest);
+
+
 
     }
 
@@ -262,6 +448,11 @@ public class CheckInActivity extends AppCompatActivity {
         intent.putExtra("promo",promo);
         startActivity(intent);
         finish();
+    }
+
+    private void showMessge(String msg) {
+
+        Toast.makeText(this,msg,Toast.LENGTH_SHORT).show();
     }
 
     public Boolean isOnlineNet() {

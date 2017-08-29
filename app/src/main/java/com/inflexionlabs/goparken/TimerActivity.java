@@ -1,6 +1,8 @@
 package com.inflexionlabs.goparken;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
@@ -48,10 +50,16 @@ public class TimerActivity extends AppCompatActivity {
     double priceT = 0;
 
     JsonObjectRequest jsArrayRequest;
+    JsonObjectRequest jsArrayRequest1;
+    String URL_BASE = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/";
+    JSONObject dataRequest = new JSONObject();
+
     String URL_GETCHECKININFO;
     JSONObject parking;
 
     Button btnCheckOut;
+
+    ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +82,8 @@ public class TimerActivity extends AppCompatActivity {
         txtHoraEntrada = (TextView) findViewById(R.id.txtHoraEntrada);
         txtAddress = (TextView) findViewById(R.id.txtAddress);
         txtCardMask = (TextView) findViewById(R.id.txtMetodoPago);
+
+        progress = new ProgressDialog(this);
 
         btnCheckOut = (Button) findViewById(R.id.btnCheckOut);
 
@@ -103,6 +113,10 @@ public class TimerActivity extends AppCompatActivity {
             }.start();
         }
 
+
+    }
+
+    public void validar(){
 
     }
 
@@ -140,37 +154,101 @@ public class TimerActivity extends AppCompatActivity {
 
         txtHoras.setText(before + "" + Double.toString(numhours)+"h:");
 
-        if (numhours < 1) {
+        if(checkInUtilities.isPromo()){
 
             try{
-                txtPrecio.setText(Double.toString(parking.getDouble("cost_goparken_by_hour")));
+                txtPrecio.setText(Double.toString(parking.getDouble("precioPromo")));
+
+                if(numhours > Double.parseDouble(parking.getString("horasPromo"))){
+
+                    globalSeconds = 0;
+                    timerHours_ = 0;
+                    timerMinutes_ = 0;
+                    timerSeconds_ = 0;
+
+                    txtHoras.setText("00");
+                    txtMin.setText("00");
+                    txtSec.setText("00");
+
+                    txtPrecio.setText(Double.toString(parking.getDouble("cost_goparken_by_hour")));
+
+                    checkInUtilities.setPromo(false);
+
+                    try {
+                        dataRequest.put("checkin_id",checkInUtilities.getId());
+                        dataRequest.put("token",userUtilities.getToken());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    jsArrayRequest1 = new JsonObjectRequest(
+                            Request.Method.POST,
+                            URL_BASE + "UpdateCheckin",
+                            dataRequest,
+                            new Response.Listener<JSONObject>() {
+                                @Override
+                                public void onResponse(JSONObject response) {
+                                    // Manejo de la respuesta
+                                    Log.d(TAG, "Respuesta en JSON 2 timer: " + response);
+
+                                    }
+                            },
+                            new Response.ErrorListener() {
+
+                                @Override
+                                public void onErrorResponse(VolleyError error) {
+                                    // Manejo de errores
+                                    ///progress.dismiss();
+                                    //showMessge("Ocurrio un error por favor intenrte mas tarde");
+                                    Log.d(TAG, "Error: " + error.getMessage());
+                                }
+                            });
+
+                    // Add request to de queue
+                    MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequest1);
+
+                }
+
             }catch (JSONException e) {
                 e.printStackTrace();
             }
 
+        }else{
+
+            if (numhours < 1) {
+
+                try{
+                    txtPrecio.setText(Double.toString(parking.getDouble("cost_goparken_by_hour")));
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
 
-        } else {
 
-            try{
-                priceH =  parking.getDouble("cost_goparken_by_hour") * numhours;
+            } else {
+
+                try{
+                    priceH =  parking.getDouble("cost_goparken_by_hour") * numhours;
 
                 /*Calculamos las fracciones*/
-                double minutos = timerMinutes_;
-                minutos = minutos / 15;
-                minutos = Math.ceil(minutos);
+                    double minutos = timerMinutes_;
+                    minutos = minutos / 15;
+                    minutos = Math.ceil(minutos);
 
-                priceF = parking.getDouble("cost_goparken_by_fraction") * minutos;
+                    priceF = parking.getDouble("cost_goparken_by_fraction") * minutos;
 
-                priceT = priceH +priceF;
+                    priceT = priceH +priceF;
 
-                txtPrecio.setText("$ "+Double.toString(priceT));
-            }catch (JSONException e) {
-                e.printStackTrace();
+                    txtPrecio.setText("$ "+Double.toString(priceT));
+                }catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+
             }
-
-
         }
+
+
 
     }
 
@@ -201,6 +279,13 @@ public class TimerActivity extends AppCompatActivity {
 
     public void loadTimer(){
 
+        hideProgress();
+
+        progress.setMessage("Cargando temporizador ...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
+
         URL_GETCHECKININFO = "http://ec2-107-20-100-168.compute-1.amazonaws.com/api/v1/CheckinByUserId?token="+
                 userUtilities.getToken();
 
@@ -214,6 +299,7 @@ public class TimerActivity extends AppCompatActivity {
                         // Manejo de la respuesta
                         Log.d(TAG, "Respuesta en JSON: " + response);
                         if(response != null){
+
                             try {
                                 JSONObject content = response.getJSONObject("content");
                                 JSONObject checkin = content.getJSONObject("checkin");
@@ -248,6 +334,8 @@ public class TimerActivity extends AppCompatActivity {
                                             incremental();
                                         }
                                     }.start();
+
+                                    hideProgress();
 
 
                                 }
@@ -334,6 +422,56 @@ public class TimerActivity extends AppCompatActivity {
         startActivity(intent);
 
         finish();
+
+    }
+
+    public void hideProgress(){
+
+        new CountDownTimer(1000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                Log.d(TAG,"hideProgress seconds remaining: " + Long.toString(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                Log.d(TAG,"hideProgress");
+                progress.dismiss();
+            }
+        }.start();
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(TAG, "onPause");
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+
+        /*killLoad();
+
+        progress.setMessage("Resumiendo ...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
+        counting = false;
+
+        new CountDownTimer(3000, 1000) {
+
+            public void onTick(long millisUntilFinished) {
+                Log.d(TAG,"hideProgress seconds remaining: " + Long.toString(millisUntilFinished / 1000));
+            }
+
+            public void onFinish() {
+                Log.d(TAG,"loadTimer()");
+                loadTimer();
+            }
+        }.start();*/
 
     }
 }

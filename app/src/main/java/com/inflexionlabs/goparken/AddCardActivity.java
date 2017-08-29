@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
@@ -68,6 +69,8 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
 
     DatabaseReference databaseReference;
 
+    ProgressDialog progress;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,6 +116,8 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
         openpay = new Openpay(MERCHANT_ID,PRIVATE_API_KEY,productionMode);
         deviceIdString = openpay.getDeviceCollectorDefaultImpl().setup(this);
 
+        progress = new ProgressDialog(this);
+
     }
 
     private void saveCard() {
@@ -120,6 +125,10 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
         if(!validateForm()){
             return;
         }
+
+        progress.setMessage("Guardando datos...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
 
         Card card = new Card();
         card.holderName(editTxtNonbreT.getText().toString());
@@ -357,6 +366,7 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
 
                         updateFireBaseUser();
 
+                        progress.dismiss();
                         showMessge("Datos guardados con èxito");
 
                     }
@@ -366,7 +376,7 @@ public class AddCardActivity extends AppCompatActivity implements OperationCallB
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         // Manejo de errores
-
+                        progress.dismiss();
                         showMessge("Ocurrio un error, por favor intente nuevamente");
                         Log.d(TAG, "Error: " + error.getMessage());
                     }
