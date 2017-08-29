@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -19,6 +20,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +48,8 @@ public class CardsListActivity extends AppCompatActivity {
     Context context;
 
     TextView txtUsuario;
+    ImageView imgUserPhoto;
+    String photoUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,18 @@ public class CardsListActivity extends AppCompatActivity {
 
         txtUsuario = (TextView) findViewById(R.id.txtUsuario);
         txtUsuario.setText(userUtilities.getUserName());
+
+        imgUserPhoto = (ImageView) findViewById(R.id.imgUserPicture);
+
+        if (userUtilities.getProvider().equals("password")) {
+            photoUrl = "https://firebasestorage.googleapis.com/v0/b/goparkennativa-cfff1.appspot.com/o/perfil_imagen%402x.png?alt=media&token=0104417e-f8d8-4b1d-8712-ea90e18ecadd";
+
+        } else {
+            photoUrl = userUtilities.getPhotoUrl().toString();
+        }
+        Picasso.with(this).load(photoUrl).noFade().fit().into(imgUserPhoto);
+
+
 
     }
 

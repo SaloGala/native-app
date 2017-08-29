@@ -62,13 +62,15 @@
 
                     <Space
                         android:layout_width="match_parent"
-                        android:layout_height="10dp" />
+                        android:layout_height="10dp"
+                        />
 
                     <EditText
                         android:id="@+id/editTxtNombre"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtNombre" />
+                        android:hint="@string/editTxtNombre"
+                        />
 
                     <Space
                         android:layout_width="match_parent"
@@ -78,7 +80,8 @@
                         android:id="@+id/editTxtApellidos"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtApellidos" />
+                        android:hint="@string/editTxtApellidos"
+                        />
 
                     <Space
                         android:layout_width="match_parent"
@@ -88,7 +91,8 @@
                         android:id="@+id/editTxtCorreo"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtEmail" />
+                        android:hint="@string/editTxtEmail"
+                        />
 
                     <Space
                         android:layout_width="match_parent"
@@ -98,7 +102,8 @@
                         android:id="@+id/editTxtCorreoR"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/editTxtEmail2" />
+                        android:hint="@string/editTxtEmail2"
+                        />
 
                     <Space
                         android:layout_width="match_parent"
@@ -110,6 +115,7 @@
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
                         android:hint="@string/editTxtPass"
+
                         />
 
                     <Space
@@ -121,7 +127,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:hint="@string/editTxtPass2" />
+                        android:hint="@string/editTxtPass2"
+                        />
 
                     <Space
                         android:layout_width="match_parent"
@@ -130,7 +137,8 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="* Campo obligatorio" />
+                        android:text="* Campo obligatorio"
+                        android:textColor="@color/textColor"/>
 
                     <Space
                         android:layout_width="match_parent"

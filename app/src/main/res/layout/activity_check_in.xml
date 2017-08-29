@@ -68,8 +68,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="@string/inst_msg"
-                        android:textSize="16dp"
-                        android:textAlignment="center"/>
+                        android:textSize="18dp"
+                        android:textAlignment="center"
+                        android:textColor="@color/textColor"/>
 
                     <Space
                         android:layout_width="match_parent"

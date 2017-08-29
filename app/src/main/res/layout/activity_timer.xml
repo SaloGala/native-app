@@ -64,6 +64,7 @@
                             android:id="@+id/txtHoras"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
+                            android:textColor="@color/textColor"
 
                             />
 
@@ -72,7 +73,7 @@
                             android:id="@+id/txtMin"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-
+                            android:textColor="@color/textColor"
 
                             />
 
@@ -80,7 +81,7 @@
                             android:id="@+id/txtSec"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
-
+                            android:textColor="@color/textColor"
                             />
 
                     </LinearLayout>
@@ -94,7 +95,7 @@
                             android:id="@+id/txtPrecio"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/datos_tarjeta"
+                            android:textColor="@color/textColor"
                             android:textSize="40dp"
                             android:textAlignment="center"/>
 
@@ -106,7 +107,7 @@
                             android:id="@+id/txtHoraEntrada"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/datos_tarjeta"
+                            android:textColor="@color/textColor"
                             android:textSize="20dp"
                             android:textAlignment="center"/>
 
@@ -118,7 +119,7 @@
                             android:id="@+id/txtParkingName"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/datos_tarjeta"
+                            android:textColor="@color/textColor"
                             android:textSize="20dp"
                             android:textAlignment="center"/>
 
@@ -130,7 +131,7 @@
                             android:id="@+id/txtAddress"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/datos_tarjeta"
+                            android:textColor="@color/textColor"
                             android:textSize="20dp"
                             android:textAlignment="center"/>
 
@@ -152,7 +153,7 @@
                             android:id="@+id/txtMetodoPago"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/datos_tarjeta"
+                            android:textColor="@color/textColor"
                             android:textSize="20dp"
                             android:textAlignment="center"/>
 

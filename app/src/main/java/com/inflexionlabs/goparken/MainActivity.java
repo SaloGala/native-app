@@ -178,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
             checkLocationPermissions();
         }
 
-        hasCheckInActive();
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -186,8 +185,10 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
 
         if (mFirebaseUser != null) {
 
+            initializeUserInfo();
 
             initializeComponents();
+
             writeNewUser();
 
             initializeApiComponents();
@@ -236,8 +237,83 @@ public class MainActivity extends AppCompatActivity implements GoogleApiClient.O
         }
     }
 
-    public void hasCheckInActive(){
-        String URL_HASCKINACT = "";
+    private void initializeUserInfo() {
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+
+        //Traer de la base
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+
+        DatabaseReference mUserDetail = mDatabaseReference.child("users").child(mFirebaseUser.getUid() + "/data");
+
+        ValueEventListener userListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+
+                hasCheckInActive(user.getToken());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "loadPost:onCancelled", databaseError.toException());
+            }
+        };
+
+        mUserDetail.addListenerForSingleValueEvent(userListener);
+
+
+    }
+
+    public void goToTimerActivity(){
+        Intent intent = new Intent(this, TimerActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra("promo","false");
+        startActivity(intent);
+        finish();
+    }
+
+
+    public void hasCheckInActive(String token){
+        String URL_HASCKINACT = URL_BASE+ "Checkin/HasCheckinActive?token="+token;
+
+        JsonObjectRequest jsArrayRequestC= new JsonObjectRequest(
+                Request.Method.GET,
+                URL_HASCKINACT,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // Manejo de la respuesta
+                        Log.d(TAG, "Respuesta en JSON: " + response);
+
+                        try {
+                            JSONObject content = response.getJSONObject("content");
+                            if(content.getBoolean("active")){
+                                goToTimerActivity();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // Manejo de errores
+
+                        Log.d(TAG, "Error: " + error.getMessage());
+                    }
+                });
+
+        // Add request to de queue
+        MySingleton.getInstance(getApplicationContext()).addToRequestQueue(jsArrayRequestC);
+
+        Log.d(TAG,"token: "+token);
     }
 
     private void initializeGraphicComponents() {

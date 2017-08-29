@@ -18,7 +18,7 @@ public class PaymentFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
-        View view = inflater.inflate(R.layout.tarifa_dialog,container,false);
+        View view = inflater.inflate(R.layout.aviso_dialog,container,false);
 
         return view;
     }

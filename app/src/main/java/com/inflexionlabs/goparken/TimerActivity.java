@@ -1,10 +1,14 @@
 package com.inflexionlabs.goparken;
 
+import android.app.Dialog;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.FloatProperty;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.android.volley.Request;
@@ -20,7 +24,8 @@ public class TimerActivity extends AppCompatActivity {
 
     private final String TAG = "TimerActivity";
 
-    ParkingUtilities parkingUtilities = ParkingUtilities.getInstance();
+    CheckInUtilities checkInUtilities = CheckInUtilities.getInstance();
+
     UserUtilities userUtilities = UserUtilities.getInstance();
 
     double globalSeconds = 0;
@@ -40,9 +45,13 @@ public class TimerActivity extends AppCompatActivity {
 
     double priceH = 0;
     double priceF = 0;
+    double priceT = 0;
 
     JsonObjectRequest jsArrayRequest;
     String URL_GETCHECKININFO;
+    JSONObject parking;
+
+    Button btnCheckOut;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +74,15 @@ public class TimerActivity extends AppCompatActivity {
         txtHoraEntrada = (TextView) findViewById(R.id.txtHoraEntrada);
         txtAddress = (TextView) findViewById(R.id.txtAddress);
         txtCardMask = (TextView) findViewById(R.id.txtMetodoPago);
+
+        btnCheckOut = (Button) findViewById(R.id.btnCheckOut);
+
+        btnCheckOut.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                checkOut();
+            }
+        });
     }
 
     public void incremental(){
@@ -106,38 +124,52 @@ public class TimerActivity extends AppCompatActivity {
         if (numseconds < 10) {
             before = "0";
         }
-        txtSec.setText(before + "" + Double.toString(numseconds));
+        txtSec.setText(before + "" + Double.toString(numseconds)+"s");
 
         before = "";
         if (numminutes < 10) {
             before = "0";
         }
 
-        txtMin.setText(before + "" + Double.toString(numminutes));
+        txtMin.setText(before + "" + Double.toString(numminutes)+":m:");
 
         before = "";
         if (numhours < 10) {
             before = "0";
         }
 
-        txtHoras.setText(before + "" + Double.toString(numhours));
+        txtHoras.setText(before + "" + Double.toString(numhours)+"h:");
 
         if (numhours < 1) {
 
-            txtPrecio.setText(Double.toString(parkingUtilities.getCost_goparken_by_hour()));
+            try{
+                txtPrecio.setText(Double.toString(parking.getDouble("cost_goparken_by_hour")));
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
 
         } else {
 
-            priceH = parkingUtilities.getCost_goparken_by_hour() * numhours;
+            try{
+                priceH =  parking.getDouble("cost_goparken_by_hour") * numhours;
 
-            /*Calculamos las fracciones*/
-            double minutos = timerMinutes_;
-            minutos = minutos / 15;
-            minutos = Math.ceil(minutos);
+                /*Calculamos las fracciones*/
+                double minutos = timerMinutes_;
+                minutos = minutos / 15;
+                minutos = Math.ceil(minutos);
 
-            priceF = parkingUtilities.getCost_goparken_by_fraction() * minutos;
+                priceF = parking.getDouble("cost_goparken_by_fraction") * minutos;
 
-            txtPrecio.setText("$ "+Double.toString(priceH)+Double.toString(priceF));
+                priceT = priceH +priceF;
+
+                txtPrecio.setText("$ "+Double.toString(priceT));
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
         }
 
     }
@@ -185,14 +217,22 @@ public class TimerActivity extends AppCompatActivity {
                             try {
                                 JSONObject content = response.getJSONObject("content");
                                 JSONObject checkin = content.getJSONObject("checkin");
-                                JSONObject parking = content.getJSONObject("parking");
+                                parking = content.getJSONObject("parking");
 
                                 if(checkin != null){
 
-                                    txtHoraEntrada.setText("HORA DE ENTRADA "+checkin.getString("in"));
+                                    checkInUtilities.setId(checkin.getInt("id"));
+                                    checkInUtilities.setParking_id(checkin.getInt("parking_id"));
+                                    checkInUtilities.setMarker_id(checkin.getInt("marker_id"));
+                                    checkInUtilities.setIn(checkin.getString("in"));
+                                    checkInUtilities.setOut(checkin.getString("out"));
+                                    checkInUtilities.setComision(parking.getInt("comision"));
+                                    checkInUtilities.setExit_code(checkin.getString("exit_code"));
+
+                                    txtHoraEntrada.setText("HORA DE ENTRADA: "+checkin.getString("in"));
                                     txtParkingName.setText(parking.getString("name"));
                                     txtAddress.setText(formatAddress(parking));
-                                    txtCardMask.setText(getString(R.string.tu_metodo_msg)+" "+content.getString("mask_card"));
+                                    txtCardMask.setText(getString(R.string.tu_metodo_msg)+": "+content.getString("mask_card"));
 
                                     globalSeconds = content.getDouble("secondsSinceCheckin");
                                     counting = true;
@@ -243,5 +283,57 @@ public class TimerActivity extends AppCompatActivity {
         txtMin.setText("00");
         txtHoras.setText("00");
         counting = false;
+    }
+
+    public void checkOut(){
+
+        // custom dialog
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.alert_dialog);
+        dialog.setTitle("Aviso");
+
+        // set the custom dialog components - text, image and button
+        TextView txtTexto = (TextView) dialog.findViewById(R.id.txtTexto);
+        Button btnAceptar = (Button) dialog.findViewById(R.id.btnAceptar);
+        Button btnCancelar = (Button) dialog.findViewById(R.id.btnCancelar);
+
+        txtTexto.setText("¿Seguro que quieres terminar la sesión?");
+
+        btnAceptar.setText("Aceptar");
+        btnCancelar.setText("Cancelar");
+
+        // if button is clicked, close the custom dialog
+        btnAceptar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+                killLoad();
+                goToCheckOutAcitvity();
+            }
+        });
+
+        btnCancelar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+
+            }
+        });
+
+        dialog.show();
+    }
+
+    public void killLoad(){
+        load();
+    }
+
+    public void goToCheckOutAcitvity(){
+
+        Intent intent = new Intent(this, CheckOutActivity.class);
+
+        startActivity(intent);
+
+        finish();
+
     }
 }

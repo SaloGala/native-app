@@ -6,4 +6,5 @@
     <color name="colorPrimaryActionBar">#FFF</color>
     <color name="rippleFABColor">#4DD0E1</color>
     <color name="textColor">#418AB3</color>
+    <color name="redWarning">#c50000</color>
 </resources>

@@ -1,5 +1,6 @@
 package com.inflexionlabs.goparken;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -86,6 +87,12 @@ public class LoginFormActivity extends AppCompatActivity {
             return;
         }
 
+        final ProgressDialog progress = new ProgressDialog(this);
+        //progress.setTitle("Loading");
+        progress.setMessage("Iniciando sesión...");
+        progress.setCancelable(false); // disable dismiss by tapping outside of the dialog
+        progress.show();
+
 
         // [START sign_in_with_email]
         mAuth.signInWithEmailAndPassword(email, password)
@@ -98,9 +105,13 @@ public class LoginFormActivity extends AppCompatActivity {
 
                             registerEventFirebaseAnalitics("email_password", "El usuario inicio sesion con un correo y contraseña");
 
+                            // To dismiss the dialog
+                            progress.dismiss();
+
                             goMapScreen();
 
                         } else {
+                            progress.dismiss();
                             Log.w(TAG, "signInWithEmail:failure", task.getException());
                             Toast.makeText(LoginFormActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
                         }

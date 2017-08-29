@@ -12,8 +12,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +39,7 @@ public class PerfilFragment extends Fragment {
     Button btnEditarPerfil;
     Button btnAddCard;
     Button btnAddAuto;
+    Button btnLogOut;
     private DatabaseReference mDatabaseReference;
     FirebaseUser mFirebaseUser;
     private FirebaseAuth mFirebaseAuth;
@@ -67,10 +70,13 @@ public class PerfilFragment extends Fragment {
         btnEditarPerfil = (Button) mView.findViewById(R.id.btnEditarPerfil);
         btnAddAuto = (Button) mView.findViewById(R.id.btnVerVehiculos);
         btnAddCard = (Button) mView.findViewById(R.id.btnVerMetodosPago);
+        btnLogOut = (Button) mView.findViewById(R.id.btnCerrarSesion);
 
         btnEditarPerfil.setOnClickListener(btnListener);
         btnAddAuto.setOnClickListener(btnListener);
         btnAddCard.setOnClickListener(btnListener);
+        btnLogOut.setOnClickListener(btnListener);
+
         initializeUserInfo();
         return mView;
     }
@@ -163,11 +169,39 @@ public class PerfilFragment extends Fragment {
                 case R.id.btnVerMetodosPago:
                     showCardsList();
                     break;
+                case R.id.btnCerrarSesion:
+                    logOut();
+                    break;
 
             }
 
         }
     };
+
+    public void logOut() {
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String providerId = "";
+
+        for (UserInfo profile : user.getProviderData()) {
+            providerId = profile.getProviderId();
+        }
+
+        mFirebaseAuth.signOut();
+
+        if (providerId.equals("facebook.com")) {
+            LoginManager.getInstance().logOut();
+        }
+
+        goLoginScreen();
+    }
+
+    private void goLoginScreen() {
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        getActivity().finish();
+    }
 
 
     private void editProfileForm() {
